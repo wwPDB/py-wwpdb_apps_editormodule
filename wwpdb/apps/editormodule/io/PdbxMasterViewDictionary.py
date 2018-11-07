@@ -1,7 +1,7 @@
 
-from pdbx_v2.persist.PdbxPyIoAdapter   import PdbxPyIoAdapter as PdbxIoAdapter
-from pdbx_v2.reader.PdbxContainers     import DataContainer
-from pdbx_v2.reader.DataCategory import DataCategory
+from mmcif_utils.persist.PdbxPyIoAdapter   import PdbxPyIoAdapter as PdbxIoAdapter
+from mmcif.api.PdbxContainers     import DataContainer
+from mmcif.api.DataCategory import DataCategory
 
 import sys
 

@@ -19,7 +19,7 @@
 # 2012-06-28    RPS    Introduced support for launching of Jmol viewer relative to specific records selected via DataTable
 #                        interface, such that Jmol scripting commands are customized based on cif category and row selected.
 # 2012-07-30    RPS    _getDataTblData() updated to accommodate column-specific filtering
-# 2012-08-16    RPS    added URL mapping in accordance with setting for 'SITE_CIF_EDITOR_URL' in wwpdb.api.facade.ConfigInfoData.py
+# 2012-08-16    RPS    added URL mapping in accordance with setting for 'SITE_CIF_EDITOR_URL' in wwpdb.utils.config.ConfigInfoData.py
 # 2012-08-21    RPS    Update required for proper integration with WF tracking.
 # 2012-09-25    RPS    Disabling communication with status database until decision is made as to how this module fits
 #                        into workflow processing
@@ -80,8 +80,8 @@ from wwpdb.apps.editormodule.depict.EditorDepict        import EditorDepict
 #
 from wwpdb.apps.editormodule.utils.WfTracking           import WfTracking
 #
-from wwpdb.api.facade.DataReference                     import DataFileReference
-from wwpdb.api.facade.ConfigInfo                        import ConfigInfo
+from wwpdb.wwpdb.utils.wf.DataReference                     import DataFileReference
+from wwpdb.utils.config.ConfigInfo                        import ConfigInfo
 #
 from wwpdb.utils.rcsb.GraphicsContext3D                 import GraphicsContext3D
 

@@ -131,15 +131,15 @@ __version__   = "V0.01"
 
 import sys, traceback, time, os, os.path, shutil, re, operator
 
-from pdbx_v2.persist.PdbxPersist                       import PdbxPersist
-from pdbx_v2.persist.PdbxCoreIoAdapter                   import PdbxCoreIoAdapter as PdbxIoAdapter
-from wwpdb.api.facade.ConfigInfo                    import ConfigInfo
+from mmcif_utils.persist.PdbxPersist                       import PdbxPersist
+from mmcif_utils.persist.PdbxCoreIoAdapter                   import PdbxCoreIoAdapter as PdbxIoAdapter
+from wwpdb.utils.config.ConfigInfo                    import ConfigInfo
 from pdbx_v2.persist.PdbxDictionaryInfo             import PdbxDictionaryInfo,PdbxDictionaryInfoStore,PdbxDictionaryViewInfo
 from wwpdb.apps.editormodule.io.EditorDataImport    import EditorDataImport
 from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewDictionary
 from wwpdb.apps.editormodule.config.EditorConfig    import EditorConfig
 from wwpdb.apps.releasemodule.utils.DBLoadUtil       import DBLoadUtil
-from pdbx_v2.reader.DataCategory                     import DataCategory
+from mmcif.api.DataCategory                     import DataCategory
 
 import logging
 

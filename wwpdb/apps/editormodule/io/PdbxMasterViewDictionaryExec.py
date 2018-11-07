@@ -3,7 +3,7 @@
 # Simple front end to dump views to files....
 
 from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewDictionary
-from pdbx_v2.writer.PdbxWriter import PdbxWriter
+from mmcif.io.PdbxWriter import PdbxWriter
 
 import argparse
 

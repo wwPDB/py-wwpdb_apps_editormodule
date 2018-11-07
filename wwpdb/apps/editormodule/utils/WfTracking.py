@@ -19,8 +19,8 @@ __version__   = "V0.07"
 import os,sys
 import datetime
 
-from wwpdb.api.status.dbapi.WfDbApi import WfDbApi
-from wwpdb.api.status.dbapi.WFEtime import getTimeNow
+from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
+from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
 
 class WfTracking(object):
     """Provides methods to update progress and tracking information in the WF status database.
