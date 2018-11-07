@@ -78,7 +78,7 @@ from wwpdb.apps.editormodule.webapp.WebRequest          import EditorInputReques
 from wwpdb.apps.editormodule.io.PdbxDataIo              import PdbxDataIo
 from wwpdb.apps.editormodule.depict.EditorDepict        import EditorDepict
 #
-from wwpdb.apps.editormodule.utils.WfTracking           import WfTracking
+from wwpdb.utils.wf.dbapi.WfTracking                    import WfTracking
 #
 from wwpdb.io.locator.DataReference                     import DataFileReference
 from wwpdb.utils.config.ConfigInfo                      import ConfigInfo
