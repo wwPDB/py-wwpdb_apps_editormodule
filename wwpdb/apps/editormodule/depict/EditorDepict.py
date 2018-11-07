@@ -89,11 +89,11 @@ __version__   = "V0.02"
 
 import os, sys, time, operator, urllib
 from json                                           import loads, dumps
-from pdbx.persist.PdbxPersist                       import PdbxPersist #temporary for testing
-from pdbx.persist.PdbxPyIoAdapter                   import PdbxPyIoAdapter as PdbxIoAdapter #temporary for testing
+from mmcif_utils.persist.PdbxPersist                import PdbxPersist #temporary for testing
+from mmcif_utils.persist.PdbxPyIoAdapter            import PdbxPyIoAdapter as PdbxIoAdapter #temporary for testing
 from wwpdb.apps.editormodule.io.PdbxDataIo          import PdbxDataIo
 from wwpdb.apps.editormodule.config.EditorConfig    import EditorConfig
-from wwpdb.utils.rcsb.GraphicsContext3D             import GraphicsContext3D
+from wwpdb.io.graphics.GraphicsContext3D            import GraphicsContext3D
 import logging
 
 logger = logging.getLogger(__name__)
