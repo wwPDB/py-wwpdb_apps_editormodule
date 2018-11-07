@@ -80,10 +80,10 @@ from wwpdb.apps.editormodule.depict.EditorDepict        import EditorDepict
 #
 from wwpdb.apps.editormodule.utils.WfTracking           import WfTracking
 #
-from wwpdb.wwpdb.utils.wf.DataReference                     import DataFileReference
-from wwpdb.utils.config.ConfigInfo                        import ConfigInfo
+from wwpdb.io.locator.DataReference                     import DataFileReference
+from wwpdb.utils.config.ConfigInfo                      import ConfigInfo
 #
-from wwpdb.utils.rcsb.GraphicsContext3D                 import GraphicsContext3D
+from wwpdb.io.graphics.GraphicsContext3D                import GraphicsContext3D
 
 import time
 import logging

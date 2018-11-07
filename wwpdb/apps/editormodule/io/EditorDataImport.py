@@ -21,7 +21,7 @@ __version__   = "V0.01"
 
 import sys, os, os.path, traceback, time
 
-from wwpdb.wwpdb.utils.wf.DataReference  import DataFileReference
+from wwpdb.io.locator.DataReference  import DataFileReference
 
 class EditorDataImport(object):
     """ Controlling class for data import operations

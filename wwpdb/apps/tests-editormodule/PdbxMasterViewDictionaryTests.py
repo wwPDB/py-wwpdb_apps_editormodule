@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
-from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewDictionary
-
 import unittest
 import sys
+import os
+
+from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewDictionary
+
 
 class PdbxViewTests(unittest.TestCase):
     def setUp(self):
         self.__lfh = sys.stderr
-        self.__testConfig = 'resources/pdbx_display_view_info_master.cif'
+        self.__testConfig = os.path.join(os.path.dirname(__file__), 'resources', 'pdbx_display_view_info_master.cif')
 
         self.__dV = PdbxMasterViewDictionary(verbose = False)
         self.assertTrue(self.__dV.read(self.__testConfig))
