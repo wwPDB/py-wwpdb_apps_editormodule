@@ -260,7 +260,7 @@ class PdbxDataIo(object):
     def __setUpSnapShotsArea(self):
         try:
             if( not os.path.isdir(self.__sessionSnapShotsPath) ):
-                os.mkdir( self.__sessionSnapShotsPath,0777 )
+                os.mkdir( self.__sessionSnapShotsPath,0o777 )
                 if os.access( self.__sessionSnapShotsPath, os.R_OK ):
                     if (self.__verbose):
                         self.__lfh.write("+%s.%s() dataFileSnapShot area read accessible at: %s\n" % (self.__class__.__name__,

@@ -46,7 +46,7 @@ class PdbxMasterViewDictionary(object):
                 viewName     =row[idView]
                 sections     =row[idSections]
 
-                if not vD.has_key(exptl):
+                if exptl not in vD:
                     vObj = {}
                     vObj['EXPTL'] = exptl
                     vObj['NAME'] = viewName
@@ -70,7 +70,7 @@ class PdbxMasterViewDictionary(object):
                 methods = row[idMeths]
                 views    = row[idViews]
 
-                if not vD.has_key(methods):
+                if methods not in vD:
                     vObj = {}
                     vObj['METHODS'] = methods
                     vObj['VIEWS'] = views
@@ -91,7 +91,7 @@ class PdbxMasterViewDictionary(object):
                 method      = row[idMeth]
                 translation = row[idTrans]
 
-                if not vD.has_key(method):
+                if method not in vD:
                     vObj = {}
                     vObj['METHOD'] = method
                     vObj['TRANSLATION'] = translation
@@ -105,7 +105,7 @@ class PdbxMasterViewDictionary(object):
         """Returns the list of views available"""
 
         ret = []
-        for key, value in self.__vMaster['EXPTL_VIEW'].iteritems():
+        for (key, value) in self.__vMaster['EXPTL_VIEW'].items():
             ret.append(value['EXPTL'])
         return ret
 
@@ -113,7 +113,7 @@ class PdbxMasterViewDictionary(object):
         """Returns the list of method combinations available"""
 
         ret = []
-        for key, value in self.__vMaster['VIEW_MAP'].iteritems():
+        for (key, value) in self.__vMaster['VIEW_MAP'].items():
             ret.append(value['METHODS'])
         return ret
 
@@ -215,7 +215,7 @@ class PdbxMasterViewDictionary(object):
             rContainer = self.__myReader.getContainer(containerName = blockName)
             if rContainer is not None:
                 # For each category - append to container
-                for catName, attrList in __catMap.iteritems():
+                for (catName, attrList) in __catMap.items():
                     rCat = rContainer.getObj(catName)
                     dCat = container.getObj(catName)
                     if not rCat:
