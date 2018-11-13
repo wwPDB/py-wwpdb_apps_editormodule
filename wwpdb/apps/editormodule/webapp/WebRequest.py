@@ -22,7 +22,7 @@ __version__   = "V0.07"
 import sys
 from json import loads, dumps
 
-from wwpdb.apps.editormodule.io.SessionManager import SessionManager
+from wwpdb.utils.session.SessionManager import SessionManager
 
 class WebRequest(object):
     """ Base container and accessors for input and output parameters and control information. 
@@ -188,6 +188,10 @@ class EditorInputRequest(WebRequest):
             self.setValue('sessionid',sObj.getId())
         
         return sObj
+
+        def getIntegerValue(self, myKey):
+            # Handle unicode in request
+            return int(self.getValue(myKey).encode('utf-8'))
 
 #
 

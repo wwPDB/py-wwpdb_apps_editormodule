@@ -43,7 +43,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     #
-    install_requires=['mmcif.utils', 'wwpdb.utils.wf', 'wwpdb.utils.db'],
+    install_requires=['mmcif.utils', 'wwpdb.utils.wf', 'wwpdb.utils.db', 'wwpdb.utils.session', 'wwpdb.io'],
     packages=find_packages(exclude=['wwpdb.apps.tests-editormodule']),
     # Enables Manifest to be used
     #include_package_data = True,
