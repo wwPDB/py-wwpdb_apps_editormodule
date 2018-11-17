@@ -132,7 +132,9 @@ __version__   = "V0.01"
 import sys, traceback, time, os, os.path, shutil, re, operator
 
 from mmcif_utils.persist.PdbxPersist                      import PdbxPersist
-from mmcif_utils.persist.PdbxCoreIoAdapter                import PdbxCoreIoAdapter as PdbxIoAdapter
+#from mmcif_utils.persist.PdbxCoreIoAdapter                import PdbxCoreIoAdapter as PdbxIoAdapter
+from mmcif.io.IoAdapterCore                               import IoAdapterCore
+
 from wwpdb.utils.config.ConfigInfo                        import ConfigInfo
 from mmcif_utils.persist.PdbxDictionaryInfo               import PdbxDictionaryInfo,PdbxDictionaryInfoStore,PdbxDictionaryViewInfo
 from wwpdb.apps.editormodule.io.EditorDataImport          import EditorDataImport
@@ -217,7 +219,8 @@ class PdbxDataIo(object):
         self.__pdbxDictStore = None
         self.__pathPdbxDataFile = None
         #
-        self.__pdbxReader = None
+        #self.__pdbxReader = None
+        self.__containerList = []
         #
         self.__dataBlockName=None
         self.__entryTitle=None
@@ -410,21 +413,22 @@ class PdbxDataIo(object):
             # parse model cif file and determine blockname
             #########################################################################################################
             if self.__pathPdbxDataFile is not None and os.access(self.__pathPdbxDataFile,os.R_OK):
-                self.__pdbxReader=PdbxIoAdapter(self.__verbose,self.__lfh)
-                self.__pdbxReader.read(pdbxFilePath=self.__pathPdbxDataFile)
+                pdbxReader=IoAdapterCore(verbose = self.__verbose)
+                self.__containerList = pdbxReader.readFile(inputFilePath = self.__pathPdbxDataFile, enforceAscii=True)
+
+                iCountNames = len(self.__containerList)
+                assert( iCountNames == 1 ), ("+%s.%s() -- expecting containerNameList to have single member but list had %s members\n" % (self.__class__.__name__,
+                                                                                                                                          sys._getframe().f_code.co_name,
+                                                                                                                                          iCountNames) )
                 #
-                containerNameList = self.__pdbxReader.getContainerNameList()
-                self.__dataBlockName = containerNameList[0]
+                self.__dataBlockName = self.__containerList[0].getName().encode('utf-8')
+                logger.info("Datablock name %r" % self.__dataBlockName)
                 self.__lfh.write("--------------------------------------------\n")        
                 self.__lfh.write("+%s.%s() identified datablock name %s in sample pdbx data file at: %s\n" % (self.__class__.__name__,
                                                                                                                        sys._getframe().f_code.co_name,
                                                                                                                        self.__dataBlockName,
                                                                                                                        self.__pathPdbxDataFile )) 
                 #
-                iCountNames = len(containerNameList)
-                assert( iCountNames == 1 ), ("+%s.%s() -- expecting containerNameList to have single member but list had %s members\n" % (self.__class__.__name__,
-                                                                                                                                          sys._getframe().f_code.co_name,
-                                                                                                                                          iCountNames) )
             else:
                 if (self.__verbose):
                     self.__lfh.write("+%s.%s() pdbx data file not found/accessible at: %s\n" % (self.__class__.__name__,
@@ -434,12 +438,12 @@ class PdbxDataIo(object):
             if (self.__verbose):
                 self.__lfh.write("+%s.%s() problem processing pdbx data file at: %s\n" % (self.__class__.__name__,
                                                                                           sys._getframe().f_code.co_name, self.__pathPdbxDataFile ) )
-            traceback.print_exc(file=self.__lfh)
+            logger.traceback("problem processing file")
             self.__lfh.flush()
                                                  
         try:
             myPersist=PdbxPersist(self.__verbose,self.__lfh)
-            myPersist.setContainerList(self.__pdbxReader.getContainerList())
+            myPersist.setContainerList(self.__containerList)
             myPersist.store(self.__dbFilePath)
             
             if( self.__verbose ):
@@ -454,7 +458,7 @@ class PdbxDataIo(object):
                 self.__entryExptlMethodsLst = self.__getEntryExptlList(myPersist)
 
         except:
-            traceback.print_exc(file=self.__lfh)
+            logger.traceback("In shelving")
 
         return self.__dataBlockName, self.__entryTitle, self.__entryAccessionIdsLst
     
@@ -765,9 +769,9 @@ class PdbxDataIo(object):
                 self.__orderAuthors("em_author_list", myPersist)
                 myPersist.recover(self.__dbFilePath)
                 #
-                myWriter=PdbxIoAdapter(self.__verbose,self.__lfh)
+                myWriter=IoAdapterCore(verbose = self.__verbose)
                 myWriter.setContainerList(myPersist.getContainerList())
-                success = myWriter.write(pdbxFilePath=exprtFilePath)
+                success = myWriter.writeFile(pdbxFilePath=exprtFilePath)
                 #
                 if( success is not None and success is False ):
                     if( self.__verbose ):
