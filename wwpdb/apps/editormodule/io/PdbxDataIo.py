@@ -770,8 +770,8 @@ class PdbxDataIo(object):
                 myPersist.recover(self.__dbFilePath)
                 #
                 myWriter=IoAdapterCore(verbose = self.__verbose)
-                myWriter.setContainerList(myPersist.getContainerList())
-                success = myWriter.writeFile(pdbxFilePath=exprtFilePath)
+                cList = myPersist.getContainerList()
+                success = myWriter.writeFile(outputFilePath=exprtFilePath, containerList = cList)
                 #
                 if( success is not None and success is False ):
                     if( self.__verbose ):
