@@ -20,14 +20,14 @@ def main():
 
     parseargs = parser.parse_args()
 
-    print parseargs
+    print(parseargs)
 
     # filename is mandatory
     dV = PdbxMasterViewDictionary(verbose = False)
     dV.read(parseargs.filename)
 
     if parseargs.list_methods:
-        print "Methods: %s" % dV.getMethods()
+        print("Methods: %s" % dV.getMethods())
 
     if parseargs.export:
         if parseargs.methods:
@@ -36,7 +36,7 @@ def main():
             methodList = dV.getMethods()
 
         for m in methodList:
-            print "Exporting %s" % m
+            print("Exporting %s" % m)
             catObj = dV.generateMethodsView(m)
             if catObj:
                 ofh = open(m + '.cif', 'w')
@@ -45,7 +45,7 @@ def main():
                 pdbxW.write([catObj])
                 ofh.close()
             else:
-                print "Method %s invalid" % m
+                print("Method %s invalid" % m)
 
 
 if __name__ == '__main__':

@@ -95,7 +95,7 @@ class WebRequest(object):
     
     def exists(self,myKey):
         try:
-            return self.__dict.has_key(myKey)
+            return myKey in self.__dict
         except:
             return False
 

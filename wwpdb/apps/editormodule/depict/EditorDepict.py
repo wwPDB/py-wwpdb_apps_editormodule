@@ -87,7 +87,13 @@ __email__     = "rsala@rcsb.rutgers.edu"
 __license__   = "Creative Commons Attribution 3.0 Unported"
 __version__   = "V0.02"
 
-import os, sys, time, operator, urllib
+import os, sys, time, operator
+
+try:
+    from urllib.parse import unquote as u_unquote
+except ImportError:
+    from urllib import unquote  as u_unquote
+
 from json                                           import loads, dumps
 from mmcif_utils.persist.PdbxPersist                import PdbxPersist #temporary for testing
 from mmcif_utils.persist.PdbxPyIoAdapter            import PdbxPyIoAdapter as PdbxIoAdapter #temporary for testing
@@ -530,8 +536,11 @@ class EditorDepict(object):
         logger.debug('catDispLabel: %s' % catDispLabel)
         context    = str( p_reqObj.getValue("context") )
 
-        catDispLabel = urllib.unquote(catDispLabel).decode('utf8') # found the need to do this when Chrome browser being used, which for some reason does not URL decode the data as Firefox does
-        
+        if sys.version_info[0] < 3:
+            catDispLabel = u_unquote(catDispLabel).decode('utf8') # found the need to do this when Chrome browser being used, which for some reason does not URL decode the data as Firefox does
+        else:
+            catDispLabel = u_unquote(catDispLabel)  # Need to test chrome XXXX
+
         pdbxDataIo = PdbxDataIo(p_reqObj,self.__verbose,self.__lfh)
         catObjDict = pdbxDataIo.getTblConfigDict( p_cifCtgryNm, catDispLabel )  # note: to be used as Json Object when in webpage
         bOk, ctgryColList = pdbxDataIo.getCategoryColList( p_cifCtgryNm )
@@ -758,7 +767,7 @@ class EditorDepict(object):
             # the record is itself a dictionary, which will consist of single key/value pair where the "key" represents true  
             # row index of the cif record as it sits in persistent store and "value" is the cif record itself
             
-            trueRowIndxKey,recordValue = record.items()[0]
+            trueRowIndxKey,recordValue = list(record.items())[0]
             newRecordJsonObj['DT_RowId'] = "row_"+str(trueRowIndxKey)
             newRecordJsonObj['DT_RowClass'] = "dt_row"
             #
@@ -891,7 +900,7 @@ class EditorDepict(object):
                     ctgryDsplNmLst=''
                     ctgryDisplyLbls = None
                     ctgryCrdnlties = ''
-                    ctgryTuplLst = ctgryDict.items()
+                    ctgryTuplLst = list(ctgryDict.items())
                     if( len( ctgryTuplLst ) > 1 ):
                         # this if condition indicates drop-down choice that calls for 
                         # simultaneous viewing of > 1 DataTable, i.e. "combo" viewing

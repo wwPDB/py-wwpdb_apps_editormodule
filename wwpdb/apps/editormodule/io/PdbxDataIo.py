@@ -421,7 +421,10 @@ class PdbxDataIo(object):
                                                                                                                                           sys._getframe().f_code.co_name,
                                                                                                                                           iCountNames) )
                 #
-                self.__dataBlockName = self.__containerList[0].getName().encode('utf-8')
+                if sys.version_info[0] < 3:
+                    self.__dataBlockName = self.__containerList[0].getName().encode('utf-8')
+                else:
+                    self.__dataBlockName = self.__containerList[0].getName()
                 logger.info("Datablock name %r" % self.__dataBlockName)
                 self.__lfh.write("--------------------------------------------\n")        
                 self.__lfh.write("+%s.%s() identified datablock name %s in sample pdbx data file at: %s\n" % (self.__class__.__name__,
@@ -1198,7 +1201,7 @@ class PdbxDataIo(object):
                     if( self.__verbose ):
                         self.__lfh.write("+%s.%s() -- colDisplNameDict obtained as %r\n" % (self.__class__.__name__,
                                                                sys._getframe().f_code.co_name,
-                                                               colDisplNameDict.items() ) )
+                                                               list(colDisplNameDict.items()) ) )
                     #
                     ctgryMetaDict['COLUMN_DISPLAY_ORDER']=colNameList
                     ctgryMetaDict['COLUMN_DISPLAY_NAMES']=colDisplNameDict
@@ -1245,7 +1248,7 @@ class PdbxDataIo(object):
                 if( self.__debug ):
                         self.__lfh.write("+%s.%s() -- new configDict generated as %r\n" % (self.__class__.__name__,
                                                                sys._getframe().f_code.co_name,
-                                                               configDict.items() ) )
+                                                               list(configDict.items()) ) )
                 #
             else:
                 if( self.__verbose ):
@@ -1487,7 +1490,7 @@ class PdbxDataIo(object):
                                             if( self.__debug ):
                                                 self.__lfh.write("+%s.%s() -- ctgryMetaDict obtained as %r\n" % (self.__class__.__name__,
                                                                                            sys._getframe().f_code.co_name,
-                                                                                           ctgryMetaDict.items() ) )
+                                                                                           list(ctgryMetaDict.items()) ) )
                                         #
                                         vldtnTstRslts = self.__validateAgainstDict(ctgryMetaDict, curCtgryNm, truAttribName, itemValue)
                                         if( vldtnTstRslts['pass_regex_tst'] == 'false' or vldtnTstRslts['pass_bndry_tst'] == 'false' ):
@@ -1619,7 +1622,7 @@ class PdbxDataIo(object):
                 if( self.__debug ):
                     self.__lfh.write("+%s.%s() -- ctgryMetaDict obtained as %r\n" % (self.__class__.__name__,
                                                                sys._getframe().f_code.co_name,
-                                                               ctgryMetaDict.items() ) )
+                                                               list(ctgryMetaDict.items()) ) )
                 #
             rtrnDict = self.__validateAgainstDict(ctgryMetaDict,p_ctgryNm, attributeNm, p_newValue)
         #
@@ -2212,7 +2215,7 @@ class PdbxDataIo(object):
             ################################################
             # here we are undertaking special handling for certain cif items that require auto *decrement* of ordinal ID values to reflect the loss of a row
                 
-            if( p_ctgryNm in EditorConfig.autoIncrDecrDict.keys() ):
+            if p_ctgryNm in EditorConfig.autoIncrDecrDict:
                 attributeList = ctgryObj.getAttributeList()
                 if( self.__verbose ):
                     self.__lfh.write("+%s.%s() -- Attribute list retrieved is: %s \n" % (self.__class__.__name__,
@@ -2335,7 +2338,7 @@ class PdbxDataIo(object):
                 ################################################
                 # here we are undertaking special handling for certain cif items that require auto increment of ordinal ID values to reflect new row being inserted
                     
-                if( p_ctgryNm in EditorConfig.autoIncrDecrDict.keys() ):
+                if( p_ctgryNm in EditorConfig.autoIncrDecrDict ):
                     
                     colIdx = None
                     targetAttrNm = None
@@ -2481,7 +2484,7 @@ class PdbxDataIo(object):
                 if( colName == sortTargetColName ):
                     sortAscIdx = idx
                     
-        returnIdx = sortAscIdx if( sortAscIdx >= 0 ) else -1
+        returnIdx = sortAscIdx if( sortAscIdx and sortAscIdx >= 0 ) else -1
         
         return returnIdx
     
@@ -2641,7 +2644,7 @@ class PdbxDataIo(object):
             allIntDict[colIndx] = True
             for dictEntry in sortlist:
                 try:
-                    int( ( dictEntry.items() )[0][1][colIndx] )
+                    int( ( list(dictEntry.items()) )[0][1][colIndx] )
                 except:
                     allIntDict[colIndx] = False
                     if( self.__verbose and self.__debug ):
@@ -2653,9 +2656,9 @@ class PdbxDataIo(object):
         
         for colIndx in reversed(orderby):
             if( allIntDict[colIndx] ):
-                sortlist.sort(key=lambda dictEntry: int(( dictEntry.items() )[0][1][colIndx]), reverse=(colIndx in desc))
+                sortlist.sort(key=lambda dictEntry: int(( list(dictEntry.items()) )[0][1][colIndx]), reverse=(colIndx in desc))
             else:
-                sortlist.sort(key=lambda dictEntry: ( dictEntry.items() )[0][1][colIndx], reverse=(colIndx in desc))
+                sortlist.sort(key=lambda dictEntry: ( list(dictEntry.items()) )[0][1][colIndx], reverse=(colIndx in desc))
                 
         return sortlist     
     

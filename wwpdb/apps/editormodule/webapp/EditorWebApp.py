@@ -114,7 +114,7 @@ class EditorWebApp(object):
         self.__templatePath = os.path.join(self.__topPath,"htdocs","editormodule")
         #
 
-        if type( parameterDict ) == types.DictType:
+        if isinstance(parameterDict, dict):
             self.__myParameterDict=parameterDict
         else:
             self.__myParameterDict={}
@@ -259,7 +259,7 @@ class EditorWebAppWorker(object):
         """
         #
         reqPath=self.__reqObj.getRequestPath()
-        if not self.__appPathD.has_key(reqPath):
+        if reqPath not in self.__appPathD:
             # bail out if operation is unknown -
             rC=ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose,log=self.__lfh)
             rC.setError(errMsg='Unknown operation')
@@ -279,7 +279,7 @@ class EditorWebAppWorker(object):
         #
         try:
             reqPath=self.__reqObj.getRequestPath()
-            if not self.__appPathD.has_key(reqPath):
+            if reqPath not in self.__appPathD:
                 # bail out if operation is unknown -
                 rC=ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose,log=self.__lfh)
                 rC.setError(errMsg='Unknown operation')
