@@ -1166,8 +1166,13 @@ Content-Disposition: attachment; filename=\"%s\"
             self.__lfh.write("+%s.%s() -- rowIdx is now: %d\n" % (className, methodName, rowIdx) )
         #
         if( newMultiValue ):
-            if( type(newMultiValue) == types.UnicodeType ): newValue = newMultiValue.encode('ascii')
-            else: newValue = newMultiValue
+            try:
+                newMultiValue.encode('ascii')
+                # ASCII
+                newValue = newMultiValue
+            except UnicodeEncodeError:
+                # Unicode
+                newValue = __encodeUtf8ToCif(newMultiValue)
         #
         rtrnValue = None
         #
@@ -1201,8 +1206,14 @@ Content-Disposition: attachment; filename=\"%s\"
             self.__lfh.write("++%s.%s() type(newValue) is: %s\n" % (self.__class__.__name__,
                                    sys._getframe().f_code.co_name,
                                    type(newValue)))
-            
-        if( type(newValue) == types.UnicodeType ): newValue = self.__encodeUtf8ToCif( newValue )
+        
+        # Convert if not ASCII
+        try:
+            newValue.encode('ascii')
+            # Ascii - do nothing
+        except UnicodeEncodeError:
+            newValue = __encodeUtf8ToCif(newValue)
+
         rtrnValue = newValue
          
         rC.setHtmlText( rtrnValue )
@@ -1504,7 +1515,10 @@ Content-Disposition: attachment; filename=\"%s\"
         ''' Encoding unicode/utf-8 content into cif friendly ascii
 
         '''
-        return p_content.encode('ascii','xmlcharrefreplace')
+        text = p_content.encode('ascii','xmlcharrefreplace')
+        if sys.version_info[0] > 2:
+            text = text.decode('ascii')
+        return text
     
     
     def __makeDataStoreSnapShot(self,p_editActnIndx):
@@ -1793,8 +1807,12 @@ Content-Disposition: attachment; filename=\"%s\"
         """ 
         # Gracefully exit if no file is provide in the request object - 
         fs=self.__reqObj.getRawValue(fileTag)
-        if ((fs is None) or (type(fs) == types.StringType) or (type(fs) == types.UnicodeType) ):
-            return False
+        if sys.version_info[0] < 3:
+            if ((fs is None) or (isinstance(fs, types.StringType)) or (isinstance(fs, types.UnicodeType))):
+                return False
+        else:
+            if ((fs is None) or (isinstance(fs, str)) or (isinstance(fs, bytes))):
+                return False
         return True
 
     def __uploadFile(self,fileTag='file',fileTypeTag='filetype'):

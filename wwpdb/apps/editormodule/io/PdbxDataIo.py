@@ -3168,7 +3168,10 @@ class PdbxDataIo(object):
         ''' Encoding unicode/utf-8 content into cif friendly ascii
 
         '''
-        return p_content.encode('ascii','xmlcharrefreplace')
+        text = p_content.encode('ascii','xmlcharrefreplace')
+        if sys.version_info[0] > 2:
+            text = text.decode('ascii')
+        return text
 
     def __regexValidation(self,p_ctgryMetaDict,p_ctgryNm,p_attributeNm,p_newValue):
         ''' Perform validation check of proposed edit against regular expression constraints for the given
@@ -3462,7 +3465,7 @@ class PdbxDataIo(object):
                                                                                            sys._getframe().f_code.co_name,
                                                                                            p_sGlobalSrchFilter ) )
             for trueIndxdRcrdDict in p_rsltSetList:
-                trueIndxKey,rcrdValue = ( trueIndxdRcrdDict.items() )[0]
+                trueIndxKey,rcrdValue = ( list(trueIndxdRcrdDict.items()) )[0]
                 for field in rcrdValue:
                     if( p_sGlobalSrchFilter.lower() in str(field).lower() ):
                         fltrdList.append(trueIndxdRcrdDict)
@@ -3471,16 +3474,16 @@ class PdbxDataIo(object):
             if( self.__verbose and self.__debug):
                 self.__lfh.write("+%s.%s() -- performing column-specific searches with search dictionary: %r \n" % (self.__class__.__name__,
                                                                                            sys._getframe().f_code.co_name,
-                                                                                           p_dictColSrchFilter.items() ) )
+                                                                                           list(p_dictColSrchFilter.items()) ) )
                 self.__lfh.write("+%s.%s() -- performing column-specific searches against recordset: %r \n" % (self.__class__.__name__,
                                                                                            sys._getframe().f_code.co_name,
                                                                                            p_rsltSetList ) )
             #
             bAllCriteriaMet = False
             for trueIndxdRcrdDict in p_rsltSetList:
-                trueRowIdx,rcrd = ( trueIndxdRcrdDict.items() )[0]
+                trueRowIdx,rcrd = ( list(trueIndxdRcrdDict.items()) )[0]
                 #
-                for key in p_dictColSrchFilter.keys():
+                for key in list(p_dictColSrchFilter.keys()):
                     if( p_dictColSrchFilter[key].lower() in str(rcrd[key]).lower() ):
                         bAllCriteriaMet = True
                     else:
