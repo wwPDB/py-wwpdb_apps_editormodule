@@ -1888,7 +1888,7 @@ Content-Disposition: attachment; filename=\"%s\"
             # Store upload file in session directory - 
     
             fPathAbs=os.path.join(self.__sessionPath,fName)
-            ofh=open(fPathAbs,'w')
+            ofh=open(fPathAbs,'wb')
             ofh.write(fs.file.read())
             ofh.close()
             self.__reqObj.setValue("uploadFileName",fName)
