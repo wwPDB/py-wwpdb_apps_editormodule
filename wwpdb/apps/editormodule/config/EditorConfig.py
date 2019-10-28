@@ -87,6 +87,7 @@ class EditorConfig(object):
                             "pdbx_entity_src_syn",
                             "pdbx_refine_tls_group",
                             "pdbx_related_exp_data_set",
+                            "pdbx_struct_assembly_auth_evidence",
                             "pdbx_struct_assembly_prop",
                             "pdbx_serial_crystallography_measurement",
                             "pdbx_serial_crystallography_sample_delivery",
