@@ -148,7 +148,8 @@ class EditorConfig(object):
                           'struct_ref_seq']
     
     # list of categories for which deletion of last remaining row will be allowed in the UI
-    arrAllowLastRowDeleteCtgries = ['em_entity_assembly_molwt',
+    arrAllowLastRowDeleteCtgries = ['em_db_reference',
+                                    'em_entity_assembly_molwt',
                                     'em_single_particle_entity',
                                     'em_vitrification',
                                     'entity_src_nat',
