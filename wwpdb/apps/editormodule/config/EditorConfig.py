@@ -121,7 +121,8 @@ class EditorConfig(object):
     itemsAllowingCifNullOption = ['pdbx_database_status.methods_development_category',
                                   'pdbx_nmr_exptl_sample_conditions.pressure_units',
                                   'refine.pdbx_method_to_determine_struct',
-                                  'struct_conn.pdbx_value_order']
+                                  'struct_conn.pdbx_value_order',
+                                  'em_imaging_optics.phase_plate']
     
     bAccommodatingUnicode=False # are we handling incoming non-ascii unicode inputs by converting to XML char references when persisting to CIF file
     
