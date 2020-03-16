@@ -441,7 +441,7 @@ class PdbxDataIo(object):
             if (self.__verbose):
                 self.__lfh.write("+%s.%s() problem processing pdbx data file at: %s\n" % (self.__class__.__name__,
                                                                                           sys._getframe().f_code.co_name, self.__pathPdbxDataFile ) )
-            logger.traceback("problem processing file")
+            logger.exception("problem processing file")
             self.__lfh.flush()
                                                  
         try:
@@ -461,7 +461,7 @@ class PdbxDataIo(object):
                 self.__entryExptlMethodsLst = self.__getEntryExptlList(myPersist)
 
         except:
-            logger.traceback("In shelving")
+            logger.exception("In shelving")
 
         return self.__dataBlockName, self.__entryTitle, self.__entryAccessionIdsLst
     
