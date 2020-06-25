@@ -103,7 +103,9 @@ class EditorConfig(object):
                             "struct_ncs_dom",
                             "struct_ncs_dom_lim",
                             "struct_ref_seq_dif",
-                            "pdbx_audit_support"]
+                            "pdbx_audit_support",
+                            "pdbx_reference_entity_sequence",
+                            "pdbx_reference_entity_poly"]
     
     # list of categories for which we allow submitted values to take form of comma separated list 
     itemsInCsvListForm = ["diffrn_source.pdbx_wavelength_list"]
