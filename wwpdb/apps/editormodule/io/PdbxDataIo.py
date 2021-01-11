@@ -317,12 +317,10 @@ class PdbxDataIo(object):
                 ############################################################################################################
                 # Make local copy of coordinate file
                 ############################################################################################################
-                os.chdir(self.__sessionPath)            
                 if wfmPdbxFilePath is not None and os.access(wfmPdbxFilePath,os.R_OK):
                     shutil.copyfile(wfmPdbxFilePath, lclPdbxFilePath)
                     self.__pathPdbxDataFile = lclPdbxFilePath
                 #
-                os.system("env > LOGENV")            
             except:
                 if (self.__verbose):
                     self.__lfh.write("+++%s.%s()  - pre-processing of pdbx data file %s, failed for deposition id:  %s\n" % (self.__class__.__name__,
