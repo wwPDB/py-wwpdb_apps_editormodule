@@ -142,6 +142,7 @@ from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewD
 from wwpdb.apps.editormodule.config.EditorConfig          import EditorConfig
 from wwpdb.utils.db.DBLoadUtil                            import DBLoadUtil
 from mmcif.api.DataCategory                               import DataCategory
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
 import logging
 
@@ -175,8 +176,10 @@ class PdbxDataIo(object):
         self.__sessionId  =self.__sObj.getId()
         #
         self.__cI=ConfigInfo()
+        self.__cICommon = ConfigInfoAppCommon()
         #
-        self.__pathPdbxDictFile  = self.__cI.get("SITE_MMCIF_DICT_FILE_PATH")
+        # self.__pathPdbxDictFile  = self.__cI.get("SITE_MMCIF_DICT_FILE_PATH")
+        self.__pathPdbxDictFile = self.__cICommon.get_mmcif_next_dictionary_file_path()
         #
         self.__lfh.write("+%s.%s() configFileProvided is: %s\n" % (self.__class__.__name__,
                                                                                           sys._getframe().f_code.co_name, configFileProvided ) )
