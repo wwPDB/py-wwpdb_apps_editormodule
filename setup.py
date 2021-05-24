@@ -47,10 +47,10 @@ setup(
                       'wwpdb.utils.config >= 0.22.2'],
     packages=find_packages(exclude=['wwpdb.apps.tests-editormodule']),
     # Enables Manifest to be used
-    #include_package_data = True,
+    include_package_data = True,
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
-        '': ['*.md', '*.rst', "*.txt", "*.cfg"],
+        '': ['*.md', '*.rst', "*.txt", "*.cfg", "*.html", "*.cif"],
     },
     #
     # These basic tests require no database services -
