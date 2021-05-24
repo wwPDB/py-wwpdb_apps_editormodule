@@ -82,6 +82,7 @@ from wwpdb.utils.wf.dbapi.WfTracking                    import WfTracking
 #
 from wwpdb.io.locator.DataReference                     import DataFileReference
 from wwpdb.utils.config.ConfigInfo                      import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 #
 from wwpdb.io.graphics.GraphicsContext3D                import GraphicsContext3D
 
@@ -109,9 +110,11 @@ class EditorWebApp(object):
         self.__debug=False
         self.__siteId=siteId
         self.__cI=ConfigInfo(self.__siteId)
-        self.__topPath=self.__cI.get('SITE_WEB_APPS_TOP_PATH')
-        self.__topSessionPath  = self.__cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
-        self.__templatePath = os.path.join(self.__topPath,"htdocs","editormodule")
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
+        # self.__topPath=self.__cI.get('SITE_WEB_APPS_TOP_PATH')
+        self.__topSessionPath  = self.__cICommon.get_site_web_apps_top_sessions_path()
+        self.__templatePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+        # self.__templatePath = os.path.join(self.__topPath,"htdocs","editormodule")
         #
 
         if isinstance(parameterDict, dict):
@@ -128,7 +131,7 @@ class EditorWebApp(object):
         #
         self.__reqObj.setValue("TopSessionPath", self.__topSessionPath)
         self.__reqObj.setValue("TemplatePath",   self.__templatePath)
-        self.__reqObj.setValue("TopPath",        self.__topPath)
+        # self.__reqObj.setValue("TopPath",        self.__topPath)
         self.__reqObj.setValue("WWPDB_SITE_ID",  self.__siteId)
         os.environ["WWPDB_SITE_ID"]=self.__siteId
         #

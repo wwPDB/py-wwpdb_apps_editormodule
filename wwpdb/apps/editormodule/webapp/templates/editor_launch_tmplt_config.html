@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Configure General Annotation Editor</title>
+
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/oneColLiqCtrHdr.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/jquery.dataTables.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/jquery.dataTables.wwpdb.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/themes/custom/jquery-ui-1.10.3.custom.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/themes/custom/jquery-ui-1.10.3.custom.wwpdb.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/editormodule/styles/navigation.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/cifeditor.css" />
+
+<style>
+.ui-menu { z-index: 100; }
+#context_menu { position:absolute; display:none; }
+</style>
+
+<script type="text/javascript">
+	var SESSION_ID = '%(sessionid)s';
+	var SUBDIRECTORY = '%(subdirectory)s';
+	var DEPID     = '%(identifier)s';
+	var SESS_PATH_PREFIX = '%(session_url_prefix)s';
+	var FILE_SOURCE = '%(filesource)s';
+	var INSTANCE = '%(instance)s';
+	var DATAFILE = '%(datafile)s';
+	var CONTEXT = '%(context)s';
+	var EXPMETHOD = '%(expmethod)s';
+	%(crdnlty_dict)s
+</script>
+<script type="text/javascript" src="/js/jquery-2.1.3/core/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="/js/jquery-migrate/jquery-migrate-1.2.1.js"></script>
+
+<script type="text/javascript" src="/editormodule/js/jquery/ui-src/jquery-ui-1.10.3.custom.min.js" defer></script>
+<script type="text/javascript" src="/js/jquery/plugins/jquery.form.min.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/category.min.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/jquery/plugins-src/jquery.dataTables-1.10.5.wwpdb-editormod.min.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/jquery/plugins-src/jquery.jeditable-1.7.1.wwpdb.min.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/jquery/plugins-src/dataTables.colReorder.min.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/editor-fxn-defs.min.js?v=20180703" defer></script>
+<script type="text/javascript" src="/editormodule/js/custom-jeditable-input-types.min.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/json2.js" defer></script>
+<script type="text/javascript" src="/editormodule/js/jquery/plugins-src/Transpose-1.0.0.min.js" defer></script>
+
+<script type="text/javascript" src="/editormodule/js/editor-main.min.js?v=20180703"></script>
+</head>
+<body class="oneColLiqCtrHdr">
+<div id="container">
+<!-- begin #header-->
+	<div id="header">
+    	<div id="logo"><img src="/images/wwpdb_logo.gif" width="187" height="58" alt="logo" /> </div>
+    	<div id="headerCont">
+      		<h1>General Annotation mmCIF Editor&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Configure CIF Category Display Settings</h1>
+      		<!-- <span id="help" class="ui-icon ui-icon-info fltrgt"></span>  -->
+		</div>
+    	<br class="clearfloat" /> 
+	</div>
+<!-- #header ends above-->
+<!-- #mainContent begins -->
+	<div id="postSaveContent" class="displaynone" style="border-style: solid; border-width: 1px; border-color:#696">
+			<p>Updated Editor View Config file:&nbsp;&nbsp;<a href="%(session_url_prefix)s/%(datafile)s">%(datafile)s</a></p>
+			<p>TO DOWNLOAD FILE: Right-click on the above link and choose "Save Link As".</p>
+			<br />
+			<form method="post" action="../../../service/editor/launch"  enctype="multipart/form-data"> 
+			 <fieldset style="border-style: solid; border-width: 1px; padding: 20px; border-color:#696; border-style: dotted;">
+			 	If you'd like to launch a CIF editor test session using the newly updated view config file,<br />
+				<span class="strong">PLEASE FIRST SAVE A COPY OF YOUR UPDATED CONFIG FILE ABOVE</span>, and then<br />
+				 use the form below to upload a test coordinate data file and indicate the desired view context.
+				<br /><br /><br />
+					<label for="file" style="margin-bottom: 10px;">Upload test CIF data file:</label>
+					<input class="formInputText" type='file' size='50' name="cifinput"/>
+					<br />
+					
+					<label for="context" style="margin-bottom: 10px;">View Context:</label>
+						<select id="context" name="context">
+							<option value="summaryreport">General Purpose</option>
+							<option value="annotation">Added Annotation</option>
+							<option value="entityfix">PRD (entity fixer)</option>
+							<option value="em">EM TESTING</option>
+							<option value="nmr">NMR TESTING</option>
+						</select>
+					<br /><br /><br /><br />
+					
+					<input type="hidden" name="configFilePath" id="configFilePath" value="%(absolute_session_path)s/%(datafile)s" />
+					<input type="hidden" name="filesource" id="filesource" value="upload" />
+					<input class="formInputButton" type = 'submit' value = 'Go' />
+			 </fieldset>
+			</form>
+	</div>
+	<div id="mainContent">
+		<div class="errmsg glblerr ui-state-error ui-corner-all noprint"></div>
+		<br />
+		<div class="fltrgt" style="z-index: 101; position: relative; width: 220px;"><span class="clearfloat"></span>
+			<!-- <ul style="z-index: 103; position: relative; margin-top: 2px; margin-right: 8px; font-size: .8em; height: 18px; background-color:#c1d6c1; background-image: none;" class="global_check_menu fltlft displaynone" id="global_check_menu" name="global_check_menu" >
+				<li>
+					<a href="#" class="" style="font-weight: bold; background-color:#c1d6c1; color: #000066; z-index: 104; position: relative;" >Global Data Checks</a>
+					<ul>
+						<li><a href="#" class="glblchck" style="width: 120px; z-index: 105; position: relative" id="glblchck_dictconstr">Dictionary Constraints</a></li>
+						<li><a href="#" class="glblchck" style="width: 120px; z-index: 105; position: relative" id="glblchck_mndtrydata">Mandatory Data</a></li>
+					</ul>
+				</li>
+			</ul> -->
+			<input id="savedone" name="savedone" value="Done" class="fltrgt" type="button" style="margin-top: 2px; z-index: 102; position: relative; font-size: .8em;" />
+			<br class="clearfloat" /><br />
+			<span id="help_editor_ui_admin" class="ui-icon ui-icon-info fltrgt" title=""></span>
+			<br class="clearfloat" /><br />
+		</div>
+<br />
+<!-- <input style="display: inline;" class="cifctgry_submit_see_json" id="citation_author_test" name="citation_author" value="citation_author_see_raw_json" type="button">
+<input style="display: inline;" class="cifctgry_submit_see_json" id="entity_test" name="entity" value="entity_see_raw_json" type="button">  -->
+				<div class="noprint displaynone">
+						<form name="hlprfrm" id="hlprfrm" method="post">
+							<input type="hidden" name="context" id="context" value="%(context)s" />
+							<input type="hidden" name="subdirectory" id="subdirectory" value="%(subdirectory)s" />
+							<input type="hidden" name="rowids" id="rowids" value="" />
+							<input type="hidden" name="sessionid" id="sessionid" value="%(sessionid)s" />
+			      			<input type="hidden" name="identifier" id="identifier" value="%(identifier)s" />
+			      			<input type="hidden" name="instance" id="instance" value="%(instance)s" />
+			      			<input type="hidden" name="filesource" id="filesource" value="%(filesource)s" />
+			      			<input type="hidden" name="datafile" id="datafile" value="%(datafile)s" />
+			      			<input type="hidden" name="caller" id="caller" value="%(caller)s" />
+			      			<input type="hidden" name="filePath" id="filePath" value="%(filepath)s" />
+						</form>
+						<!-- <input id="saveunfinished" name="saveunfinished" value="Save" class="fltrgt" type="button" disabled="disabled">  -->
+				</div>
+				<br class="clearfloat"/>
+				<!-- <input id="transpose_vw_all" name="transpose_vw_all" value="Transpose View (All)" class="fltrgt" type="button" style="margin-top: 25px; font-size: .8em;" /> -->
+				<div id="undobtns_grp" class="fltrgt undogrp displaynone"></div><br class="clearfloat"/>
+			<div>
+				<div id="editor_pane" class="" style="width: 100%%; margin-left: 1%%; margin-top: 30px;">
+							<div id="dt_rslts_single" class="displaynone atomic_dt_container" style="margin-bottom: 10px; padding: 8px; border-style:solid; border-width:1px; border-color:#c1d6c1;"></div>
+							<div id="dt_rslts_combo" class="displaynone" ></div>
+							<div id="colorlegend" class="ui-state-highlight ui-corner-all noprint displaynone">
+    <p>Color legend: <span class="ui-icon ui-icon-info fltlft"></span> <span class="prmry_key smallbox">Primary Key Field</span> <span class="immutable smallbox">Read-Only Field</span> <span class="mndtry smallbox">Data Required</span> <span class="mndtry mndtry_missing smallbox">Missing Required Data</span> <span class="dict_violation smallbox">mmCIF Dictionary Violation</span><!-- <span class="mndtry_missing smallbox">Required Field Missing</span> --> <span class="newrecord smallbox">New Row Added by User</span> <span class="row_selected smallbox">Row Selected for Action</span><br class="clearfloat">
+    </p>
+</div>
+						<br />
+						<br />
+				</div>
+			</div>
+			<!-- #main editor_pane ends with above /div -->
+			<br class="clearfloat"/>
+			
+
+		<br class="clearfloat" />
+		<br />
+		<br />
+		<div id="context_menu_content" class="displaynone">
+			<ul id="context_menu">
+				<li><a href="#" id="delrow" class="row_context_menu_choice">Delete Row(s)</a></li>
+				<li><a href="#" id="insertrow" class="row_context_menu_choice">Insert Row(s)</a></li>
+			</ul>
+			<div id="insert_row" title="Insert Row(s)">
+				<div>
+					<p><h4>Clone Options:</h4></p>
+					<p id="checkbox_duplicate_viewid" class="insert_row_chckbox" >Duplicate View ID<input type="checkbox" id="chckbx_duplicate_viewid" name="insert_row" value="view_id" style="display: inline; margin-right: 10px;" /></p>
+					<p id="checkbox_duplicate_prmryheading" class="insert_row_chckbox displaynone" >Duplicate Primary Heading<input type="checkbox" id="chckbx_duplicate_prmryheading" name="insert_row" value="category_menu_display_name" style="display: inline; margin-right: 10px;" /></p>
+					<p id="checkbox_duplicate_subheading" class="insert_row_chckbox displaynone" >Duplicate SubHeading<input type="checkbox" id="chckbx_duplicate_subheading" name="insert_row" value="category_group_display_name" style="display: inline; margin-right: 10px;" /></p>
+					<p id="checkbox_duplicate_category_display_name" class="insert_row_chckbox displaynone" >Duplicate Category Display Name<input type="checkbox" id="chckbx_duplicate_category_display_name" name="insert_row" value="category_display_name" style="display: inline; margin-right: 10px;" /></p>
+					<br />
+					<p><h4 class="fltlft">How many rows?</h4>
+						<select id=insert_row_quantity" name="insert_row_quantity" size="1" style="margin-left: 8px">
+							<option selected="selected" value="1">1</option>
+	  						<option value="2">2</option>
+	  						<option value="3">3</option>
+	  						<option value="4">4</option>
+	  						<option value="5">5</option>
+	  						<option value="6">6</option>
+	  						<option value="7">7</option>
+	  						<option value="8">8</option>
+	  						<option value="9">9</option>
+	  						<option value="10">10</option>
+						</select>
+					</p>
+					<span style="font-size: x-small">NOTE: rows will be added just below the row currently selected.</span>
+					<br class="clearfloat"/><br />
+				</div>
+			</div>
+			<div id="delete_row" title="Delete Row(s)">
+				<div>
+					<p><h4 class="fltlft">How many rows?</h4>
+						<select id=delete_row_quantity" name="delete_row_quantity" size="1" style="margin-left: 8px">
+							<option selected="selected" value="1">1</option>
+	  						<option value="2">2</option>
+	  						<option value="3">3</option>
+	  						<option value="4">4</option>
+	  						<option value="5">5</option>
+	  						<option value="6">6</option>
+	  						<option value="7">7</option>
+	  						<option value="8">8</option>
+	  						<option value="9">9</option>
+	  						<option value="10">10</option>
+						</select>
+					</p>
+					<span style="font-size: x-small">NOTE: rows will be deleted starting with highlighted row and continuing as necessary with rows directly below to satisfy quantity specified.</span>
+					<br class="clearfloat"/><br />
+				</div>
+			</div>
+		</div>
+		
+		
+		<div id="other-value-form" title="Enter other value">
+			<p class="topcaption">Use input below to submit value not already in the choice list.</p>
+			<form id="othr-val-frm">
+				<fieldset>
+					<label for="othervalue">Other Value</label>
+					<input type="text" name="othervalue" id="othervalue" class="text ui-widget-content ui-corner-all" />
+				</fieldset>
+			</form>
+		</div>
+		<div id="dialog-confirm-other" title="Submit value not already defined" class="displaynone">
+			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Value being submitted, '<span id="other_val"></span>', is not in list of accepted options.</p>
+			<p>Please confirm that you would like to submit this value.</p>
+		</div>
+		<div id="jmol_viewer" class="displaynone"></div>
+		<div id="mndtry_check_rslts" title="Global Mandatory Data Check"></div>
+		<div id="dict_violation_rslts" title="Global Dictionary Violations"></div>
+		<div class="errmsg ui-state-error ui-corner-all"></div>
+	</div>
+	<!-- #mainContent ends with above /div -->
+	
+<div id="helpcontent" class="displaynone">
+<h4>Help Info on configuring CIF Editor UI</h4>
+
+There are two cif categories which control aspects of the CIF Editor UI: <span class="strong">pdbx_display_view_category_info</span> and <span class="strong">pdbx_display_view_item_info</span>
+<br /><br />
+Both categories contain the <span class="strong">view_id</span> item, which is the identifier that corresponds to a given "context" in which the CIF Editor UI is potentially used. Currently the view_id's in use are:
+<br />
+<ul>
+	<li>XRAY:</li>
+	<ul>
+		<li>AV1 - the "general purpose" context</li>
+		<li>AV2 - the "added annotation" context</li>
+		<li>AV3 - the "entity fixer" / PRD context</li>
+	</ul>
+	<li>EM1 - EM prototype</li>
+	<li>NMR1 - NMR prototype</li>
+</ul>
+<div id="pdbx_display_view_category_info_help">
+<h4>pdbx_display_view_category_info</h4>
+This category determines:
+<ul>
+	<li>what headings are used in the horizontal navigation menu</li>
+	<li>how these headings are mapped to CIF categories</li>
+	<li>whether there will be corresponding drop-down choices (and the labels for the drop-downs if these are desired), etc.</li>
+</ul>
+NOTE: the main purpose of each row in this category is to configure how a single cif category is to be associated with a top-level menu heading and optionally a drop-down sub-heading  
+<br /><br />
+Below are brief explanations of the category's columns/items.
+<ul>
+<li><span class="strong">view_id</span> - explained above</li>
+<li><span class="strong">Primary Heading</span> - these identifiers correspond to the top-level navigation menu bar choices, under which 1 or more cif categories will be grouped</li>
+
+<li><span class="strong">Sub Heading</span> - for a given "Primary Heading" above, this item allows one to create sub-headings.
+			<br />If no sub-headings are desired for the top-level heading, the value for this item must be the same as "Primary Heading" for the cif category/row
+			<br />If sub-headings are desired (which will show as drop-down choices upon clicking the top-level label), the value for this item will be displayed as the label of the drop-down choice and 
+				<br />this value must be different from the "Primary Heading". e.g. to create four drop-down sub-headings for the same primary heading, there should be four records with four
+				<br />distinct values for this item but which all share the same "Primary Heading"</li>
+			
+<li><span class="strong">category_name</span> - used to specify which cif categories are to fall under the given top-level menu heading and optionally under a given sub-heading</li> 
+
+<li><span class="strong">category_display_name</span> - user-friendly display name for the CIF category (not currently being utilized but may be of potential future use)
+								<br />Convention is to use default value of category name when not using a user-friendly alternative.
+								<br /><span class="strong" style="color: red;">IMPORTANT: </span>this value serves as parent key to corresponding child key in the "pdbx_display_view_item_info" category discussed below</li>
+
+<li><span class="strong">category_cardinality</span> - whether or not the category will be restricted to having just one record</li>
+</ul>
+</div>
+<div id="pdbx_display_view_item_info_help">
+<h4>pdbx_display_view_item_info</h4>
+This category is used to configure which actual cif items are "priority" items, i.e. are shown by default on initial viewing of the data.<br />
+Brief description of columns:
+
+<ul>
+	<li><span class="strong">view_id</span> - explained above</li>
+	<li><span class="strong">category_display_name</span> - item used to map rows in this section to those in the first section
+						<br /><span class="strong" style="color: red;">IMPORTANT: must</span> match a parent key in the 'pdbx_display_view_category_info" category above</li>
+	<li><span class="strong">item_name</span>  - fully qualified item name</li>
+	<li><span class="strong">item_display_name</span> - user-friendly display name for the item</li>
+	<li><span class="strong">read_only_flag</span> - whether or not the item is read-only</li>
+</ul>
+</div>
+</div>
+<!-- #footer begins -->
+	<br class="clearfloat" />
+	<div id="footer">
+   		<p>&copy; 2012 wwPDB General Annotation mmCIF Editor V0.01</p>
+	</div>
+<!-- #footer ends above -->
+</div>
+<!-- #container ends above-->
+</body>
+</html>

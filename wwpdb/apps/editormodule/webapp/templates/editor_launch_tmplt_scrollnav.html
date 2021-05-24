@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>General Annotation mmCIF Editor</title>
+
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/oneColLiqCtrHdr.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/jquery.dataTables.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/jquery.dataTables.wwpdb.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/themes/custom/jquery-ui-1.10.3.custom.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/themes/custom/jquery-ui-1.10.3.custom.wwpdb.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/editormodule/styles/navigation.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/cifeditor.css" />
+
+<style>
+.ui-menu { z-index: 100; }
+#context_menu { position:absolute; display:none; }
+</style>
+
+<script type="text/javascript">
+	var SESSION_ID = '%(sessionid)s';
+	var SUBDIRECTORY = '%(subdirectory)s';
+	var DEPID     = '%(identifier)s';
+	var SESS_PATH_PREFIX = '%(session_url_prefix)s';
+	var FILE_SOURCE = '%(filesource)s';
+	var INSTANCE = '%(instance)s';
+	var DATAFILE = '%(datafile)s';
+	var CONTEXT = '%(context)s';
+	%(crdnlty_dict)s
+</script>
+<script type="text/javascript" src="/js/jquery-2.1.3/core/jquery-2.1.3.min.js"></script>
+<!-- <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script> -->
+
+<script> 
+$(document).ready(function(){
+	var insidewidth = 0;
+	
+	$('#ulwrapdiv').find('li.topnav').each(function(i,n){
+		insidewidth += this.offsetWidth;
+	});
+	
+	function renderNavBar(){
+	/**********************************************************
+	*	Displays/positions navigation bar according to 
+	*	current browser window dimensions
+	***********************************************************/
+		
+
+		//alert("insidewidth is: "+ insidewidth);
+		$('#navlist').width(insidewidth+35);
+		
+    	var viewPortWidth = $(window).width();
+    	var ulwrapdivWidth = (viewPortWidth*0.6);
+    	var rotrightPosLeft = (viewPortWidth*0.72);
+    	var fastfwdlastPosLeft = (viewPortWidth*0.76);
+
+    	//alert("viewPortWidth is: " + viewPortWidth);   1024 
+    	//alert("ulwrapdivWidth is: " + ulwrapdivWidth);
+
+    	$('#ulwrapdiv').css({ position: "absolute", overflow: "hidden", width: ulwrapdivWidth, height: 1000, left: 135 });
+    	$('#rotright').css({ left: rotrightPosLeft });
+    	$('#fastfwdlast').css({ left: fastfwdlastPosLeft });
+    	
+	}
+	
+	$(window).resize(function() {
+	/**********************************************************
+	*	Dynamically redisplays/repositions navbar on  
+	*	resize of the browser window
+	***********************************************************/		
+		//$('#google_chart_global, #google_chart_global_2010').html('');
+		$('#log').append('<div>Handler for .resize() called.</div>');
+		renderNavBar();
+	});
+
+	/**********************************************************
+	*	Variables, event-handlers to manage scroll of navbar
+	***********************************************************/
+    var _ulwrapdiv = $('#ulwrapdiv');
+	var _rotright = $('#rotright');
+	var _rotleft = $('#rotleft');
+	var _first = $('#first');
+	var _last = $('#last');
+	var scroll_interval;
+
+
+	//scrolling on mousedown
+	
+	function scrollToEnd(){
+		var right = _ulwrapdiv.scrollLeft() + 20;
+		_ulwrapdiv.scrollLeft(right);
+	}
+
+	function scrollToBeginning(){
+		var left = _ulwrapdiv.scrollLeft() - 20;
+		_ulwrapdiv.scrollLeft(left);
+	}
+	
+	_rotright.mousedown(function(e) {
+		scroll_interval = setInterval( scrollToEnd, 100 );
+	}).bind('mouseup', function() {
+	    clearInterval(scroll_interval);
+	});
+
+	_rotleft.mousedown(function(e) {
+		scroll_interval = setInterval( scrollToBeginning, 100 );
+	}).bind('mouseup', function() {
+	    clearInterval(scroll_interval);
+	});
+	
+		
+	//first and last:
+	_first.click(function(e){
+		_ulwrapdiv.animate({scrollLeft: '0px'});
+	});
+	
+	_last.click(function(e){
+		_ulwrapdiv.animate({scrollLeft: insidewidth +'px'});
+	});
+
+	
+	// Calling renderNavBar on load of this page
+	renderNavBar();
+});
+ 
+</script>
+<script type="text/javascript" src="/editormodule/js/editor-main.min.js?v=20180703"></script>
+</head>
+<body class="oneColLiqCtrHdr">
+<div id="container">
+<!-- begin #header-->
+	<div id="header">
+    	<div id="logo"><img src="/images/wwpdb_logo.gif" width="187" height="58" alt="logo" /> </div>
+    	<div id="headerCont">
+      		<h1>General Annotation mmCIF Editor&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Deposition ID: %(data_block_name)s</h1>
+      		<h2>Entry Title: %(entry_title)s</h2>
+      		<!-- <span id="help" class="ui-icon ui-icon-info fltrgt"></span>  -->
+		</div>
+    	<br class="clearfloat" /> 
+	</div>
+<!-- #header ends above-->
+<!-- #mainContent begins -->
+	<div id="mainContent"  style="position:relative;">
+		<div class="errmsg glblerr ui-state-error ui-corner-all noprint"></div>
+		<!-- <h3>Deposition ID: %(data_block_name)s</h3> -->
+				<div class="fltrgt" style="z-index: 101; position: relative; width: 220px;"><span class="clearfloat"></span>
+		<ul style="z-index: 103; position: relative; margin-top: 2px; margin-right: 8px; font-size: .8em; height: 18px; background-color:#c1d6c1; background-image: none;" class="global_check_menu fltlft displaynone" id="global_check_menu" name="global_check_menu" >
+			<li>
+				<a href="#" class="" style="font-weight: bold; background-color:#c1d6c1; color: #000066; z-index: 104; position: relative;" >Global Data Checks</a>
+				<ul>
+					<li><a href="#" class="glblchck" style="width: 120px; z-index: 105; position: relative" id="glblchck_dictconstr">Dictionary Constraints</a></li>
+					<li><a href="#" class="glblchck" style="width: 120px; z-index: 105; position: relative" id="glblchck_mndtrydata">Mandatory Data</a></li>
+				</ul>
+			</li>
+		</ul>
+		<input id="savedone" name="savedone" value="Done" class="fltrgt" type="button" title="Exit CIF Editor and save all changes made during this session." style="margin-top: 2px; z-index: 102; position: relative; font-size: .8em;" />
+		<input id="abort" name="abort" value="Abort" class="fltrgt" type="button" title="Leave CIF Editor and abort any changes made during this session." style="margin-top: 2px; margin-right: 5px; z-index: 102; position: relative; font-size: .8em;" />
+		</div>
+		<!--<input id="savedone" name="savedone" value="Done" class="fltrgt" type="button" style="margin-top: 2px; margin-left: 10px; z-index: 101; position: relative; font-size: .8em;" />-->
+	<div class="fltlft" style="border: 1px solid #CCFFCC; padding: 8px 19px; height: 16px; width:30px; background: #696; cursor: pointer;" >
+		<a id="first" title="Click to position menu bar at beginning" style="font:13px Verdana, Arial, Helvetica, sans-serif; color: #fff;" >First</a>
+	</div>
+	<div id="rotleft" title="Click and hold to scroll to beginning" class="fltlft" style="padding: 8px 10px; height: 15px; cursor: pointer;" ><span style="font-size:25px; text-align: left; line-height: 15px;">&#x00ab;</span></div>
+	<div id="ulwrapdiv" class="navBar fltlft" >
+			<ul id="navlist" class="nav">
+				%(ctgry_nav_bar)s
+		        <br class="clearfloat" />
+		    </ul>
+	</div>
+	<div id="rotright" title="Click and hold to scroll to end" style="padding: 8px 19px; height: 15px; position: absolute; left: 1050px; cursor: pointer"><span style="font-size:25px; text-align: right; line-height: 15px;">&#x00bb;</span></div>
+	<div id="fastfwdlast" class="fltlft" style="border: 1px solid #CCFFCC; padding: 8px 19px; height: 16px; width:30px; background: #696; position:absolute; left:1090px; cursor: pointer">
+		<a id="last" title="Click to position menu bar at end" style="font:13px Verdana, Arial, Helvetica, sans-serif; background: #696; color: #fff;" >Last</a>
+	</div>
+	<br class="clearfloat" />
+			
+		<div id="validationprogress" class="displaynone">
+			<br /><br /><br /><br /><br />
+			<div id="progressbar" style="width:800px; margin:0 auto;"></div>
+			<h3 style="width:600px; margin:0 auto;">Please wait while data is being validated against mmCIF dictionary...</h3>
+			<br />
+		</div>
+<!-- <input style="display: inline;" class="cifctgry_submit_see_json" id="citation_author_test" name="citation_author" value="citation_author_see_raw_json" type="button">
+<input style="display: inline;" class="cifctgry_submit_see_json" id="entity_test" name="entity" value="entity_see_raw_json" type="button">  -->
+				<div class="noprint displaynone">
+						<form name="hlprfrm" id="hlprfrm" method="post">
+							<input type="hidden" name="context" id="context" value="%(context)s" />
+							<input type="hidden" name="subdirectory" id="subdirectory" value="%(subdirectory)s" />
+							<input type="hidden" name="rowids" id="rowids" value="" />
+							<input type="hidden" name="sessionid" id="sessionid" value="%(sessionid)s" />
+			      			<input type="hidden" name="identifier" id="identifier" value="%(identifier)s" />
+			      			<input type="hidden" name="instance" id="instance" value="%(instance)s" />
+			      			<input type="hidden" name="filesource" id="filesource" value="%(filesource)s" />
+			      			<input type="hidden" name="datafile" id="datafile" value="%(datafile)s" />
+			      			<input type="hidden" name="caller" id="caller" value="%(caller)s" />
+			      			<input type="hidden" name="filePath" id="filePath" value="%(filepath)s" />
+						</form>
+						<!-- <input id="saveunfinished" name="saveunfinished" value="Save" class="fltrgt" type="button" disabled="disabled">  -->
+				</div>
+				<br class="clearfloat"/>
+				<div id="skip_btns_grp" class="fltlft" style="margin-left: 1%%;" >
+					<input id="skip_link" name="skip_link" value="Skip Link Calc" class="displaynone skip_calc" type="button" style="margin-top: 8px; font-size: .8em; margin-right: 15px;" />
+					<input id="skip_site" name="skip_site" value="Skip Site Calc" class="displaynone skip_calc" type="button" style="margin-top: 8px; font-size: .8em; margin-right: 15px;" />
+					<input id="skip_solventpos" name="skip_solventpos" value="Skip Solvent Reposition Calc" class="displaynone skip_calc" type="button" style="margin-top: 8px; font-size: .8em; margin-right: 15px;" />
+					<input id="skip_sheet" name="skip_sheet" value="Skip Sheet Calc" class="skip_scndry_strctr displaynone fltlft skip_calc" type="button" style="margin-top: 8px; font-size: .8em; margin-right: 15px;" />
+					<input id="skip_helix" name="skip_helix" value="Skip Helix Calc" class="skip_scndry_strctr displaynone fltlft skip_calc" type="button" style="margin-top: 8px; font-size: .8em; margin-right: 15px;" />
+				</div>
+				<!-- <input id="check_dict_violations-all" name="check_dict_violations-all" value="Dictionary Violations Check (Global)" class="fltrgt check_dict_violations" type="button" style="margin-top: 8px; margin-left: 15px; font-size: .8em;" />
+				<input id="check_mandatory_items-all" name="check_mandatory_items-all" value="Mandatory Data Check (Global)" class="fltrgt check_mandatory_items" type="button" style="margin-top: 8px;  font-size: .8em;" />
+				 -->
+				<input id="transpose_vw_all" name="transpose_vw_all" value="Transpose View (All)" class="fltrgt" type="button" style="margin-top: 25px; font-size: .8em;" />
+				<div id="undobtns_grp" class="fltrgt undogrp displaynone"></div><br class="clearfloat"/>
+			<div>
+				<div id="editor_pane" class="" style="width: 100%%; margin-left: 1%%; margin-top: 30px;">
+							<div id="dt_rslts_single" class="displaynone atomic_dt_container" style="margin-bottom: 10px; padding: 8px; border-style:solid; border-width:1px; border-color:#c1d6c1;"></div>
+							<div id="dt_rslts_combo" class="displaynone" ></div>
+							<div id="colorlegend" class="ui-state-highlight ui-corner-all noprint displaynone" style="margin-top: 15px;">
+							    <p>Color legend: <span class="ui-icon ui-icon-info fltlft"></span> <span class="prmry_key smallbox">Primary Key Field</span> <span class="immutable smallbox">Read-Only Field</span> <span class="mndtry smallbox">Data Required</span> <span class="mndtry mndtry_missing smallbox">Missing Required Data</span> <span class="dict_violation smallbox">mmCIF Dictionary Violation</span><!-- <span class="mndtry_missing smallbox">Required Field Missing</span> --> <span class="newrecord smallbox">New Row Added by User</span> <span class="row_selected smallbox">Row Selected for Action</span><br class="clearfloat">
+							    </p>
+							</div>
+				</div>
+			</div>
+			<!-- #main editor_pane ends with above /div -->
+			<br class="clearfloat"/>
+
+		<div id="context_menu_content" class="displaynone">
+			<ul id="context_menu">
+				<li><a href="#" id="delrow" class="row_context_menu_choice">Delete Row(s)</a></li>
+				<li><a href="#" id="insertrow" class="row_context_menu_choice">Insert Row(s)</a></li>
+			</ul>
+			<div id="insert_row" title="Insert Row(s)">
+				<div>
+					<p><h4 class="fltlft">How many rows?</h4>
+						<select id=insert_row_quantity" name="insert_row_quantity" size="1" style="margin-left: 8px">
+							<option selected="selected" value="1">1</option>
+	  						<option value="2">2</option>
+	  						<option value="3">3</option>
+	  						<option value="4">4</option>
+	  						<option value="5">5</option>
+	  						<option value="6">6</option>
+	  						<option value="7">7</option>
+	  						<option value="8">8</option>
+	  						<option value="9">9</option>
+	  						<option value="10">10</option>
+						</select>
+					</p>
+					<span style="font-size: x-small">NOTE: rows will be added just below the row currently selected.</span>
+					<br class="clearfloat"/><br />
+				</div>
+			</div>
+		</div>
+		<div id="delete_row" title="Delete Row(s)">
+			<div>
+				<p><h4 class="fltlft">How many rows?</h4>
+					<select id=delete_row_quantity" name="delete_row_quantity" size="1" style="margin-left: 8px">
+						<option selected="selected" value="1">1</option>
+  						<option value="2">2</option>
+  						<option value="3">3</option>
+  						<option value="4">4</option>
+  						<option value="5">5</option>
+  						<option value="6">6</option>
+  						<option value="7">7</option>
+  						<option value="8">8</option>
+  						<option value="9">9</option>
+  						<option value="10">10</option>
+					</select>
+				</p>
+				<span style="font-size: x-small">NOTE: rows will be deleted starting with highlighted row and continuing as necessary with rows directly below to satisfy quantity specified.</span>
+				<br class="clearfloat"/><br />
+			</div>
+		</div>
+
+		<div id="other-value-form" title="Enter other value">
+			<p class="topcaption">Use input below to submit value not already in the choice list.</p>
+			<form id="othr-val-frm">
+				<fieldset>
+					<label for="othervalue">Other Value</label>
+					<input type="text" name="othervalue" id="othervalue" class="text ui-widget-content ui-corner-all" />
+				</fieldset>
+			</form>
+		</div>
+		<div id="dialog-confirm-other" title="Submit value not already defined" class="displaynone">
+			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Value being submitted, '<span id="other_val"></span>', is not in list of accepted options.</p>
+			<p>Please confirm that you would like to submit this value.</p>
+		</div>
+		<div id="jmol_viewer" class="displaynone"></div>
+		<div id="mndtry_check_rslts" title="Global Mandatory Data Check"></div>
+		<div id="dict_violation_rslts" title="Global Dictionary Violations"></div>
+		<div class="errmsg ui-state-error ui-corner-all"></div>
+	</div>
+	<!-- #mainContent ends with above /div -->
+<!-- #footer begins -->
+	<br class="clearfloat" />
+	<div id="footer">
+   		<p>&copy; 2015 wwPDB General Annotation mmCIF Editor V0.01</p>
+	</div>
+<!-- #footer ends above -->
+</div>
+<!-- #container ends above-->
+</body>
+</html>
