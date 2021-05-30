@@ -2777,11 +2777,21 @@ class PdbxDataIo(object):
             except:
                 traceback.print_exc(file=self.__lfh)
         #
+        # Get list of categories in file
+        cindex = p_myPersist.getIndex(self.__dbFilePath)
+        storectgries = cindex.get(self.__dataBlockName, None)
+        logger.debug("Categories present %s", storectgries)
+        #
         for cifCtgryNm in purgeCategoryList:
                 
+            if storectgries is not None and cifCtgryNm not in storectgries:
+                logger.debug("Skip purge of %s as not present", cifCtgryNm)
+                continue
+
             ctgryObj = p_myPersist.fetchOneObject(self.__dbFilePath,self.__dataBlockName, cifCtgryNm)
             #
             if ctgryObj:
+                logger.debug("Purge category %s", cifCtgryNm)
                 # can use attributeList here
                 #ctgryMetaDict = self.__pdbxDictStore.fetchOneObject(dbFileName=self.__dictDbFilePath,objectName=cifCtgryNm)
                 ctgryMetaDict = self.__getCifCtgryMetaDict(p_sCtgryName=cifCtgryNm, p_bCreateStub=True)
