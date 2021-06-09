@@ -44,7 +44,7 @@ setup(
     ],
     #
     install_requires=['mmcif.utils', 'wwpdb.utils.wf', 'wwpdb.utils.db', 'wwpdb.utils.session', 'wwpdb.io',
-                      'wwpdb.utils.config >= 0.22.2'],
+                      'wwpdb.utils.config ~= 0.24'],
     packages=find_packages(exclude=['wwpdb.apps.tests-editormodule']),
     # Enables Manifest to be used
     include_package_data = True,
