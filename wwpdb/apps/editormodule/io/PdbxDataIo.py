@@ -140,6 +140,7 @@ from mmcif_utils.persist.PdbxDictionaryInfo               import PdbxDictionaryI
 from wwpdb.apps.editormodule.io.EditorDataImport          import EditorDataImport
 from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewDictionary
 from wwpdb.apps.editormodule.config.EditorConfig          import EditorConfig
+from wwpdb.apps.editormodule.config.AccessConfigCifFiles import get_display_view_info_master_cif, get_display_view_info_cif
 from wwpdb.utils.db.DBLoadUtil                            import DBLoadUtil
 from mmcif.api.DataCategory                               import DataCategory
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
@@ -184,7 +185,7 @@ class PdbxDataIo(object):
         self.__lfh.write("+%s.%s() configFileProvided is: %s\n" % (self.__class__.__name__,
                                                                                           sys._getframe().f_code.co_name, configFileProvided ) )
 
-        self.__masterPathViewFile      = self.__cI.get("SITE_CIF_EDITOR_UI_CONFIG_FILE_PATH_MASTER")
+        self.__masterPathViewFile = get_display_view_info_master_cif()
 
         # Sent back to client - and returned...
         defView = self.__reqObj.getValue("defview")
@@ -208,7 +209,7 @@ class PdbxDataIo(object):
                self.__pathViewFile = "/net/wwpdb_da/da_top/resources/pdbx_display_view_info_CIFEDITOR.cif"
                self.__editCifViewConfig=True
            if( self.__context == 'entityfix' ):
-               self.__pathViewFile = self.__cI.get("SITE_CIF_EDITOR_UI_CONFIG_FILE_PATH")
+               self.__pathViewFile = get_display_view_info_cif()
         #
         self.__currentSiteID     = self.__cI.get("SITE_PREFIX")
         self.__currentDeployPath = self.__cI.get("SITE_DEPLOY_PATH")

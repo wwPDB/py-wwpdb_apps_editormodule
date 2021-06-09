@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>wwPDB New Deposition System</title>
+<link href="assets/styles/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="assets/styles/bootstrap-fileupload.min.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="stylesheet" type="text/css" media="all" href="assets/styles/wwpdb_feedback.css" />
+</head>
+<body class="oneColLiqCtrHdr">
+
+	<div id="header">
+    	<div id="logo"><img src="/images/wwpdb_logo.gif" width="187" height="58" alt="logo" /> </div>
+    	<div id="headerCont">
+      		<h3>wwPDB New Deposition System</h3>
+		</div>
+    	<br class="clearfloat" /> 
+	</div>
+	<div style="width: 55%; margin-left: auto; margin-right: auto; margin-top: 30px;">
+	    <form class="form-horizontal" name="beta_test_feedback" id="beta_test_feedback" onsubmit="return checkcaptcha();" action="http://deposit-feedback.wwpdb.org/service/feedback" method="post" enctype="multipart/form-data">
+	    	<fieldset>
+		    	<legend><h3>Beta Testing Feedback</h3></legend>
+			    <div class="control-group">
+				    <label class="control-label" for="fname">Contact name:</label>
+				    <div class="controls controls-row">
+						<input class="span1" type="text" id="title" name="title"placeholder="title">
+						<input class="span2" type="text" id="fname" name="fname" placeholder="first name" required>
+						<input class="span2" type="text" id="lname" name="lname" placeholder="last name" required>
+						<input class="span1" type="text" id="suffix" name="suffix"placeholder="suffix">
+					</div>
+			    </div>
+			    <div class="control-group">
+				    <label class="control-label" for="sender">Contact email:</label>
+				    <div class="controls">
+				    	<input type="email" id="sender" name="sender" placeholder="email@example.com" required>
+				    </div>
+			    </div>
+			    <div class="control-group">
+				    <label class="control-label" for="institution">Institution:</label>
+				    <div class="controls">
+				    	<input type="text" id="institution" name="institution" placeholder="Institution" required>
+				    </div>
+			    </div>
+			    <div class="control-group">
+				    <label class="control-label" for="dep_id">Deposition Dataset ID (optional):</label>
+				    <div class="controls">
+				    	<input type="text" id="dep_id" name="dep_id" placeholder="Dataset ID">
+				    </div>
+			    </div>
+			    <div class="control-group">
+				    <label class="control-label" for="subject">Feedback related to:</label>
+				    <div class="controls">
+				    	<select id="subject" name="subject" class="">
+				    		<option value="misc">Miscellaneous</option>
+							<option value="fileuploadsmmry">File Upload Summary</option>
+							<option value="admin">Admin</option>
+							<option value="macromolecule">Macromolecule</option>
+							<option value="refinement">Refinement</option>
+							<option value="datacollection">Data Collection</option>
+							<option value="ligandcheck">Ligand Check</option>
+							<option value="filedownload">File Download</option>
+						</select>
+				    </div>
+			    </div>
+			    <div class="control-group">
+				    <label class="control-label" for="feedback">Comments:</label>
+				    <div class="controls">
+				    	<textarea id="feedback" class="input-xxlarge" rows="6" name="feedback" required></textarea>
+				    </div>
+			    </div>
+			    <div class="control-group">
+			    	<label class="control-label" for="feedback">Upload a file (optional):</label>
+				    <div class="controls fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-append">
+							<div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span></div>
+							<span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file" /></span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+						</div>
+					</div>
+					<br />
+			    </div>
+			    <div class="control-group">
+				    <label class="control-label" for="captcha_input">
+				    	Copy this security code into the text box: <span id="txt_captcha_span" style="color:#F00; margin-left: 5px;"></span><!-- this is where the script will place the generated code -->
+				    	<input type="hidden" id="captcha_check" /><!-- this is where the script will place a copy of the code for validation: this is a hidden field -->
+				    </label>
+				    <div class="controls">
+				    	<input type="text" name="captcha_input" id="captcha_input" required>
+				    </div>
+				</div>
+				<div class="form-actions">
+			    	<button type="submit" id="submit" name="submit" class="btn btn-primary">Submit</button>
+			    </div>
+			</fieldset>
+    </form>
+	</div>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+//Generates the captcha function    
+	var a = Math.ceil(Math.random() * 9)+ '';
+	var b = Math.ceil(Math.random() * 9)+ '';       
+	var c = Math.ceil(Math.random() * 9)+ '';  
+	var d = Math.ceil(Math.random() * 9)+ '';  
+	var e = Math.ceil(Math.random() * 9)+ '';  
+	  
+	var code = a + b + c + d + e;
+	$("#captcha_check").val(code);
+	$("#txt_captcha_span").html(code);	
+</script>
+<script type="text/javascript">
+function checkcaptcha(){
+	var why = "";
+
+	var captchaInput = $("#captcha_input").val();
+	 
+	if( captchaInput == ""){
+		why += "The security code should not be empty.\n";
+	}
+	if( captchaInput != ""){
+		if(ValidCaptcha(captchaInput) == false){
+			why += "The security code did not match.\n";
+		}
+	}
+	if(why != ""){
+		alert(why);
+		return false;
+	}
+}
+	
+// Validate the Entered input aganist the generated security code function   
+function ValidCaptcha(){
+	var str1 = removeSpaces( $("#captcha_check").val() );
+	var str2 = removeSpaces( $("#captcha_input").val() );
+	if (str1 == str2){
+		return true;	
+	}else{
+		return false;
+	}
+}
+
+// Remove the spaces from the entered and generated code
+function removeSpaces(string){
+	return string.split(' ').join('');
+}
+	
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>General Annotation Editor</title>
+
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/oneColLiqCtrHdr.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/themes/custom/jquery-ui-1.8.20.custom.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/editormodule/styles/themes/custom/jquery-ui-1.8.20.custom.wwpdb.css" />
+<script type="text/javascript" src="/editormodule/js/jquery/core/jquery.min.js"></script>
+<script>
+$(document).ready(function() {	
+	$("#cifinput").change( function(){
+		var value = $(this).val();
+		if( value != "undefined" && value.length > 1 ){
+			$("#configfile").removeAttr('disabled');
+		}else{
+			$("#configfile").attr('disabled','disabled');
+		}
+	});	
+});
+</script>
+</head>
+<body class="oneColLiqCtrHdr">
+<div id="container">
+<!-- begin #header-->
+	<div id="header">
+    	<div id="logo"><img src="/images/wwpdb_logo.gif" width="187" height="58" alt="logo" /> </div>
+    	<div id="headerCont">
+      		<h1>General Annotation mmCIF Editor</h1>
+		</div>
+    	<br class="clearfloat" /> 
+	</div>
+<!-- #header ends above-->
+    <br class="clearfloat" />
+	<br />
+<!-- #mainContent begins -->
+		<br />
+		<br />
+	<div id="mainContent">
+		<!-- 
+		<a href="../service/editor/launch?datafile=1kip.cif&filesource=rcsb_dev">Prototyping with 1kip.cif</a>
+		<br />
+		<br />
+		<a href="../service/editor/launch?datafile=rcsb029714.cif&filesource=rcsb_dev">Prototyping with rcsb029714.cif</a>
+		<br />
+		<br />
+		<a href="../service/editor/launch?datafile=2j01.cif&filesource=rcsb_dev">Prototyping with large pdbx file 2j01.cif</a>  
+		-->
+		<div style="width: 40%; margin-left: 6%">
+		<h3>Upload a CIF file for testing (REQUIRED)</h3>		
+		<form method="post" action="../service/editor/launch"  enctype="multipart/form-data"> 
+		 <fieldset>
+				<label for="file">Upload CIF File</label><br /><br />
+				<input class="formInputText" type='file' size='50' id="cifinput" name="cifinput"/>
+				<br /><br /><br />
+				
+				<label for="context" style="margin-right: 10px;">View Context</label>
+					<select id="context" name="context">
+						<option value="summaryreport">General Purpose</option>
+						<option value="annotation">Added Annotation</option>
+						<option value="entityfix">PRD (entity fixer)</option>
+						<option value="em">EM TESTING</option>
+						<option value="nmr">NMR TESTING</option>
+						<option value="editorconfig">developer testing</option>
+					</select>
+				<br /><br /><br /><br />
+				
+				<label for="configfile">Upload Editor Config File (optional, for UI config testing)</label><br /><br />
+				<input id="configfile" class="formInputText" type='file' size='50' name="configfile" disabled="disabled"/><br /><br />
+				<br /><br /><br />
+				
+				<input class="formInputButton" type = 'submit' value = 'Go' />
+				<input type="hidden" name="filesource" id="filesource" value="upload" />
+				<br />
+		 </fieldset>
+		</form>
+		</div>		
+	</div>
+		<br />
+		<br />	
+	<!-- #mainContent ends with above /div -->
+<!-- #footer begins -->
+	<br class="clearfloat" />
+	<div id="footer">
+   		<p>&copy; 2015 wwPDB General Annotation mmCIF Editor Editor V0.01</p>
+	</div>
+<!-- #footer ends above -->
+</div>
+<!-- #container ends above-->
+</body>
+</html>

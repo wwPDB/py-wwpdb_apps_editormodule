@@ -1,0 +1,1027 @@
+##
+# File: pdbx_display_view_info.cif
+# Date: 28-July-2012 jdw
+#
+#	This file consists of two sections in which aspects of the UI layout are configured via instructions which are expressed via CIF convention.
+#	For each of the two sections, a CIF "loop"-ing  construct is used to specify the configuration details in a row-by-row basis.
+#	
+#	In each section, the "view_id" is the identifier that corresponds to a given "context" in which the CIF Editor UI is potentially used. Currently the view_id's in use are:
+#	
+#	    AV1 -- the "general purpose" context
+#	    AV2 -- the "added annotation" context
+#	    AV3 -- the "entity fixer" / PRD context
+#	
+#	
+#	The first section, corresponding to the "_pdbx_display_view_category_info" category, is the section that governs what headings are used in the horizontal navigation menu,
+#	how these headings are mapped to CIF categories, whether there will be corresponding drop-down choices (and the labels for the drop-downs if these are desired), etc.
+#	NOTE: the main purpose of each row in this category is to configure how a single cif category is to be associated with a top-level menu heading and optionally a drop-down subheading  
+#	
+#	Below are brief explanations of the category's items.
+#	
+#	    category_menu_display_name  --> these identifiers correspond to the top-level navigation menu bar choices (i.e. the primary headings), under which 1 or more cif categories will be grouped
+#	
+#	    category_group_display_name --> for a given "category_menu_display_name" above, this item allows one to create subheadings.
+#				If no subheadings are desired for the top-level heading, the value for this item must be the same as "category_menu_display_name" for each cif category/row grouped under the primary heading
+#				If subheadings are desired (which will show as drop-down choices upon clicking the top-level label), the value for this item will be displayed as the label of the drop-down choice and 
+#					this value must be different from the "category_menu_display_name". e.g. to create four drop-down subheadings for the same primary heading, there should be four records with four
+#					distinct values for this item but which all share the same "category_menu_display_name" 
+#				
+#	    category_name --> used to specify which cif categories are to fall under the given top-level menu heading and optionally under a given subheading 
+#	
+#	    category_display_name --> user-friendly display name for the CIF category (not currently being utilized but may be of potential future use)
+#									this value serves as parent key to corresponding child key in the "_pdbx_display_view_item_info" category discussed below
+#	
+#	    category_cardinality --> whether or not the category will be restricted to having just one record
+#	
+#	
+#	The second section, corresponding to the "_pdbx_display_view_item_info" category, is the section that is used to configure which actual cif items are "priority" items,
+#	and thus are shown by default on initial viewing of the data. Brief description of items:
+#	
+#	    category_display_name --> item used to map rows in this section to those in the first section (i.e. must match between the two sections)
+#	    item_name  --> fully qualified item name
+#	    item_display_name --> user-friendly display name for the item
+#	    read_only_flag --> whether or not the item is read-only
+#
+# Updates:  
+#
+#    2-Aug-2012  jdw   add category level view details
+#    4-Aug-2012  jdw   add category display name and 'read only' flage to item info category
+#    7-Aug-2012  rps   updated to reflect annotator config requests
+#   10-Aug-2012  rps   corrected typos
+#   28-Sep-2012  rps   introduced support for "annotation" context via view_id "AV2"
+#   18-Oct-2012  rps   introduced support for "entityfix" context via view_id "AV3"
+#   24-Oct-2012  rps   updates to "AV2" config
+#   01-Nov-2012  rps   more updates to "AV2" config
+#   12-Nov-2012  rps   requested updates to "AV1" config
+#   05-Feb-2013  jdw   reorganize to support multicategory display --
+#   26-Feb-2013  rps   config updates requested from annotation team
+#   07-Mar-2013  rps   more config updates requested from annotation team    
+#   11-Mar-2013  rps   "Skip/Suppression" config added for AV1    
+#   19-Mar-2013  rps   Changes to write protection for fields in citation_author and audit_author categories.
+#   26-Apr-2013  jmb   Changes to simplify the layout.
+#   08-Oct-2013  rps   Added diffrn_radiation_wavelength.wavelength and diffrn_radiation_wavelength.wt for AV1 "Data Collection" group
+#   25-Oct-2013  rps   Replaced "computing" with "software"
+#						Various corrections, replacing "ndb" with "pdbx" in item names.
+#						Adding some missing items.
+#   07-Jan-2014  rps   Updated labelling for 'reflns.number_obs' and 'reflns.number_all'.
+#						'pdbx_SG_project.id' and 'entity_src_gen.entity_id' now editable.
+#	02-Feb-2014	 rps   Added 'struct_ref_seq' and 'struct_ref_seq_dif' to 'Entity Description' group
+#						Added 'exptl' to 'Data Collection' group.
+#						'_struct_keywords.pdbx_details' added for default view.
+#						'_entity_poly.pdbx_strand_id' and '_entity_poly.pdbx_seq_one_letter_code' added to 'Entity Chain' group
+#						Added 'cell' category to 'Data Collection' group.
+#						Added 'pdbx_refine_tls_group', 'struct_ncs_ens', 'struct_ncs_dom', 'struct_ncs_dom_lim', 'refine_ls_restr_ncs'
+#							to bottom of 'Reflection/Refinement Data' group.
+#	2014-02-21	RPS	'_pdbx_refine_tls_group.selection_details' added to AV1
+#	2014-02-25	RPS	AV2 config for 'struct_conn" had displayed internal numbering and asym ids and not author provided one.
+#						So this was corrected on behalf of Ezra Peisach.
+#	2014-03-03	RPS	removed AV1 line referencing '_entity_src_gen.details' which doesn't exist.
+#	2014-03-05	RPS	corrected _pdbx_struct_assembly_depositor_info.methods_details to _pdbx_struct_assembly_depositor_info.method_details.
+#	2014-03-06	RPS corrected for proper listing of 'entity_src_nat.tissue'
+#	2014-03-24	RPS	database_PDB_caveat.id now editable. And pdbx_database_proc category removed.
+#	2014-05-30	RPS adding _pdbx_database_PDB_obs_spr to AV1 --> Deposition.
+#	2014-07-17	RPS removed read-only protection for "software.pdbx_ordinal"
+#	2014-07-29	RPS removed read-only protection for "reflns_shell.pdbx_ordinal"
+#	2014-07-30	RPS Added "reflns.percent_possible_obs" and "reflns_shell.percent_possible_all"
+#	2015-02-18	RPS	Adding 'pdbx_descriptor' item to default view of 'struct' category under 'Entity Description'
+#	2015-03-27	RPS	Config updated by Ezra Peisach.
+#	2015-04-22	RPS	struct_conn.id made editable.
+#	2015-05-10	RPS	Updates to expt_crystal by EP.
+#	2015-08-08	EP	Add entiy.src_method.
+##
+data_display_view
+# 
+loop_
+_pdbx_display_view_category_info.view_id 
+_pdbx_display_view_category_info.category_menu_display_name 
+_pdbx_display_view_category_info.category_name 
+_pdbx_display_view_category_info.category_group_display_name 
+_pdbx_display_view_category_info.category_display_name 
+_pdbx_display_view_category_info.category_cardinality 
+AV1 Deposition                   struct                              Deposition                   Title                                 unit  
+AV1 Deposition                   pdbx_database_status                Deposition                   'Entry status'                        unit  
+AV1 Deposition                   audit_author                        Deposition                   'Entry Authors'                       multi 
+AV1 Deposition                   pdbx_contact_author                 Deposition                   'Contact Authors'                     multi 
+AV1 Deposition                   pdbx_depui_entry_details            Deposition                   'Entry Supercedes'                    unit  
+AV1 Deposition                   pdbx_audit_support                  Deposition                   Funding                               multi 
+AV1 'Related DB/Entry'           pdbx_database_related               'Related DB/Entry'           'Related Entries'                     multi 
+AV1 'Related DB/Entry'           entity_poly                         'Related DB/Entry'           TargetTrack                           multi 
+AV1 'Related DB/Entry'           pdbx_SG_project                     'Related DB/Entry'           'SG Project'                          multi 
+AV1 'Related DB/Entry'           pdbx_related_exp_data_set           'Related DB/Entry'           'External reference'                  multi 
+AV1 'Related DB/Entry'           pdbx_database_status                'Related DB/Entry'           'Methods Development'                 multi 
+AV1 Citation                     struct                              Citation                     Title2                                unit
+AV1 Citation                     citation                            Citation                     Citation                              multi 
+AV1 Citation                     citation_author                     Citation                     'Citation Authors'                    multi 
+AV1 Citation                     audit_author                        Citation                     'Entry Authors'                       multi 
+AV1 Caveat                       database_PDB_caveat                 Caveat                       Caveat                                multi 
+AV1 'Entity Description'         struct                              'Entity Description'         'ED Title'                            unit  
+AV1 'Entity Description'         struct_keywords                     'Entity Description'         'Struct Keywords'                     multi 
+AV1 'Entity Description'         entity                              'Entity Description'         'Entity Description'                  multi 
+AV1 'Entity Description'         entity_name_com                     'Entity Description'         'Polymer Synonym'                     multi 
+AV1 'Entity Description'         entity_poly                         'Entity Description'         'Entity Chain'                        multi 
+AV1 'Entity Description'         pdbx_entry_details                  'Entity Description'         'Other Details'                       multi 
+AV1 'Entity Description'         pdbx_depui_entity_features          'Entity Description'         'Entity Features'                     multi 
+AV1 'Entity Description'         pdbx_struct_ref_seq_depositor_info  'Entity Description'         'Depositor Entity Mapping'            multi 
+AV1 'Entity Description'         struct_ref                          'Entity Description'         'Entity Mapping'                      unit  
+AV1 'Entity Description'         struct_ref_seq                      'Entity Description'         struct_ref_seq                        unit  
+AV1 'Entity Description'         struct_ref_seq_dif                  'Entity Description'         struct_ref_seq_dif                    multi 
+AV1 'Polymer Source'             entity_src_gen                      'Polymer Source'             'Genetically Engineered'              multi 
+AV1 'Polymer Source'             entity_src_nat                      'Polymer Source'             'Naturally Obtained'                  multi 
+AV1 'Polymer Source'             pdbx_entity_src_syn                 'Polymer Source'             Synthesized                           multi 
+AV1 'Data Collection'            cell                                'Data Collection'            cell                                  unit  
+AV1 'Data Collection'            symmetry                            'Data Collection'            symmetry                              unit  
+AV1 'Data Collection'            exptl_crystal_grow                  'Data Collection'            exptl_crystal_grow                    multi 
+AV1 'Data Collection'            exptl_crystal                       'Data Collection'            exptl_crystal                         multi 
+AV1 'Data Collection'            exptl                               'Data Collection'            exptl                                 multi 
+AV1 'Data Collection'            diffrn                              'Data Collection'            Temperature                           multi 
+AV1 'Data Collection'            diffrn_source                       'Data Collection'            diffrn_source                         multi 
+AV1 'Data Collection'            diffrn_detector                     'Data Collection'            Detector                              multi 
+AV1 'Data Collection'            diffrn_radiation                    'Data Collection'            diffrn_radiation                      multi 
+AV1 'Data Collection'            diffrn_radiation_wavelength         'Data Collection'            diffrn_radiation_wavelength           multi 
+AV1 'Data Collection'            software                            'Data Collection'            Software                              multi 
+AV1 'Reflection/Refinement Data' reflns                              'Reflection/Refinement Data' 'Overall Data'                        unit  
+AV1 'Reflection/Refinement Data' reflns_shell                        'Reflection/Refinement Data' 'Highest Resolution Shell'            multi 
+AV1 'Reflection/Refinement Data' refine                              'Reflection/Refinement Data' 'Overall Refinement Data'             multi 
+AV1 'Reflection/Refinement Data' refine_ls_shell                     'Reflection/Refinement Data' 'Highest Resolution Refinement Shell' multi 
+AV1 'Reflection/Refinement Data' pdbx_refine_tls_group               'Reflection/Refinement Data' pdbx_refine_tls_group                 multi 
+AV1 'Reflection/Refinement Data' struct_ncs_ens                      'Reflection/Refinement Data' struct_ncs_ens                        multi 
+AV1 'Reflection/Refinement Data' struct_ncs_dom                      'Reflection/Refinement Data' struct_ncs_dom                        multi  
+AV1 'Reflection/Refinement Data' struct_ncs_dom_lim                  'Reflection/Refinement Data' struct_ncs_dom_lim                    mutil 
+AV1 'Reflection/Refinement Data' refine_ls_restr_ncs                 'Reflection/Refinement Data' refine_ls_restr_ncs                   unit  
+AV1 Derived                      struct_conn                         Links                        struct_conn                           multi 
+AV1 Derived                      struct_mon_prot_cis                 Links                        Cis-peptide                           multi 
+AV1 Derived                      struct_site                         'SITE record'                struct_site                           multi 
+AV1 Derived                      struct_site_gen                     'SITE record'                struct_site_gen                       multi 
+AV1 Derived                      struct_sheet                        Strands                      struct_sheet                          multi 
+AV1 Derived                      struct_sheet_order                  Strands                      struct_sheet_order                    multi 
+AV1 Derived                      struct_sheet_range                  Strands                      struct_sheet_range                    multi 
+AV1 Derived                      pdbx_struct_sheet_hbond             Strands                      pdbx_struct_sheet_hbond               multi 
+AV1 Derived                      struct_conf                         Helices                      struct_conf                           multi 
+AV1 Derived                      struct_conf_type                    Helices                      struct_conf_type                      multi 
+AV1 Derived                      pdbx_struct_assembly_depositor_info 'Biological Assembly'        'Depositor Assembly details'          multi 
+AV1 Derived                      pdbx_struct_assembly                'Biological Assembly'        pdbx_struct_assembly                  multi 
+AV1 Derived                      pdbx_struct_assembly_gen            'Biological Assembly'        pdbx_struct_assembly_gen              multi 
+AV1 Derived                      pdbx_struct_assembly_prop           'Biological Assembly'        pdbx_struct_assembly_prop             multi 
+AV1 Derived                      struct_biol                         'Biological Assembly'        'Assembly details'                    multi 
+AV1 Derived                      pdbx_distant_solvent_atoms          'Solvent Re-position'        'distant solvent'                     multi 
+AV1 Derived                      pdbx_solvent_atom_site_mapping      'Solvent Re-position'        'solvent atom mapping'                multi 
+AV2 Links                        struct_conn                         Links                        struct_conn                           multi 
+AV2 Links                        struct_mon_prot_cis                 Links                        Cis-peptide                           multi 
+AV2 'SITE record'                struct_site                         'SITE record'                struct_site                           multi 
+AV2 'SITE record'                struct_site_gen                     'SITE record'                struct_site_gen                       multi 
+AV2 'Secondary Structure'        struct_sheet                        Strands                      struct_sheet                          multi 
+AV2 'Secondary Structure'        struct_sheet_order                  Strands                      struct_sheet_order                    multi 
+AV2 'Secondary Structure'        struct_sheet_range                  Strands                      struct_sheet_range                    multi 
+AV2 'Secondary Structure'        pdbx_struct_sheet_hbond             Strands                      pdbx_struct_sheet_hbond               multi 
+AV2 'Secondary Structure'        struct_conf                         Helices                      struct_conf                           multi 
+AV2 'Secondary Structure'        struct_conf_type                    Helices                      struct_conf_type                      multi 
+AV2 'Biological Assembly'        pdbx_struct_assembly_depositor_info 'Biological Assembly'        'Depositor Assembly details'          multi 
+AV2 'Biological Assembly'        pdbx_struct_assembly                'Biological Assembly'        pdbx_struct_assembly                  multi 
+AV2 'Biological Assembly'        pdbx_struct_assembly_gen            'Biological Assembly'        pdbx_struct_assembly_gen              multi 
+AV2 'Biological Assembly'        pdbx_struct_assembly_prop           'Biological Assembly'        pdbx_struct_assembly_prop             multi 
+AV2 'Biological Assembly'        struct_biol                         'Biological Assembly'        'Assembly details'                    multi 
+AV2 'Solvent Re-position'        pdbx_distant_solvent_atoms          'Solvent Re-position'        'distant solvent'                     multi 
+AV2 'Solvent Re-position'        pdbx_solvent_atom_site_mapping      'Solvent Re-position'        'solvent atom mapping'                multi 
+AV2 'Nucleic Acid Features'      ndb_struct_conf_na                  'Nucleic Acid Features'      ndb_struct_conf_na                    multi 
+AV2 'Nucleic Acid Features'      ndb_struct_na_base_pair             'Nucleic Acid Features'      ndb_struct_na_base_pair               multi 
+AV2 'Nucleic Acid Features'      ndb_struct_na_base_pair_step        'Nucleic Acid Features'      ndb_struct_na_base_pair_step          multi 
+AV3 PRD                          pdbx_reference_molecule             PRD                          pdbx_reference_molecule               multi 
+AV3 PRD                          pdbx_reference_entity_src_nat       PRD                          pdbx_reference_entity_src_nat         multi 
+AV3 PRD                          pdbx_reference_entity_link          PRD                          'Linkage between entities'            multi 
+AV3 PRD                          pdbx_reference_entity_poly_link     PRD                          'Linkage within a polymer entity'     multi 
+AV3 PRD                          pdbx_reference_entity_list          PRD                          'List of entities'                    multi 
+AV3 PRD                          pdbx_reference_entity_poly          PRD                          'Polymer details'                     multi
+AV3 PRD                          pdbx_reference_entity_sequence	     PRD      		  	  'Additional features'                 multi
+AV3 PRD                          pdbx_prd_audit                      PRD                          'PRD Revision History'                multi 
+# 
+loop_
+_pdbx_display_view_item_info.view_id 
+_pdbx_display_view_item_info.category_display_name 
+_pdbx_display_view_item_info.item_name 
+_pdbx_display_view_item_info.item_display_name 
+_pdbx_display_view_item_info.read_only_flag 
+AV1 TargetTrack                           '_entity_poly.entity_id'                                      'Entity ID'                                 Y 
+AV1 TargetTrack                           '_entity_poly.pdbx_strand_id'                                 'Chain(s)'                                  Y 
+AV1 TargetTrack                           '_entity_poly.pdbx_target_identifier'                         'Target DB'                                 N 
+AV1 Title                                 '_struct.title'                                               'Entry Title'                               N 
+AV1 Title                                 '_struct.pdbx_descriptor'                                     pdbx_descriptor                             N 
+AV1 'Entry status'                        '_pdbx_database_status.entry_id'                              'Entry Id'                                  Y 
+AV1 'Entry status'                        '_pdbx_database_status.date_coordinates'                      'Dep date'                                  Y 
+AV1 'Entry status'                        '_pdbx_database_status.status_code'                           'Process status'                            Y 
+AV1 'Entry status'                        '_pdbx_database_status.dep_release_code_coordinates'          'Auth Coodinate status (depUI)'             Y 
+AV1 'Entry status'                        '_pdbx_database_status.dep_release_code_sequence'             'Auth Sequence status (depUI)'              N 
+AV1 'Entry status'                        '_pdbx_database_status.pdb_format_compatible'                 'PDB Format Compat'                         N 
+AV1 'Entry status'                        '_pdbx_database_status.title_suppression'                     'Suppress Title?'                           N 
+AV1 'Entry status'                        '_pdbx_database_status.SG_entry'                              'SG entry?'                                 N 
+AV1 'Entry status'                        '_pdbx_database_status.date_hold_coordinates'                 'Date of hold expiry'                       Y 
+AV1 'Entry status'                        '_pdbx_database_status.date_author_approval'                  'Auth approve date'                         Y 
+AV1 'Entry status'                        '_pdbx_database_status.deposit_site'                          'Dep site'                                  Y 
+AV1 'Entry status'                        '_pdbx_database_status.process_site'                          'Proc site'                                 Y 
+AV1 'Entry status'                        '_pdbx_database_status.date_of_NDB_release'                   'Release date'                              Y 
+AV1 'Entry status'                        '_pdbx_database_status.author_release_status_code'            'Auth status (legacy)'                      Y 
+AV1 Funding                               '_pdbx_audit_support.ordinal'                                 Ordinal                                     Y 
+AV1 Funding                               '_pdbx_audit_support.funding_organization'                    'Funding Organization'                      N 
+AV1 Funding                               '_pdbx_audit_support.grant_number'                            'Grant Number'                              N 
+AV1 Funding                               '_pdbx_audit_support.country'                                 Country                                     N 
+AV1 'Struct Keywords'                     '_struct_keywords.pdbx_keywords'                              Header                                      N 
+AV1 'Struct Keywords'                     '_struct_keywords.text'                                       Keywords                                    N 
+AV1 'Struct Keywords'                     '_struct_keywords.pdbx_details'                               'PDBX details'                              N 
+AV1 'Entry Authors'                       '_audit_author.pdbx_ordinal'                                  ID                                          N 
+AV1 'Entry Authors'                       '_audit_author.name'                                          'Entry Author'                              N 
+AV1 'Entry Authors'                       '_audit_author.identifier_ORCID'                              'ORCID'                                     N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.id'                                     ID                                          N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.name_first'                             'First Name'                                N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.name_last'                              'Last Name'                                 N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.role'                                   Role                                        N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.email'                                  Email                                       N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.phone'                                  Phone                                       N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.organization_type'                      'Organization type'                         N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.country'                                Country                                     N 
+AV1 'Contact Authors'                     '_pdbx_contact_author.identifier_ORCID'                       ORCID                                       N 
+AV1 'Entry Supercedes'                    '_pdbx_depui_entry_details.replace_pdb_id'                    'Obsoleted Entries'                         N 
+AV1 'Related Entries'                     '_pdbx_database_related.db_name'                              'DB Name'                                   N 
+AV1 'Related Entries'                     '_pdbx_database_related.db_id'                                'DB ID'                                     N 
+AV1 'Related Entries'                     '_pdbx_database_related.content_type'                         'Content Type'                              N 
+AV1 'Related Entries'                     '_pdbx_database_related.details'                              Details                                     N 
+AV1 'SG Project'                          '_pdbx_SG_project.id'                                         'Project id'                                N 
+AV1 'SG Project'                          '_pdbx_SG_project.project_name'                               'Project Name'                              N 
+AV1 'SG Project'                          '_pdbx_SG_project.full_name_of_center'                        'Center Full Name'                          N 
+AV1 'SG Project'                          '_pdbx_SG_project.initial_of_center'                          'Center abbreviation'                       N 
+AV1 'Methods Development'                 '_pdbx_database_status.methods_development_category'          'Methods Development'                       N 
+AV1 'External reference'                  '_pdbx_related_exp_data_set.ordinal'                          'Ordinal'                                   N
+AV1 'External reference'                  '_pdbx_related_exp_data_set.data_set_type'                    'Type'                                      N
+AV1 'External reference'                  '_pdbx_related_exp_data_set.data_reference'                   'Data reference'                            N
+AV1 'External reference'                  '_pdbx_related_exp_data_set.metadata_reference'               'Metadata reference'                        N
+AV1 'External reference'                  '_pdbx_related_exp_data_set.details'                          'Details'                                   N
+AV1 Title2                                '_struct.title'                                               'Entry Title'                               N 
+AV1 Title2                                '_struct.pdbx_descriptor'                                     pdbx_descriptor                             N 
+AV1 Citation                              '_citation.id'                                                id                                          N 
+AV1 Citation                              '_citation.title'                                             'Citation Title'                            N 
+AV1 Citation                              '_citation.journal_abbrev'                                    'Journal Name'                              N 
+AV1 Citation                              '_citation.pdbx_database_id_PubMed'                           'PubMed ID'                                 N 
+AV1 Citation                              '_citation.pdbx_database_id_DOI'                              DOI                                         N 
+AV1 Citation                              '_citation.year'                                              Year                                        N 
+AV1 Citation                              '_citation.journal_volume'                                    Volume                                      N 
+AV1 Citation                              '_citation.page_first'                                        'First page'                                N 
+AV1 Citation                              '_citation.page_last'                                         'Last page'                                 N 
+AV1 'Citation Authors'                    '_citation_author.citation_id'                                'Citation id'                               N 
+AV1 'Citation Authors'                    '_citation_author.ordinal'                                    'Author id'                                 N 
+AV1 'Citation Authors'                    '_citation_author.name'                                       'Citation Author'                           N 
+AV1 Caveat                                '_database_PDB_caveat.id'                                     'Caveat id'                                 N 
+AV1 Caveat                                '_database_PDB_caveat.text'                                   Caveat                                      N 
+AV1 'Other Details'                       '_pdbx_entry_details.compound_details'                        'Polymer Details'                           N 
+AV1 'Other Details'                       '_pdbx_entry_details.nonpolymer_details'                      'Non-Polymer Details'                       N 
+AV1 'Other Details'                       '_pdbx_entry_details.source_details'                          'Source Details'                            N 
+AV1 'Other Details'                       '_pdbx_entry_details.sequence_details'                        'Sequence Details'                          N 
+AV1 'Biological Assembly Details'         '_struct_biol.details'                                        'Biological Assembly Details'               N 
+AV1 'Entity Description'                  '_entity.id'                                                  'Entity ID'                                 Y 
+AV1 'Entity Description'                  '_entity.type'                                                Type                                        Y 
+AV1 'Entity Description'                  '_entity.src_method'                                          'Src method'                                N 
+AV1 'Entity Description'                  '_entity.pdbx_description'                                    'Molecule name'                             N 
+AV1 'Entity Description'                  '_entity.pdbx_fragment'                                       'Fragment/domain detail'                    N 
+AV1 'Entity Description'                  '_entity.pdbx_ec'                                             'EC number'                                 N 
+AV1 'Entity Description'                  '_entity.pdbx_mutation'                                       Mutation                                    N 
+AV1 'Entity Description'                  '_entity.details'                                             'Other details'                             N 
+AV1 'Entity Features'                     '_pdbx_depui_entity_features.entity_id'                       'Entity ID'                                 N 
+AV1 'Entity Features'                     '_pdbx_depui_entity_features.type'                            Type                                        N 
+AV1 'ED Title'                            '_struct.title'                                               'Entry Title'                               N 
+AV1 'ED Title'                            '_struct.pdbx_descriptor'                                     pdbx_descriptor                             N 
+AV1 'Entity Chain'                        '_entity_poly.entity_id'                                      'Entity ID'                                 Y 
+AV1 'Entity Chain'                        '_entity_poly.type'                                           Type                                        Y 
+AV1 'Entity Chain'                        '_entity_poly.pdbx_strand_id'                                 Chain                                       N 
+AV1 'Entity Chain'                        '_entity_poly.pdbx_seq_one_letter_code'                       pdbx_seq_one_letter_code                    N 
+AV1 'Entity Mapping'                      '_struct_ref.entity_id'                                       'Entity ID'                                 Y 
+AV1 'Entity Mapping'                      '_struct_ref.db_name'                                         'Database Name'                             Y 
+AV1 'Entity Mapping'                      '_struct_ref.pdbx_db_accession'                               'Database Accession'                        Y 
+AV1 'Entity Mapping'                      '_struct_ref.db_code'                                         'Database Full Accession'                   Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.align_id'                                    align_id                                    Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.ref_id'                                      ref_id                                      Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_PDB_id_code'                            pdbx_PDB_id_code                            Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_strand_id'                              pdbx_strand_id                              Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.seq_align_beg'                               seq_align_beg                               Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_seq_align_beg_ins_code'                 pdbx_seq_align_beg_ins_code                 Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.seq_align_end'                               seq_align_end                               Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_seq_align_end_ins_code'                 pdbx_seq_align_end_ins_code                 Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_db_accession'                           pdbx_db_accession                           Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.db_align_beg'                                db_align_beg                                Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_db_align_beg_ins_code'                  pdbx_db_align_beg_ins_code                  Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.db_align_end'                                db_align_end                                Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_db_align_end_ins_code'                  pdbx_db_align_end_ins_code                  Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_auth_seq_align_beg'                     pdbx_auth_seq_align_beg                     Y 
+AV1 struct_ref_seq                        '_struct_ref_seq.pdbx_auth_seq_align_end'                     pdbx_auth_seq_align_end                     Y 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_ordinal'                            pdbx_ordinal                                N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.align_id'                                align_id                                    N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_pdb_id_code'                        pdbx_pdb_id_code                            N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.mon_id'                                  mon_id                                      N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_pdb_strand_id'                      pdbx_pdb_strand_id                          N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.seq_num'                                 seq_num                                     N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_pdb_ins_code'                       pdbx_pdb_ins_code                           N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_auth_seq_num'                       pdbx_auth_seq_num                           N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_seq_db_name'                        pdbx_seq_db_name                            N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_seq_db_accession_code'              pdbx_seq_db_accession_code                  N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.db_mon_id'                               db_mon_id                                   N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_seq_db_seq_num'                     pdbx_seq_db_seq_num                         N 
+AV1 struct_ref_seq_dif                    '_struct_ref_seq_dif.details'                                 details                                     N 
+AV1 'Depositor Entity Mapping'            '_pdbx_struct_ref_seq_depositor_info.entity_id'               'Entity ID'                                 Y 
+AV1 'Depositor Entity Mapping'            '_pdbx_struct_ref_seq_depositor_info.db_name'                 'Author Provided Database'                  Y 
+AV1 'Depositor Entity Mapping'            '_pdbx_struct_ref_seq_depositor_info.db_accession'            'Author Provided Database Accession'        Y 
+AV1 'Depositor Entity Mapping'            '_pdbx_struct_ref_seq_depositor_info.db_code'                 'Author Provided database Full Accession'   Y 
+AV1 'Polymer Synonym'                     '_entity_name_com.entity_id'                                  'Entity ID'                                 N 
+AV1 'Polymer Synonym'                     '_entity_name_com.name'                                       Synonym                                     N 
+AV1 'Genetically Engineered'              '_entity_src_gen.entity_id'                                   'Entity ID'                                 N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_src_id'                                 'Src ID'                                    N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id'              TaxID                                       N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_gene_src_scientific_name'               'Scientific Name'                           N 
+AV1 'Genetically Engineered'              '_entity_src_gen.gene_src_common_name'                        'Common name'                               N 
+AV1 'Genetically Engineered'              '_entity_src_gen.gene_src_strain'                             Strain                                      N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_gene_src_variant'                       Variant                                     N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_gene_src_gene'                          Gene                                        N 
+AV1 'Genetically Engineered'              '_entity_src_gen.gene_src_details'                            'Other details'                             N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id'              'Expr. TaxID'                               N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_scientific_name'               'Expr. Sci. name'                           N 
+AV1 'Genetically Engineered'              '_entity_src_gen.host_org_common_name'                        'Expr. Common name'                         N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_strain'                        'Expr. Strain'                              N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_variant'                       'Expr. Variant'                             N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_cell_line'                     'Expr. Cell line'                           N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_vector_type'                   'Expr. Vector type'                         N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_vector'                        'Expr. Vector'                              N 
+AV1 'Genetically Engineered'              '_entity_src_gen.plasmid_name'                                'Expr. Plasmid name'                        N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_organ'                         'Expr. Organ'                               N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_tissue'                        'Expr. Tissue'                              N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_host_org_cell'                          'Expr. Cell'                                N 
+AV1 'Genetically Engineered'              '_entity_src_gen.pdbx_description'                            Description                                 N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.entity_id'                                   'Entity ID'                                 N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_src_id'                                 'Src ID'                                    N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_ncbi_taxonomy_id'                       'Tax ID'                                    N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_organism_scientific'                    'Scientific name'                           N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.common_name'                                 'Common name'                               N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.strain'                                      Strain                                      N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_variant'                                Variant                                     N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.tissue'                                      Tissue                                      N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_organ'                                  Organ                                       N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_cell'                                   Cell                                        N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.pdbx_cell_line'                              'Cell line'                                 N 
+AV1 'Naturally Obtained'                  '_entity_src_nat.details'                                     'Other details'                             N 
+AV1 Synthesized                           '_pdbx_entity_src_syn.entity_id'                              'Entity ID'                                 N 
+AV1 Synthesized                           '_pdbx_entity_src_syn.pdbx_src_id'                            'Src ID'                                    N 
+AV1 Synthesized                           '_pdbx_entity_src_syn.ncbi_taxonomy_id'                       'Tax ID'                                    N 
+AV1 Synthesized                           '_pdbx_entity_src_syn.organism_scientific'                    'Scientific name'                           N 
+AV1 Synthesized                           '_pdbx_entity_src_syn.organism_common_name'                   'Common name'                               N 
+AV1 Synthesized                           '_pdbx_entity_src_syn.details'                                'Other details'                             N 
+AV1 cell                                  '_cell.Z_PDB'                                                 Z_PDB                                       N 
+AV1 cell                                  '_cell.entry_id'                                              entry_id                                    Y 
+AV1 cell                                  '_cell.length_a'                                              length_a                                    Y 
+AV1 cell                                  '_cell.length_b'                                              length_b                                    Y 
+AV1 cell                                  '_cell.length_c'                                              length_c                                    Y 
+AV1 cell                                  '_cell.angle_alpha'                                           angle_alpha                                 Y 
+AV1 cell                                  '_cell.angle_beta'                                            angle_beta                                  Y 
+AV1 cell                                  '_cell.angle_gamma'                                           angle_gamma                                 Y 
+AV1 symmetry                              '_symmetry.space_group_name_H-M'                              'Space group'                               Y
+AV1 symmetry                              '_symmetry.Int_Tables_number'                                 'Space group number'                        Y
+AV1 symmetry                              '_symmetry.entry_id'                                          'entry_id'                                  Y
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.crystal_id'                              'Crystal id'                                N 
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.method'                                  'Crystallization Method'                    N 
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.temp'                                    Temperature                                 N 
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.temp_details'                            'Temperature details'                       N 
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.pH'                                      'Sample pH'                                 N 
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.pdbx_pH_range'                           'Sample pH Range'                           N 
+AV1 exptl_crystal_grow                    '_exptl_crystal_grow.pdbx_details'                            'Crystallization Conditions'                N 
+AV1 exptl_crystal                         '_exptl_crystal.id'                                           'Crystal id'                                N 
+AV1 exptl_crystal                         '_exptl_crystal.density_Matthews'                             Matthews                                    N 
+AV1 exptl_crystal                         '_exptl_crystal.density_percent_sol'                          'Solvent content'                           N 
+AV1 exptl_crystal                         '_exptl_crystal.density_meas'                                 'Measured density'                          N 
+AV1 exptl_crystal                         '_exptl_crystal.description'                                  'Description of the crystal'                N 
+AV1 exptl_crystal                         '_exptl_crystal.preparation'                                  'Data collection remarks'                   N 
+AV1 exptl                                 '_exptl.method'                                               Method                                      Y 
+AV1 exptl                                 '_exptl.crystals_number'                                      'Number of Crystals'                        N 
+AV1 Temperature                           '_diffrn.id'                                                  ID                                          Y 
+AV1 Temperature                           '_diffrn.crystal_id'                                          'Crystal id'                                N 
+AV1 Temperature                           '_diffrn.ambient_temp'                                        'Data Collection Temperature'               N 
+AV1 Temperature                           '_diffrn.ambient_temp_details'                                'Data Collection Temperature details'       N 
+AV1 Detector                              '_diffrn_detector.diffrn_id'                                  'Diffraction ID'                            Y 
+AV1 Detector                              '_diffrn_detector.detector'                                   'Detector type'                             N 
+AV1 Detector                              '_diffrn_detector.type'                                       'Detector name'                             N 
+AV1 Detector                              '_diffrn_detector.pdbx_collection_date'                       'Collection date'                           N 
+AV1 Software                              '_software.pdbx_ordinal'                                      Ordinal                                     N 
+AV1 Software                              '_software.classification'                                    'Function Classification'                   N 
+AV1 Software                              '_software.name'                                              'Software Name'                             N 
+AV1 Software                              '_software.version'                                           'Software Version'                          N 
+AV1 Software                              '_software.date'                                              'Creation Date of Version'                  N 
+AV1 Software                              '_software.type'                                              'Software type'                             N 
+AV1 Software                              '_software.location'                                          'URL for Software'                          N 
+AV1 Software                              '_software.language'                                          'Software language'                         N 
+AV1 diffrn_radiation                      '_diffrn_radiation.diffrn_id'                                 ID                                          Y 
+AV1 diffrn_radiation                      '_diffrn_radiation.wavelength_id'                             'Wavelength ID'                             Y 
+AV1 diffrn_radiation                      '_diffrn_radiation.pdbx_scattering_type'                      'Exp. type'                                 N 
+AV1 diffrn_radiation                      '_diffrn_radiation.pdbx_monochromatic_or_laue_m_l'            'Monochrome or Laue'                        N 
+AV1 diffrn_radiation                      '_diffrn_radiation.monochromator'                             Monochromator                               N 
+AV1 diffrn_radiation                      '_diffrn_radiation.pdbx_diffrn_protocol'                      'Diffraction protocol'                      N 
+AV1 diffrn_radiation_wavelength           '_diffrn_radiation_wavelength.wavelength'                     Wavelength                                  N 
+AV1 diffrn_radiation_wavelength           '_diffrn_radiation_wavelength.wt'                             'Wavelength weight'                         Y 
+AV1 diffrn_source                         '_diffrn_source.diffrn_id'                                    ID                                          Y 
+AV1 diffrn_source                         '_diffrn_source.source'                                       'Instrument source'                         N 
+AV1 diffrn_source                         '_diffrn_source.type'                                         'Instrument type'                           N 
+AV1 diffrn_source                         '_diffrn_source.pdbx_synchrotron_y_n'                         'Synchrotron Y/N'                           N 
+AV1 diffrn_source                         '_diffrn_source.pdbx_synchrotron_site'                        Synchrotron                                 N 
+AV1 diffrn_source                         '_diffrn_source.pdbx_synchrotron_beamline'                    'Synchrotron Beamline'                      N 
+AV1 diffrn_source                         '_diffrn_source.pdbx_wavelength'                              Wavelength                                  N 
+AV1 diffrn_source                         '_diffrn_source.pdbx_wavelength_list'                         'Wavelength list'                           N 
+AV1 'Overall Data'                        '_reflns.pdbx_ordinal'                                        ID                                          Y 
+AV1 'Overall Data'                        '_reflns.pdbx_diffrn_id'                                      'Diffraction ID'                            Y 
+AV1 'Overall Data'                        '_reflns.number_obs'                                          'Unique reflections observed'               N 
+AV1 'Overall Data'                        '_reflns.number_all'                                          'Unique reflections all'                    N 
+AV1 'Overall Data'                        '_reflns.d_resolution_high'                                   'Resolution, high'                          N 
+AV1 'Overall Data'                        '_reflns.d_resolution_low'                                    'Resolution, low'                           N 
+AV1 'Overall Data'                        '_reflns.pdbx_redundancy'                                     Redundancy                                  N 
+AV1 'Overall Data'                        '_reflns.observed_criterion_sigma_F'                          'Cutoff sigma F'                            N 
+AV1 'Overall Data'                        '_reflns.observed_criterion_sigma_I'                          'Cutoff sigma I'                            N 
+AV1 'Overall Data'                        '_reflns.pdbx_Rmerge_I_obs'                                   R-merge                                     N 
+AV1 'Overall Data'                        '_reflns.pdbx_Rsym_value'                                     R-sym                                       N 
+AV1 'Overall Data'                        '_reflns.pdbx_CC_half'                                        CC-half                                     N 
+AV1 'Overall Data'                        '_reflns.pdbx_netI_over_sigmaI'                               'Net I over sigma I'                        N 
+AV1 'Overall Data'                        '_reflns.B_iso_Wilson_estimate'                               'B Wilson value'                            N 
+AV1 'Overall Data'                        '_reflns.percent_possible_obs'                                percent_possible_obs                        N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.pdbx_ordinal'                                  ID                                          N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.pdbx_diffrn_id'                                'Diffraction ID'                            Y 
+AV1 'Highest Resolution Shell'            '_reflns_shell.number_measured_obs'                           'Total reflections'                         N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.number_unique_all'                             'Unique reflections'                        N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.d_res_high'                                    'Resolution, high'                          N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.d_res_low'                                     'Resolution, low'                           N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.pdbx_redundancy'                               Redundancy                                  N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.Rmerge_I_obs'                                  R-merge                                     N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.pdbx_Rsym_value'                               R-sym                                       N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.pdbx_CC_half'                                  CC-half                                     N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.meanI_over_sigI_obs'                           'Net I over sigma I'                        N 
+AV1 'Highest Resolution Shell'            '_reflns_shell.percent_possible_all'                          percent_possible_all                        N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_refine_id'                                      'Diffraction method'                        N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_diffrn_id'                                      'Diffraction id'                            Y 
+AV1 'Overall Refinement Data'             '_refine.pdbx_method_to_determine_struct'                     'Method to determine the structure'         N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_starting_model'                                 'Starting model'                            N 
+AV1 'Overall Refinement Data'             '_refine.ls_d_res_high'                                       'Resolution, high'                          N 
+AV1 'Overall Refinement Data'             '_refine.ls_d_res_low'                                        'Resolution, low'                           N 
+AV1 'Overall Refinement Data'             '_refine.ls_R_factor_obs'                                     R-obs                                       N 
+AV1 'Overall Refinement Data'             '_refine.ls_R_factor_R_work'                                  R-work                                      N 
+AV1 'Overall Refinement Data'             '_refine.ls_number_reflns_obs'                                'Reflections obs'                           N 
+AV1 'Overall Refinement Data'             '_refine.ls_number_reflns_all'                                'Number reflns all'                         N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_ls_sigma_F'                                     ls_sigma_F                                  N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_ls_sigma_I'                                     ls_sigma_I                                  N 
+AV1 'Overall Refinement Data'             '_refine.ls_R_factor_R_free'                                  R-free                                      N 
+AV1 'Overall Refinement Data'             '_refine.ls_number_reflns_R_free'                             'Number reflns R free'                      N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_ls_cross_valid_method'                          'Cross-validation method'                   N 
+AV1 'Overall Refinement Data'             '_refine.pdbx_R_Free_selection_details'                       'R  Free selection details'                 N 
+AV1 'Overall Refinement Data'             '_refine.details'                                             'Refinement details'                        N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.pdbx_refine_id'                             'Diffraction method'                        N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.d_res_high'                                 'Resolution, high'                          N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.d_res_low'                                  'Resolution, low'                           N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.R_factor_obs'                               R-obs                                       N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.R_factor_R_work'                            R-work                                      N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.number_reflns_obs'                          'Reflections observed'                      N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.number_reflns_all'                          'Number reflns all'                         N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.R_factor_R_free'                            R-free                                      N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.number_reflns_R_free'                       'Number reflns R-free'                      N 
+AV1 'Highest Resolution Refinement Shell' '_refine_ls_shell.R_factor_R_free_error'                      R_factor_R_free_error                       N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.id'                                   id                                          N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.pdbx_refine_id'                       pdbx_refine_id                              N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.refine_tls_id'                        refine_tls_id                               N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.beg_auth_asym_id'                     beg_auth_asym_id                            N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.beg_auth_seq_id'                      beg_auth_seq_id                             N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.end_auth_asym_id'                     end_auth_asym_id                            N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.end_auth_seq_id'                      end_auth_seq_id                             N 
+AV1 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.selection_details'                    selection_details                           N 
+AV1 struct_ncs_ens                        '_struct_ncs_ens.id'                                          id                                          N 
+AV1 struct_ncs_ens                        '_struct_ncs_ens.details'                                     details                                     N 
+AV1 struct_ncs_dom                        '_struct_ncs_dom.details'                                     details                                     N 
+AV1 struct_ncs_dom                        '_struct_ncs_dom.pdbx_ens_id'                                 pdbx_ens_id                                 N 
+AV1 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_asym_id'                        beg_auth_asym_id                            N 
+AV1 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_seq_id'                         beg_auth_seq_id                             N 
+AV1 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_asym_id'                        end_auth_asym_id                            N 
+AV1 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_seq_id'                         end_auth_seq_id                             N 
+AV1 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_component_id'                       pdbx_component_id                           N 
+AV1 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_refine_code'                        pdbx_refine_code                            N 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_auth_asym_id'                      pdbx_auth_asym_id                           N 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_refine_id'                         pdbx_refine_id                              Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.dom_id'                                 dom_id                                      Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_ens_id'                            pdbx_ens_id                                 Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_ordinal'                           pdbx_ordinal                                Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.ncs_model_details'                      ncs_model_details                           Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.rms_dev_position'                       rms_dev_position                            Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_position'                        weight_position                             Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.rms_dev_B_iso'                          rms_dev_B_iso                               Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_B_iso'                           weight_B_iso                                Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_number'                            pdbx_number                                 Y 
+AV1 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_type'                              pdbx_type                                   Y 
+AV1 struct_conn                           '_struct_conn.id'                                             'Link ID'                                   N 
+AV1 struct_conn                           '_struct_conn.conn_type_id'                                   'Link type'                                 N 
+AV1 struct_conn                           '_struct_conn.ptnr1_auth_comp_id'                             'From comp_id'                              N 
+AV1 struct_conn                           '_struct_conn.ptnr1_auth_asym_id'                             'From asym_id'                              N 
+AV1 struct_conn                           '_struct_conn.ptnr1_auth_seq_id'                              'From seq_id'                               N 
+AV1 struct_conn                           '_struct_conn.ptnr1_label_atom_id'                            'From atom_id'                              N 
+AV1 struct_conn                           '_struct_conn.pdbx_ptnr1_label_alt_id'                        'From alt_id'                               N 
+AV1 struct_conn                           '_struct_conn.pdbx_ptnr1_PDB_ins_code'                        'From ins_code'                             N 
+AV1 struct_conn                           '_struct_conn.ptnr1_symmetry'                                 'From symmetry'                             N 
+AV1 struct_conn                           '_struct_conn.pdbx_leaving_atom_flag'                         'Leaving Atom Flag'                         N 
+AV1 struct_conn                           '_struct_conn.ptnr2_auth_comp_id'                             'To comp_id'                                N 
+AV1 struct_conn                           '_struct_conn.ptnr2_auth_asym_id'                             'To asym_id'                                N 
+AV1 struct_conn                           '_struct_conn.ptnr2_auth_seq_id'                              'To seq_id'                                 N 
+AV1 struct_conn                           '_struct_conn.ptnr2_label_atom_id'                            'To atom_id'                                N 
+AV1 struct_conn                           '_struct_conn.pdbx_ptnr2_label_alt_id'                        'To alt_id'                                 N 
+AV1 struct_conn                           '_struct_conn.pdbx_ptnr2_PDB_ins_code'                        'To ins_code'                               N 
+AV1 struct_conn                           '_struct_conn.ptnr2_symmetry'                                 'To symmetry'                               N 
+AV1 struct_conn                           '_struct_conn.pdbx_value_order'                               'Bond order'                                N 
+AV1 struct_conn                           '_struct_conn.pdbx_dist_value'                                'Link distance'                             N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_id'                                ID                                          N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.auth_comp_id'                           'From author comp_id'                       N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.auth_asym_id'                           'From author asym_id'                       N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_ins_code'                     'From author ins_code'                      N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.auth_seq_id'                            'From author seq_id'                        N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.label_alt_id'                           'From alt_id'                               N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.label_comp_id'                          'From comp_id'                              N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.label_asym_id'                          'From asym_id'                              N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_ins_code'                      'From ins_code'                             N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.label_seq_id'                           'From seq_id'                               N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_comp_id_2'                    'To author comp_id'                         N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_asym_id_2'                    'To author asym_id'                         N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_ins_code_2'                   'To author ins_code'                        N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_seq_id_2'                     'To author seq_id'                          N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_comp_id_2'                   'To comp_id'                                N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_asym_id_2'                   'To asym_id'                                N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_ins_code_2'                    'To ins_code'                               N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_seq_id_2'                    'To seq_id'                                 N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_omega_angle'                       'Omega angle'                               N 
+AV1 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_model_num'                     'Model number'                              N 
+AV1 struct_site                           '_struct_site.id'                                             id                                          N 
+AV1 struct_site                           '_struct_site.details'                                        details                                     N 
+AV1 struct_site                           '_struct_site.pdbx_evidence_code'                             pdbx_evidence_code                          N 
+AV1 struct_site_gen                       '_struct_site_gen.id'                                         id                                          N 
+AV1 struct_site_gen                       '_struct_site_gen.site_id'                                    site_id                                     N 
+AV1 struct_site_gen                       '_struct_site_gen.pdbx_num_res'                               pdbx_num_res                                N 
+AV1 struct_site_gen                       '_struct_site_gen.label_comp_id'                              label_comp_id                               N 
+AV1 struct_site_gen                       '_struct_site_gen.label_asym_id'                              label_asym_id                               N 
+AV1 struct_site_gen                       '_struct_site_gen.label_seq_id'                               label_seq_id                                N 
+AV1 struct_site_gen                       '_struct_site_gen.pdbx_auth_ins_code'                         pdbx_auth_ins_code                          N 
+AV1 struct_site_gen                       '_struct_site_gen.auth_comp_id'                               auth_comp_id                                N 
+AV1 struct_site_gen                       '_struct_site_gen.auth_asym_id'                               auth_asym_id                                N 
+AV1 struct_site_gen                       '_struct_site_gen.auth_seq_id'                                auth_seq_id                                 N 
+AV1 struct_site_gen                       '_struct_site_gen.label_atom_id'                              label_atom_id                               N 
+AV1 struct_site_gen                       '_struct_site_gen.label_alt_id'                               label_alt_id                                N 
+AV1 struct_site_gen                       '_struct_site_gen.symmetry'                                   symmetry                                    N 
+AV1 struct_site_gen                       '_struct_site_gen.details'                                    details                                     N 
+AV1 struct_sheet                          '_struct_sheet.id'                                            id                                          N 
+AV1 struct_sheet                          '_struct_sheet.type'                                          type                                        N 
+AV1 struct_sheet                          '_struct_sheet.number_strands'                                number_strands                              N 
+AV1 struct_sheet                          '_struct_sheet.details'                                       details                                     N 
+AV1 struct_sheet_order                    '_struct_sheet_order.sheet_id'                                sheet_id                                    N 
+AV1 struct_sheet_order                    '_struct_sheet_order.range_id_1'                              range_id_1                                  N 
+AV1 struct_sheet_order                    '_struct_sheet_order.range_id_2'                              range_id_2                                  N 
+AV1 struct_sheet_order                    '_struct_sheet_order.sense'                                   sense                                       N 
+AV1 struct_sheet_order                    '_struct_sheet_order.offset'                                  offset                                      N 
+AV1 struct_sheet_range                    '_struct_sheet_range.sheet_id'                                sheet_id                                    N 
+AV1 struct_sheet_range                    '_struct_sheet_range.id'                                      id                                          N 
+AV1 struct_sheet_range                    '_struct_sheet_range.beg_label_comp_id'                       beg_label_comp_id                           N 
+AV1 struct_sheet_range                    '_struct_sheet_range.beg_label_asym_id'                       beg_label_asym_id                           N 
+AV1 struct_sheet_range                    '_struct_sheet_range.beg_label_seq_id'                        beg_label_seq_id                            N 
+AV1 struct_sheet_range                    '_struct_sheet_range.pdbx_beg_PDB_ins_code'                   pdbx_beg_PDB_ins_code                       N 
+AV1 struct_sheet_range                    '_struct_sheet_range.end_label_comp_id'                       end_label_comp_id                           N 
+AV1 struct_sheet_range                    '_struct_sheet_range.end_label_asym_id'                       end_label_asym_id                           N 
+AV1 struct_sheet_range                    '_struct_sheet_range.end_label_seq_id'                        end_label_seq_id                            N 
+AV1 struct_sheet_range                    '_struct_sheet_range.pdbx_end_PDB_ins_code'                   pdbx_end_PDB_ins_code                       N 
+AV1 struct_sheet_range                    '_struct_sheet_range.symmetry'                                symmetry                                    N 
+AV1 struct_sheet_range                    '_struct_sheet_range.beg_auth_comp_id'                        beg_auth_comp_id                            N 
+AV1 struct_sheet_range                    '_struct_sheet_range.beg_auth_asym_id'                        beg_auth_asym_id                            N 
+AV1 struct_sheet_range                    '_struct_sheet_range.beg_auth_seq_id'                         beg_auth_seq_id                             N 
+AV1 struct_sheet_range                    '_struct_sheet_range.end_auth_comp_id'                        end_auth_comp_id                            N 
+AV1 struct_sheet_range                    '_struct_sheet_range.end_auth_asym_id'                        end_auth_asym_id                            N 
+AV1 struct_sheet_range                    '_struct_sheet_range.end_auth_seq_id'                         end_auth_seq_id                             N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.sheet_id'                           sheet_id                                    N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_id_1'                         range_id_1                                  N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_id_2'                         range_id_2                                  N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_atom_id'              range_1_label_atom_id                       N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_comp_id'              range_1_label_comp_id                       N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_asym_id'              range_1_label_asym_id                       N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_seq_id'               range_1_label_seq_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_PDB_ins_code'               range_1_PDB_ins_code                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_atom_id'               range_1_auth_atom_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_comp_id'               range_1_auth_comp_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_asym_id'               range_1_auth_asym_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_seq_id'                range_1_auth_seq_id                         N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_atom_id'              range_2_label_atom_id                       N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_comp_id'              range_2_label_comp_id                       N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_asym_id'              range_2_label_asym_id                       N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_seq_id'               range_2_label_seq_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_PDB_ins_code'               range_2_PDB_ins_code                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_atom_id'               range_2_auth_atom_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_comp_id'               range_2_auth_comp_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_asym_id'               range_2_auth_asym_id                        N 
+AV1 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_seq_id'                range_2_auth_seq_id                         N 
+AV1 struct_conf_type                      '_struct_conf_type.id'                                        id                                          N 
+AV1 struct_conf_type                      '_struct_conf_type.criteria'                                  criteria                                    N 
+AV1 struct_conf_type                      '_struct_conf_type.reference'                                 reference                                   N 
+AV1 struct_conf                           '_struct_conf.conf_type_id'                                   conf_type_id                                N 
+AV1 struct_conf                           '_struct_conf.id'                                             id                                          N 
+AV1 struct_conf                           '_struct_conf.pdbx_PDB_helix_id'                              pdbx_PDB_helix_id                           N 
+AV1 struct_conf                           '_struct_conf.beg_label_comp_id'                              beg_label_comp_id                           N 
+AV1 struct_conf                           '_struct_conf.beg_label_asym_id'                              beg_label_asym_id                           N 
+AV1 struct_conf                           '_struct_conf.beg_label_seq_id'                               beg_label_seq_id                            N 
+AV1 struct_conf                           '_struct_conf.pdbx_beg_PDB_ins_code'                          pdbx_beg_PDB_ins_code                       N 
+AV1 struct_conf                           '_struct_conf.end_label_comp_id'                              end_label_comp_id                           N 
+AV1 struct_conf                           '_struct_conf.end_label_asym_id'                              end_label_asym_id                           N 
+AV1 struct_conf                           '_struct_conf.end_label_seq_id'                               end_label_seq_id                            N 
+AV1 struct_conf                           '_struct_conf.pdbx_end_PDB_ins_code'                          pdbx_end_PDB_ins_code                       N 
+AV1 struct_conf                           '_struct_conf.beg_auth_comp_id'                               beg_auth_comp_id                            N 
+AV1 struct_conf                           '_struct_conf.beg_auth_asym_id'                               beg_auth_asym_id                            N 
+AV1 struct_conf                           '_struct_conf.beg_auth_seq_id'                                beg_auth_seq_id                             N 
+AV1 struct_conf                           '_struct_conf.end_auth_comp_id'                               end_auth_comp_id                            N 
+AV1 struct_conf                           '_struct_conf.end_auth_asym_id'                               end_auth_asym_id                            N 
+AV1 struct_conf                           '_struct_conf.end_auth_seq_id'                                end_auth_seq_id                             N 
+AV1 struct_conf                           '_struct_conf.pdbx_PDB_helix_class'                           pdbx_PDB_helix_class                        N 
+AV1 struct_conf                           '_struct_conf.details'                                        details                                     N 
+AV1 struct_conf                           '_struct_conf.pdbx_PDB_helix_length'                          pdbx_PDB_helix_length                       N 
+AV1 pdbx_struct_assembly                  '_pdbx_struct_assembly.id'                                    id                                          N 
+AV1 pdbx_struct_assembly                  '_pdbx_struct_assembly.details'                               details                                     N 
+AV1 pdbx_struct_assembly                  '_pdbx_struct_assembly.method_details'                        method_details                              N 
+AV1 pdbx_struct_assembly                  '_pdbx_struct_assembly.oligomeric_details'                    oligomeric_details                          N 
+AV1 pdbx_struct_assembly                  '_pdbx_struct_assembly.oligomeric_count'                      oligomeric_count                            N 
+AV1 pdbx_struct_assembly_gen              '_pdbx_struct_assembly_gen.assembly_id'                       assembly_id                                 N 
+AV1 pdbx_struct_assembly_gen              '_pdbx_struct_assembly_gen.oper_expression'                   oper_expression                             N 
+AV1 pdbx_struct_assembly_gen              '_pdbx_struct_assembly_gen.asym_id_list'                      asym_id_list                                N 
+AV1 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.biol_id'                          biol_id                                     N 
+AV1 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.type'                             type                                        N 
+AV1 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.value'                            value                                       N 
+AV1 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.details'                          details                                     N 
+AV1 'Assembly details'                    '_struct_biol.id'                                             id                                          N 
+AV1 'Assembly details'                    '_struct_biol.details'                                        details                                     N 
+AV1 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.details'                'depositor assembly info'                   N 
+AV1 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.method_details'         'depositor assembly method'                 N 
+AV1 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.oligomeric_details'     'depositor assembly details'                N 
+AV1 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.oligomeric_count'       'depositor assembly count'                  N 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.id'                              id                                          Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_comp_id'                    auth_comp_id                                Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_asym_id'                    auth_asym_id                                Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_seq_id'                     auth_seq_id                                 Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_atom_id'                    auth_atom_id                                Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_comp_id'                   label_comp_id                               Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_asym_id'                   label_asym_id                               Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_alt_id'                    label_alt_id                                Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_seq_id'                    label_seq_id                                Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_atom_id'                   label_atom_id                               Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.neighbor_ligand_distance'        neighbor_ligand_distance                    Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.neighbor_macromolecule_distance' neighbor_macromolecule_distance             Y 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.PDB_ins_code'                    PDB_ins_code                                N 
+AV1 'distant solvent'                     '_pdbx_distant_solvent_atoms.PDB_model_num'                   PDB_model_num                               Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.id'                          id                                          Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_comp_id'                auth_comp_id                                Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_asym_id'                auth_asym_id                                Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_seq_id'                 auth_seq_id                                 Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_alt_id'                 auth_alt_id                                 Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.PDB_ins_code'                PDB_ins_code                                Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_atom_id'                auth_atom_id                                Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.Cartn_x'                     Cartn_x                                     Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.Cartn_y'                     Cartn_y                                     Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.Cartn_z'                     Cartn_z                                     Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_comp_id'               label_comp_id                               Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_asym_id'               label_asym_id                               Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_seq_id'                label_seq_id                                Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_alt_id'                label_alt_id                                Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_atom_id'               label_atom_id                               Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.occupancy'                   occupancy                                   Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_comp_id'            pre_auth_comp_id                            Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_asym_id'            pre_auth_asym_id                            Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_seq_id'             pre_auth_seq_id                             Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_alt_id'             pre_auth_alt_id                             Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_PDB_ins_code'            pre_PDB_ins_code                            Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_atom_id'            pre_auth_atom_id                            Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_Cartn_x'                 pre_Cartn_x                                 Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_Cartn_y'                 pre_Cartn_y                                 Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_Cartn_z'                 pre_Cartn_z                                 Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.symmetry'                    symmetry                                    Y 
+AV1 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.symmetry_as_xyz'             symmetry_as_xyz                             Y 
+AV2 struct_conn                           '_struct_conn.id'                                             'Link ID'                                   N 
+AV2 struct_conn                           '_struct_conn.conn_type_id'                                   'Link type'                                 N 
+AV2 struct_conn                           '_struct_conn.ptnr1_auth_comp_id'                             'From comp_id'                              N 
+AV2 struct_conn                           '_struct_conn.ptnr1_auth_asym_id'                             'From asym_id'                              N 
+AV2 struct_conn                           '_struct_conn.ptnr1_auth_seq_id'                              'From seq_id'                               N 
+AV2 struct_conn                           '_struct_conn.ptnr1_label_atom_id'                            'From atom_id'                              N 
+AV2 struct_conn                           '_struct_conn.pdbx_ptnr1_label_alt_id'                        'From alt_id'                               N 
+AV2 struct_conn                           '_struct_conn.pdbx_ptnr1_PDB_ins_code'                        'From ins_code'                             N 
+AV2 struct_conn                           '_struct_conn.ptnr1_symmetry'                                 'From symmetry'                             N 
+AV2 struct_conn                           '_struct_conn.pdbx_leaving_atom_flag'                         'Leaving Atom Flag'                         N 
+AV2 struct_conn                           '_struct_conn.ptnr2_auth_comp_id'                             'To comp_id'                                N 
+AV2 struct_conn                           '_struct_conn.ptnr2_auth_asym_id'                             'To asym_id'                                N 
+AV2 struct_conn                           '_struct_conn.ptnr2_auth_seq_id'                              'To seq_id'                                 N 
+AV2 struct_conn                           '_struct_conn.ptnr2_label_atom_id'                            'To atom_id'                                N 
+AV2 struct_conn                           '_struct_conn.pdbx_ptnr2_label_alt_id'                        'To alt_id'                                 N 
+AV2 struct_conn                           '_struct_conn.pdbx_ptnr2_PDB_ins_code'                        'To ins_code'                               N 
+AV2 struct_conn                           '_struct_conn.ptnr2_symmetry'                                 'To symmetry'                               N 
+AV2 struct_conn                           '_struct_conn.pdbx_value_order'                               'Bond order'                                N 
+AV2 struct_conn                           '_struct_conn.pdbx_dist_value'                                'Link distance'                             N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_id'                                ID                                          N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.auth_comp_id'                           'From author comp_id'                       N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.auth_asym_id'                           'From author asym_id'                       N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_ins_code'                     'From author ins_code'                      N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.auth_seq_id'                            'From author seq_id'                        N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.label_alt_id'                           'From alt_id'                               N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.label_comp_id'                          'From comp_id'                              N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.label_asym_id'                          'From asym_id'                              N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_ins_code'                      'From ins_code'                             N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.label_seq_id'                           'From seq_id'                               N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_comp_id_2'                    'To author comp_id'                         N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_asym_id_2'                    'To author asym_id'                         N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_ins_code_2'                   'To author ins_code'                        N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_auth_seq_id_2'                     'To author seq_id'                          N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_comp_id_2'                   'To comp_id'                                N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_asym_id_2'                   'To asym_id'                                N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_ins_code_2'                    'To ins_code'                               N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_seq_id_2'                    'To seq_id'                                 N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_omega_angle'                       'Omega angle'                               N 
+AV2 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_model_num'                     'Model number'                              N 
+AV2 struct_site                           '_struct_site.id'                                             id                                          N 
+AV2 struct_site                           '_struct_site.details'                                        details                                     N 
+AV2 struct_site                           '_struct_site.pdbx_evidence_code'                             pdbx_evidence_code                          N 
+AV2 struct_site_gen                       '_struct_site_gen.id'                                         id                                          N 
+AV2 struct_site_gen                       '_struct_site_gen.site_id'                                    site_id                                     N 
+AV2 struct_site_gen                       '_struct_site_gen.pdbx_num_res'                               pdbx_num_res                                N 
+AV2 struct_site_gen                       '_struct_site_gen.label_comp_id'                              label_comp_id                               N 
+AV2 struct_site_gen                       '_struct_site_gen.label_asym_id'                              label_asym_id                               N 
+AV2 struct_site_gen                       '_struct_site_gen.label_seq_id'                               label_seq_id                                N 
+AV2 struct_site_gen                       '_struct_site_gen.pdbx_auth_ins_code'                         pdbx_auth_ins_code                          N 
+AV2 struct_site_gen                       '_struct_site_gen.auth_comp_id'                               auth_comp_id                                N 
+AV2 struct_site_gen                       '_struct_site_gen.auth_asym_id'                               auth_asym_id                                N 
+AV2 struct_site_gen                       '_struct_site_gen.auth_seq_id'                                auth_seq_id                                 N 
+AV2 struct_site_gen                       '_struct_site_gen.label_atom_id'                              label_atom_id                               N 
+AV2 struct_site_gen                       '_struct_site_gen.label_alt_id'                               label_alt_id                                N 
+AV2 struct_site_gen                       '_struct_site_gen.symmetry'                                   symmetry                                    N 
+AV2 struct_site_gen                       '_struct_site_gen.details'                                    details                                     N 
+AV2 struct_sheet                          '_struct_sheet.id'                                            id                                          N 
+AV2 struct_sheet                          '_struct_sheet.type'                                          type                                        N 
+AV2 struct_sheet                          '_struct_sheet.number_strands'                                number_strands                              N 
+AV2 struct_sheet                          '_struct_sheet.details'                                       details                                     N 
+AV2 struct_sheet_order                    '_struct_sheet_order.sheet_id'                                sheet_id                                    N 
+AV2 struct_sheet_order                    '_struct_sheet_order.range_id_1'                              range_id_1                                  N 
+AV2 struct_sheet_order                    '_struct_sheet_order.range_id_2'                              range_id_2                                  N 
+AV2 struct_sheet_order                    '_struct_sheet_order.sense'                                   sense                                       N 
+AV2 struct_sheet_order                    '_struct_sheet_order.offset'                                  offset                                      N 
+AV2 struct_sheet_range                    '_struct_sheet_range.sheet_id'                                sheet_id                                    N 
+AV2 struct_sheet_range                    '_struct_sheet_range.id'                                      id                                          N 
+AV2 struct_sheet_range                    '_struct_sheet_range.beg_label_comp_id'                       beg_label_comp_id                           N 
+AV2 struct_sheet_range                    '_struct_sheet_range.beg_label_asym_id'                       beg_label_asym_id                           N 
+AV2 struct_sheet_range                    '_struct_sheet_range.beg_label_seq_id'                        beg_label_seq_id                            N 
+AV2 struct_sheet_range                    '_struct_sheet_range.pdbx_beg_PDB_ins_code'                   pdbx_beg_PDB_ins_code                       N 
+AV2 struct_sheet_range                    '_struct_sheet_range.end_label_comp_id'                       end_label_comp_id                           N 
+AV2 struct_sheet_range                    '_struct_sheet_range.end_label_asym_id'                       end_label_asym_id                           N 
+AV2 struct_sheet_range                    '_struct_sheet_range.end_label_seq_id'                        end_label_seq_id                            N 
+AV2 struct_sheet_range                    '_struct_sheet_range.pdbx_end_PDB_ins_code'                   pdbx_end_PDB_ins_code                       N 
+AV2 struct_sheet_range                    '_struct_sheet_range.symmetry'                                symmetry                                    N 
+AV2 struct_sheet_range                    '_struct_sheet_range.beg_auth_comp_id'                        beg_auth_comp_id                            N 
+AV2 struct_sheet_range                    '_struct_sheet_range.beg_auth_asym_id'                        beg_auth_asym_id                            N 
+AV2 struct_sheet_range                    '_struct_sheet_range.beg_auth_seq_id'                         beg_auth_seq_id                             N 
+AV2 struct_sheet_range                    '_struct_sheet_range.end_auth_comp_id'                        end_auth_comp_id                            N 
+AV2 struct_sheet_range                    '_struct_sheet_range.end_auth_asym_id'                        end_auth_asym_id                            N 
+AV2 struct_sheet_range                    '_struct_sheet_range.end_auth_seq_id'                         end_auth_seq_id                             N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.sheet_id'                           sheet_id                                    N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_id_1'                         range_id_1                                  N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_id_2'                         range_id_2                                  N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_atom_id'              range_1_label_atom_id                       N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_comp_id'              range_1_label_comp_id                       N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_asym_id'              range_1_label_asym_id                       N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_label_seq_id'               range_1_label_seq_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_PDB_ins_code'               range_1_PDB_ins_code                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_atom_id'               range_1_auth_atom_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_comp_id'               range_1_auth_comp_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_asym_id'               range_1_auth_asym_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_1_auth_seq_id'                range_1_auth_seq_id                         N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_atom_id'              range_2_label_atom_id                       N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_comp_id'              range_2_label_comp_id                       N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_asym_id'              range_2_label_asym_id                       N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_label_seq_id'               range_2_label_seq_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_PDB_ins_code'               range_2_PDB_ins_code                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_atom_id'               range_2_auth_atom_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_comp_id'               range_2_auth_comp_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_asym_id'               range_2_auth_asym_id                        N 
+AV2 pdbx_struct_sheet_hbond               '_pdbx_struct_sheet_hbond.range_2_auth_seq_id'                range_2_auth_seq_id                         N 
+AV2 struct_conf_type                      '_struct_conf_type.id'                                        id                                          N 
+AV2 struct_conf_type                      '_struct_conf_type.criteria'                                  criteria                                    N 
+AV2 struct_conf_type                      '_struct_conf_type.reference'                                 reference                                   N 
+AV2 struct_conf                           '_struct_conf.conf_type_id'                                   conf_type_id                                N 
+AV2 struct_conf                           '_struct_conf.id'                                             id                                          N 
+AV2 struct_conf                           '_struct_conf.pdbx_PDB_helix_id'                              pdbx_PDB_helix_id                           N 
+AV2 struct_conf                           '_struct_conf.beg_label_comp_id'                              beg_label_comp_id                           N 
+AV2 struct_conf                           '_struct_conf.beg_label_asym_id'                              beg_label_asym_id                           N 
+AV2 struct_conf                           '_struct_conf.beg_label_seq_id'                               beg_label_seq_id                            N 
+AV2 struct_conf                           '_struct_conf.pdbx_beg_PDB_ins_code'                          pdbx_beg_PDB_ins_code                       N 
+AV2 struct_conf                           '_struct_conf.end_label_comp_id'                              end_label_comp_id                           N 
+AV2 struct_conf                           '_struct_conf.end_label_asym_id'                              end_label_asym_id                           N 
+AV2 struct_conf                           '_struct_conf.end_label_seq_id'                               end_label_seq_id                            N 
+AV2 struct_conf                           '_struct_conf.pdbx_end_PDB_ins_code'                          pdbx_end_PDB_ins_code                       N 
+AV2 struct_conf                           '_struct_conf.beg_auth_comp_id'                               beg_auth_comp_id                            N 
+AV2 struct_conf                           '_struct_conf.beg_auth_asym_id'                               beg_auth_asym_id                            N 
+AV2 struct_conf                           '_struct_conf.beg_auth_seq_id'                                beg_auth_seq_id                             N 
+AV2 struct_conf                           '_struct_conf.end_auth_comp_id'                               end_auth_comp_id                            N 
+AV2 struct_conf                           '_struct_conf.end_auth_asym_id'                               end_auth_asym_id                            N 
+AV2 struct_conf                           '_struct_conf.end_auth_seq_id'                                end_auth_seq_id                             N 
+AV2 struct_conf                           '_struct_conf.pdbx_PDB_helix_class'                           pdbx_PDB_helix_class                        N 
+AV2 struct_conf                           '_struct_conf.details'                                        details                                     N 
+AV2 struct_conf                           '_struct_conf.pdbx_PDB_helix_length'                          pdbx_PDB_helix_length                       N 
+AV2 pdbx_struct_assembly                  '_pdbx_struct_assembly.id'                                    id                                          N 
+AV2 pdbx_struct_assembly                  '_pdbx_struct_assembly.details'                               details                                     N 
+AV2 pdbx_struct_assembly                  '_pdbx_struct_assembly.method_details'                        method_details                              N 
+AV2 pdbx_struct_assembly                  '_pdbx_struct_assembly.oligomeric_details'                    oligomeric_details                          N 
+AV2 pdbx_struct_assembly                  '_pdbx_struct_assembly.oligomeric_count'                      oligomeric_count                            N 
+AV2 pdbx_struct_assembly_gen              '_pdbx_struct_assembly_gen.assembly_id'                       assembly_id                                 N 
+AV2 pdbx_struct_assembly_gen              '_pdbx_struct_assembly_gen.oper_expression'                   oper_expression                             N 
+AV2 pdbx_struct_assembly_gen              '_pdbx_struct_assembly_gen.asym_id_list'                      asym_id_list                                N 
+AV2 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.biol_id'                          biol_id                                     N 
+AV2 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.type'                             type                                        N 
+AV2 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.value'                            value                                       N 
+AV2 pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.details'                          details                                     N 
+AV2 'Assembly details'                    '_struct_biol.id'                                             id                                          N 
+AV2 'Assembly details'                    '_struct_biol.details'                                        details                                     N 
+AV2 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.details'                'depositor assembly info'                   N 
+AV2 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.method_details'         'depositor assembly method'                 N 
+AV2 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.oligomeric_details'     'depositor assembly details'                N 
+AV2 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.oligomeric_count'       'depositor assembly count'                  N 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.id'                              id                                          Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_comp_id'                    auth_comp_id                                Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_asym_id'                    auth_asym_id                                Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_seq_id'                     auth_seq_id                                 Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_atom_id'                    auth_atom_id                                Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_comp_id'                   label_comp_id                               Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_asym_id'                   label_asym_id                               Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_alt_id'                    label_alt_id                                Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_seq_id'                    label_seq_id                                Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.label_atom_id'                   label_atom_id                               Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.neighbor_ligand_distance'        neighbor_ligand_distance                    Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.neighbor_macromolecule_distance' neighbor_macromolecule_distance             Y 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.PDB_ins_code'                    PDB_ins_code                                N 
+AV2 'distant solvent'                     '_pdbx_distant_solvent_atoms.PDB_model_num'                   PDB_model_num                               Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.id'                          id                                          Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_comp_id'                auth_comp_id                                Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_asym_id'                auth_asym_id                                Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_seq_id'                 auth_seq_id                                 Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_alt_id'                 auth_alt_id                                 Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.PDB_ins_code'                PDB_ins_code                                Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.auth_atom_id'                auth_atom_id                                Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.Cartn_x'                     Cartn_x                                     Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.Cartn_y'                     Cartn_y                                     Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.Cartn_z'                     Cartn_z                                     Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_comp_id'               label_comp_id                               Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_asym_id'               label_asym_id                               Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_seq_id'                label_seq_id                                Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_alt_id'                label_alt_id                                Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.label_atom_id'               label_atom_id                               Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.occupancy'                   occupancy                                   Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_comp_id'            pre_auth_comp_id                            Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_asym_id'            pre_auth_asym_id                            Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_seq_id'             pre_auth_seq_id                             Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_alt_id'             pre_auth_alt_id                             Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_PDB_ins_code'            pre_PDB_ins_code                            Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_auth_atom_id'            pre_auth_atom_id                            Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_Cartn_x'                 pre_Cartn_x                                 Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_Cartn_y'                 pre_Cartn_y                                 Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.pre_Cartn_z'                 pre_Cartn_z                                 Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.symmetry'                    symmetry                                    Y 
+AV2 'solvent atom mapping'                '_pdbx_solvent_atom_site_mapping.symmetry_as_xyz'             symmetry_as_xyz                             Y 
+AV2 ndb_struct_conf_na                    '_ndb_struct_conf_na.entry_id'                                entry_id                                    Y 
+AV2 ndb_struct_conf_na                    '_ndb_struct_conf_na.feature'                                 feature                                     Y 
+AV2 ndb_struct_conf_na                    '_ndb_struct_conf_na.feature_count'                           feature_count                               Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.buckle'                             buckle                                      Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.hbond_type_12'                      hbond_type_12                               Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.hbond_type_28'                      hbond_type_28                               Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_auth_asym_id'                     i_auth_asym_id                              Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_auth_seq_id'                      i_auth_seq_id                               Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_label_asym_id'                    i_label_asym_id                             Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_label_comp_id'                    i_label_comp_id                             Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_label_seq_id'                     i_label_seq_id                              Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_PDB_ins_code'                     i_PDB_ins_code                              Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.i_symmetry'                         i_symmetry                                  Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_auth_asym_id'                     j_auth_asym_id                              Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_auth_seq_id'                      j_auth_seq_id                               Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_label_asym_id'                    j_label_asym_id                             Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_label_comp_id'                    j_label_comp_id                             Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_label_seq_id'                     j_label_seq_id                              Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_PDB_ins_code'                     j_PDB_ins_code                              Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.j_symmetry'                         j_symmetry                                  Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.model_number'                       model_number                                Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.opening'                            opening                                     Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.pair_name'                          pair_name                                   Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.pair_number'                        pair_number                                 Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.propeller'                          propeller                                   Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.shear'                              shear                                       Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.stagger'                            stagger                                     Y 
+AV2 ndb_struct_na_base_pair               '_ndb_struct_na_base_pair.stretch'                            stretch                                     Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.helical_rise'                  helical_rise                                Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.helical_twist'                 helical_twist                               Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_auth_asym_id_1'              i_auth_asym_id_1                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_auth_asym_id_2'              'i_auth_asym_id_2 '                         Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_auth_seq_id_1'               'i_auth_seq_id_1 '                          Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_auth_seq_id_2'               'i_auth_seq_id_2 '                          Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_label_asym_id_1'             'i_label_asym_id_1 '                        Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_label_asym_id_2'             i_label_asym_id_2                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_label_comp_id_1'             i_label_comp_id_1                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_label_comp_id_2'             i_label_comp_id_2                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_label_seq_id_1'              i_label_seq_id_1                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_label_seq_id_2'              i_label_seq_id_2                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_PDB_ins_code_1'              i_PDB_ins_code_1                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_PDB_ins_code_2'              i_PDB_ins_code_2                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_symmetry_1'                  i_symmetry_1                                Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.i_symmetry_2'                  i_symmetry_2                                Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.inclination'                   inclination                                 Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_auth_asym_id_1'              j_auth_asym_id_1                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_auth_asym_id_2'              j_auth_asym_id_2                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_auth_seq_id_1'               j_auth_seq_id_1                             Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_auth_seq_id_2'               j_auth_seq_id_2                             Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_label_asym_id_1'             j_label_asym_id_1                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_label_asym_id_2'             j_label_asym_id_2                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_label_comp_id_1'             j_label_comp_id_1                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_label_comp_id_2'             j_label_comp_id_2                           Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_label_seq_id_1'              j_label_seq_id_1                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_label_seq_id_2'              j_label_seq_id_2                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_PDB_ins_code_1'              j_PDB_ins_code_1                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_PDB_ins_code_2'              j_PDB_ins_code_2                            Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_symmetry_1'                  j_symmetry_1                                Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.j_symmetry_2'                  j_symmetry_2                                Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.model_number'                  model_number                                Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.rise'                          rise                                        Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.roll'                          roll                                        Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.shift'                         shift                                       Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.slide'                         slide                                       Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.step_name'                     step_name                                   Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.step_number'                   step_number                                 Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.tilt'                          tilt                                        Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.tip'                           tip                                         Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.twist'                         twist                                       Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.x_displacement'                x_displacement                              Y 
+AV2 ndb_struct_na_base_pair_step          '_ndb_struct_na_base_pair_step.y_displacement'                y_displacement                              Y 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.prd_id'                             'PRD ID'                                    Y 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.name'                               'Molecule Name'                             N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.formula'                            'Molecule Formula'                          Y 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.release_status'                     'Release Status'                            Y 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.replaced_by'                        'Superseded PRD id'                         N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.replaces'                           'Obsoleted PRD id'                          N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.represent_as'                       'Representation Polymer or Single Molecule' N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.representative_PDB_id_code'         'Representative PDB code'                   N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.chem_comp_id'                       'Chem Comp Code for Single Molecule'        N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.class'                              'Functional Features'                       N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.class_evidence_code'                'Evidence for the functional assignment'    N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.type'                               'Structural Features'                       N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.type_evidence_code'                 'Evidence for the structural assignment'    N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.compound_details'                   'Details about this molecule'               N 
+AV3 pdbx_reference_molecule               '_pdbx_reference_molecule.description'                        'Structure Description'                     N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.prd_id'                       'PRD ID'                                    Y 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.ordinal'                      ID                                          Y 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.organism_scientific'          'Scientific Name'                           N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.strain'                       Strain                                      N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.taxid'                        'Taxonomy ID'                               N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.db_name'                      'The database name for data source'         N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.db_code'                      'The database code for data source'         N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.source'                       'The data source name'                      N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.source_id'                    'The data source ID'                        N 
+AV3 pdbx_reference_entity_src_nat         '_pdbx_reference_entity_src_nat.ref_entity_id'                'Entity ID referenced'                      N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.prd_id'                          'PRD ID'                                    Y 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.link_id'                         'Link ID'                                   Y 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.link_class'                      'Link class'                                Y 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.ref_entity_id_1'                 'Entity ID'                                 Y 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.entity_seq_num_1'                'Residue number'                            N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.comp_id_1'                       'Residue name'                              N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.atom_id_1'                       'Atom name'                                 N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.ref_entity_id_2'                 'Entity ID'                                 Y 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.entity_seq_num_2'                'Residue number'                            N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.comp_id_2'                       'Residue name'                              N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.atom_id_2'                       'Atom name'                                 N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.value_order'                     'Bond order'                                N 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.component_1'                     'First component ID'                        Y 
+AV3 'Linkage between entities'            '_pdbx_reference_entity_link.component_2'                     'Second component ID'                       Y 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.prd_id'                     'PRD ID'                                    Y 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.ref_entity_id'              'Entity ID'                                 Y 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.component_id'               'Component ID'                              Y 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.link_id'                    'Link ID'                                   Y 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.entity_seq_num_1'           'Residue number'                            N 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.comp_id_1'                  'Residue name'                              N 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.atom_id_1'                  'Atom name'                                 N 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.entity_seq_num_2'           'Residue number'                            N 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.comp_id_2'                  'Residue name'                              N 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.atom_id_2'                  'Atom name'                                 N 
+AV3 'Linkage within a polymer entity'     '_pdbx_reference_entity_poly_link.value_order'                'Bond order'                                N 
+AV3 'List of entities'                    '_pdbx_reference_entity_list.prd_id'                          'PRD ID'                                    Y
+AV3 'List of entities'                    '_pdbx_reference_entity_list.ref_entity_id'                   ID                                          Y
+AV3 'List of entities'                    '_pdbx_reference_entity_list.component_id'                    'Component ID'                              Y
+AV3 'List of entities'                    '_pdbx_reference_entity_list.type'                            Type                                        N
+AV3 'List of entities'                    '_pdbx_reference_entity_list.details'                         Details                                     N
+AV3 'Polymer details'                     '_pdbx_reference_entity_poly.prd_id'                          'PRD ID'                                    Y 
+AV3 'Polymer details'                     '_pdbx_reference_entity_poly.ref_entity_id'                   'Entity ID'                                 Y 
+AV3 'Polymer details'                     '_pdbx_reference_entity_poly.type'                            Type                                        N
+AV3 'Polymer details'                     '_pdbx_reference_entity_poly.db_code'                         'DB code'                                   N
+AV3 'Polymer details'                     '_pdbx_reference_entity_poly.db_name'                         'DB name'                                   N
+AV3 'Additional features'                 '_pdbx_reference_entity_sequence.prd_id'                      'PRD ID'                                    Y 
+AV3 'Additional features'                 '_pdbx_reference_entity_sequence.ref_entity_id'               'Entity ID'                                 Y 
+AV3 'Additional features'                 '_pdbx_reference_entity_sequence.type'                        Type                                        N
+AV3 'Additional features'                 '_pdbx_reference_entity_sequence.NRP_flag'                    'NRP flag'                                  N
+AV3 'Additional features'                 '_pdbx_reference_entity_sequence.one_letter_codes'            'One letter codes'                          Y
+
+
+AV3 'PRD Revision History'                '_pdbx_prd_audit.prd_id'                                      'PRD ID'                                    Y 
+AV3 'PRD Revision History'                '_pdbx_prd_audit.date'                                        Date                                        N 
+AV3 'PRD Revision History'                '_pdbx_prd_audit.processing_site'                             'Processing site'                           N 
+AV3 'PRD Revision History'                '_pdbx_prd_audit.action_type'                                 'Action type'                               N 
+AV3 'PRD Revision History'                '_pdbx_prd_audit.annotator'                                   Annotator                                   N 
+AV3 'PRD Revision History'                '_pdbx_prd_audit.details'                                     Details                                     N 
+# 
