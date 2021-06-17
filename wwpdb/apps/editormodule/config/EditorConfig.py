@@ -79,6 +79,7 @@ class EditorConfig(object):
     purgeSkeletonRowList = ["database_PDB_caveat",
                             "diffrn_radiation_wavelength",
                             "em_sample_support",
+                            "em_focused_ion_beam",
                             "entity_src_gen",
                             "entity_src_nat",
                             "pdbx_database_proc",
