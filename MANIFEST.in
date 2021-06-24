@@ -1,0 +1,1 @@
+recursive-include wwpdb/apps/editormodule/config *.cif
