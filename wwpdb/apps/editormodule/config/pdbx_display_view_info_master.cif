@@ -392,6 +392,7 @@ em_depui                           '_em_depui.same_title_as_pdb'                
 em_depui                           '_em_depui.same_authors_as_pdb'                               same_authors_as_pdb                              N
 em_author_list                     '_em_author_list.ordinal'                                     ID                                               N
 em_author_list                     '_em_author_list.author'                                      Author                                           N
+em_author_list                     '_em_author_list.identifier_ORCID'                            ORCID                                            N
 struct_keywords                    '_struct_keywords.pdbx_keywords'                              Header                                           N
 struct_keywords                    '_struct_keywords.text'                                       Keywords                                         N
 struct_keywords                    '_struct_keywords.pdbx_details'                               'PDBX details'                                   N
