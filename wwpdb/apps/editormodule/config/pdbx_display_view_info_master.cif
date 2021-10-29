@@ -1355,6 +1355,7 @@ em_entity_assembly                 '_em_entity_assembly.name'                   
 em_entity_assembly                 '_em_entity_assembly.parent_id'                               parent_id                                        N
 em_entity_assembly                 '_em_entity_assembly.source'                                  source                                           N
 em_entity_assembly                 '_em_entity_assembly.type'                                    type                                             N
+em_entity_assembly                 'em_entity_assembly.chimera'                                  chimera                                          N
 em_entity_assembly_molwt           '_em_entity_assembly_molwt.id'                                id                                               N
 em_entity_assembly_molwt           '_em_entity_assembly_molwt.entity_assembly_id'                assembly_id                                      N
 em_entity_assembly_molwt           '_em_entity_assembly_molwt.value'                             value                                            N
