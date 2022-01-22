@@ -14,7 +14,8 @@ __version__ = "V0.01"
 
 import unittest
 
-from wwpdb.apps.editormodule.webapp.EditorWebApp import EditorWebApp
+from wwpdb.apps.editormodule.webapp.EditorWebApp import EditorWebApp  # noqa: F401
+
 
 class ImportTests(unittest.TestCase):
     def setUp(self):
