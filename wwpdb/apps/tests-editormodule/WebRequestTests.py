@@ -111,7 +111,6 @@ class ResponseTests(unittest.TestCase):
         if not os.path.exists(sdir):  # pragma: no cover
             os.makedirs(sdir)
         self.__paramDict = {"TopSessionPath": [self.__sessiontop], "request_path": ["service/testpath"]}
-        self.__HERE = HERE
 
     def testResponseConent(self):
         """Tests WebRequest access"""

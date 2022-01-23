@@ -2349,9 +2349,10 @@ class PdbxDataIo(object):
 
         for colIndx in reversed(orderby):
             if allIntDict[colIndx]:
-                sortlist.sort(key=lambda dictEntry: int((list(dictEntry.items()))[0][1][colIndx]), reverse=(colIndx in desc))
+                # The cell-var-from-loop is probably real error - code never worked
+                sortlist.sort(key=lambda dictEntry: int((list(dictEntry.items()))[0][1][colIndx]), reverse=(colIndx in desc))  # pylint: disable=cell-var-from-loop
             else:
-                sortlist.sort(key=lambda dictEntry: (list(dictEntry.items()))[0][1][colIndx], reverse=(colIndx in desc))
+                sortlist.sort(key=lambda dictEntry: (list(dictEntry.items()))[0][1][colIndx], reverse=(colIndx in desc))  # pylint: disable=cell-var-from-loop
 
         return sortlist
 
