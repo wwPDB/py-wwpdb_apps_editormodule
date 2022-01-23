@@ -38,10 +38,9 @@ class EditorDataImport(object):
 
     """
 
-    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):
+    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
         self.__verbose = verbose
         self.__reqObj = reqObj
-        self.__lfh = log
         #
         self.__sessionObj = None
         #
@@ -55,15 +54,14 @@ class EditorDataImport(object):
 
         try:
             self.__sessionObj = self.__reqObj.getSessionObj()
-            self.__sessionPath = self.__sessionObj.getPath()
             self.__identifier = str(self.__reqObj.getValue("identifier")).upper()
             self.__instance = str(self.__reqObj.getValue("instance")).upper()
             self.__fileSource = "archive"  # 2012-09-25, decision made to always source model file from archival storage instead of instance (may need to revisit)
-            """
-            self.__fileSource  = str(self.__reqObj.getValue("filesource")).lower()
-            if self.__fileSource not in ['archive', 'wf-archive', 'wf-instance', 'wf_archive', 'wf_instance']:
-                self.__fileSource = 'archive'
-            """
+            #
+            # self.__fileSource  = str(self.__reqObj.getValue("filesource")).lower()
+            # if self.__fileSource not in ['archive', 'wf-archive', 'wf-instance', 'wf_archive', 'wf_instance']:
+            #     self.__fileSource = 'archive'
+            #
             if self.__verbose:
                 logger.info("+EditorDataImport.__setup() file source %s", self.__fileSource)
                 logger.info("+EditorDataImport.__setup() identifier  %s", self.__identifier)
@@ -74,11 +72,11 @@ class EditorDataImport(object):
                 logger.info("+EditorDataImport.__setup() sessionId %s failed", self.__sessionObj.getId())
 
     def getModelPdxFilePath(self):
-        return self.__getWfFilePath(contentType="model", format="pdbx", fileSource=self.__fileSource, version="latest")
+        return self.__getWfFilePath(contentType="model", fmt="pdbx", fileSource=self.__fileSource, version="latest")
 
-    def __getWfFilePath(self, contentType="model", format="pdbx", fileSource="archive", version="latest"):
+    def __getWfFilePath(self, contentType="model", fmt="pdbx", fileSource="archive", version="latest"):
         try:
-            fPath = self.__getWfFilePathRef(contentType=contentType, format=format, fileSource=fileSource, version=version)
+            fPath = self.__getWfFilePathRef(contentType=contentType, fmt=fmt, fileSource=fileSource, version=version)
             if self.__verbose:
                 logger.info("+EditorDataImport.__getWfFilePath() checking %s  path %s", contentType, fPath)
             if fPath is not None and os.access(fPath, os.R_OK):
@@ -90,7 +88,7 @@ class EditorDataImport(object):
                 logger.exception("In __getWfFilePath")
             return None
 
-    def __getWfFilePathRef(self, contentType="model", format="pdbx", fileSource="archive", version="latest"):
+    def __getWfFilePathRef(self, contentType="model", fmt="pdbx", fileSource="archive", version="latest"):
         """Return the path to the latest version of the"""
         #
         # Get PDBx model file -
@@ -107,7 +105,7 @@ class EditorDataImport(object):
         else:
             logger.info("+EditorDataImport.__getWfFilePath() Bad file source for %s id %s wf id %s", contentType, self.__identifier, self.__instance)
         #
-        dfRef.setContentTypeAndFormat(contentType, format)
+        dfRef.setContentTypeAndFormat(contentType, fmt)
         dfRef.setVersionId(version)
         #
         fP = None

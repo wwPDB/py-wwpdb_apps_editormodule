@@ -29,15 +29,28 @@ from wwpdb.utils.session.SessionManager import SessionManager
 class WebRequest(object):
     """Base container and accessors for input and output parameters and control information."""
 
-    def __init__(self, paramDict=None, verbose=False):
+    def __init__(self, paramDict=None, verbose=False):  # pylint: disable=unused-argument
         if paramDict is None:
             paramDict = {}
-        self.__verbose = verbose
         #
         #  Input and storage model is dictionary of lists (e.g. dict[myKey] = [,,,])
         #  Single values are stored in the leading element of the list (e.g. dict[myKey][0])
         #
         self.__dict = paramDict
+
+    def __str__(self):
+        try:
+            sL = []
+            sL.append("\n+WebRequest.printIt() WebRequest dictionary contents:\n")
+            for k, vL in self.__dict.items():
+                sL.append("  - Key: %-35s  value(s): %r\n" % (k, vL))
+            sL.append("   --------------------------------------------\n")
+            return "".join(sL)
+        except:  # noqa: E722 pylint: disable=bare-except
+            return ""
+
+    def __repr__(self):
+        return self.__str__()
 
     def printIt(self, ofh=sys.stdout):
         try:
@@ -52,7 +65,7 @@ class WebRequest(object):
         except:  # noqa: E722 pylint: disable=bare-except
             pass
 
-    def dump(self, format="text"):
+    def dump(self, format="text"):  # pylint: disable=redefined-builtin
         oL = []
         try:
             if format == "html":
@@ -133,10 +146,8 @@ class WebRequest(object):
 
 
 class EditorInputRequest(WebRequest):
-    def __init__(self, paramDict, verbose=False, log=sys.stderr):
+    def __init__(self, paramDict, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
         super(EditorInputRequest, self).__init__(paramDict, verbose)
-        self.__verbose = verbose
-        self.__lfh = log
         self.__returnFormatDefault = ""
 
     def setDefaultReturnFormat(self, return_format="html"):
@@ -190,20 +201,18 @@ class EditorInputRequest(WebRequest):
 
         return sObj
 
-        def getIntegerValue(self, myKey):
-            # Handle unicode in request
-            return int(self.getValue(myKey).encode("utf-8"))
+    def getIntegerValue(self, myKey):
+        # Handle unicode in request
+        return int(self.getValue(myKey).encode("utf-8"))
 
 
 class ResponseContent(object):
-    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):
+    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
         """
         Manage content items to be transfered as part of the
         the application response.
 
         """
-        self.__verbose = verbose
-        self.__lfh = log
         self.__reqObj = reqObj
         #
         self.__cD = {}
@@ -239,12 +248,14 @@ class ResponseContent(object):
     def setTextFileE(self, filePath):
         try:
             if os.path.exists(filePath):
-                self.__cD["textcontent"] = open(filePath).read()
+                with open(filePath, "r") as fin:
+                    self.__cD["textcontent"] = fin.read()
         except:  # noqa: E722 pylint: disable=bare-except
             pass
 
     def setTextFile(self, filePath):
-        self.__cD["textcontent"] = open(filePath).read()
+        with open(filePath, "r") as fin:
+            self.__cD["textcontent"] = fin.read()
 
     def setError(self, errMsg="", semaphore=""):
         self.__cD["errorflag"] = True
@@ -287,13 +298,17 @@ class ResponseContent(object):
         #
         return rD
 
-    def __initJsonResponse(self, myD={}):
+    def __initJsonResponse(self, myD=None):
+        if myD is None:
+            myD = {}
         rspDict = {}
         rspDict["CONTENT_TYPE"] = "application/json"
         rspDict["RETURN_STRING"] = dumps(myD)
         return rspDict
 
-    def __initJsonResponseInTextArea(self, myD={}):
+    def __initJsonResponseInTextArea(self, myD=None):
+        if myD is None:
+            myD = {}
         rspDict = {}
         rspDict["CONTENT_TYPE"] = "text/html"
         rspDict["RETURN_STRING"] = "<textarea>" + dumps(myD) + "</textarea>"

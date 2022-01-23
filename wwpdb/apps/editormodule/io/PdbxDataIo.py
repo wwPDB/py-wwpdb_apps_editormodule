@@ -132,7 +132,6 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 import sys
-import traceback
 import time
 import os
 import os.path
@@ -179,8 +178,6 @@ class PdbxDataIo(object):
         #
         self.__sObj = self.__reqObj.newSessionObj()
         self.__sessionPath = self.__sObj.getPath()
-        self.__sessionRelativePath = self.__sObj.getRelativePath()
-        self.__sessionId = self.__sObj.getId()
         #
         self.__cI = ConfigInfo()
         self.__cICommon = ConfigInfoAppCommon()
@@ -214,9 +211,6 @@ class PdbxDataIo(object):
             if self.__context == "entityfix":
                 self.__pathViewFile = get_display_view_info_cif()
         #
-        self.__currentSiteID = self.__cI.get("SITE_PREFIX")
-        self.__currentDeployPath = self.__cI.get("SITE_DEPLOY_PATH")
-        #
         if self.__verbose:
             logger.info("path to view config file is: %s", self.__pathViewFile)
             logger.info("path to view __pathPdbxDictFile is: %s", self.__pathPdbxDictFile)
@@ -230,6 +224,7 @@ class PdbxDataIo(object):
         self.__dataBlockName = None
         self.__entryTitle = None
         self.__entryAccessionIdsLst = None
+        self.__entryExptlMethodsLst = None
         #
         self.__dbFilePath = os.path.join(self.__sessionPath, "dataFile.db")
         self.__dictDbFilePath = os.path.join(self.__sessionPath, "mmcifDict.db")
@@ -400,7 +395,7 @@ class PdbxDataIo(object):
                     self.__dataBlockName = self.__containerList[0].getName().encode("utf-8")
                 else:
                     self.__dataBlockName = self.__containerList[0].getName()
-                logger.info("Datablock name %r" % self.__dataBlockName)
+                logger.info("Datablock name %r", self.__dataBlockName)
                 logger.info("--------------------------------------------")
                 logger.info("identified datablock name %s in sample pdbx data file at: %s", self.__dataBlockName, self.__pathPdbxDataFile)
                 #
@@ -604,7 +599,7 @@ class PdbxDataIo(object):
 
     def getDataStorePath(self):
         logger.info("--------------------------------------------")
-        logger.info("Starting %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
         try:
             if self.__dbFilePath is not None and os.access(self.__dbFilePath, os.R_OK):
@@ -702,7 +697,7 @@ class PdbxDataIo(object):
                         dbLoader.doLoading([exprtFilePath])
                     # ZF, end DB loading
                     if self.__verbose:
-                        logger.info("-- exported updated cif file to %s" % exprtFilePath)
+                        logger.info("-- exported updated cif file to %s", exprtFilePath)
                     return True
                 #
             else:
@@ -715,7 +710,7 @@ class PdbxDataIo(object):
     def getCtgryNavConfig(self):
         """get list of navigation menu config settings"""
         logger.info("--------------------------------------------")
-        logger.info("Starting %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
         configList = []
         #
@@ -806,50 +801,50 @@ class PdbxDataIo(object):
         #
         if self.__debug:
             logger.info("-- navigation menu configList obtained as %r", configList)
-            """ e.g. +PdbxDataIo.getCtgryNavConfig() -- navigation menu configList obtained as
-             [
-                {'no_dropdown_dict': {'Title+Entry%20status+Entry%20Authors+Contact%20Authors+Processing%20notes': ('struct+pdbx_database_status+audit_author+pdbx_contact_author+pdbx_database_proc', 'unit+unit+multi+multi+multi')},  # noqa:E501
-                 'id': 0,
-                 'dsply_lbl': 'Deposition',
-                 'dsply_typ': 'no_dropdown'},
+            # """ e.g. +PdbxDataIo.getCtgryNavConfig() -- navigation menu configList obtained as
+            #  [
+            #     {'no_dropdown_dict': {'Title+Entry%20status+Entry%20Authors+Contact%20Authors+Processing%20notes': ('struct+pdbx_database_status+audit_author+pdbx_contact_author+pdbx_database_proc', 'unit+unit+multi+multi+multi')},  # noqa:E501
+            #      'id': 0,
+            #      'dsply_lbl': 'Deposition',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'Related%20Entries+TargetTrack+SG%20Project+Methods%20Development': ('pdbx_database_related+entity_poly+pdbx_SG_project+pdbx_database_status', 'multi+multi+multi+multi')},  # noqa:E501
-                 'id': 1,
-                 'dsply_lbl': 'Related DB/Entry',
-                 'dsply_typ': 'no_dropdown'},
+            #     {'no_dropdown_dict': {'Related%20Entries+TargetTrack+SG%20Project+Methods%20Development': ('pdbx_database_related+entity_poly+pdbx_SG_project+pdbx_database_status', 'multi+multi+multi+multi')},  # noqa:E501
+            #      'id': 1,
+            #      'dsply_lbl': 'Related DB/Entry',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'Citation+Citation%20Authors+Entry%20Authors': ('citation+citation_author+audit_author', 'multi+multi+multi')},
-                 'id': 2,
-                 'dsply_lbl': 'Citation',
-                 'dsply_typ': 'no_dropdown'},
+            #     {'no_dropdown_dict': {'Citation+Citation%20Authors+Entry%20Authors': ('citation+citation_author+audit_author', 'multi+multi+multi')},
+            #      'id': 2,
+            #      'dsply_lbl': 'Citation',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'Caveat': ('database_PDB_caveat', 'multi')},
-                 'id': 3,
-                 'dsply_lbl': 'Caveat',
-                 'dsply_typ': 'no_dropdown'},
+            #     {'no_dropdown_dict': {'Caveat': ('database_PDB_caveat', 'multi')},
+            #      'id': 3,
+            #      'dsply_lbl': 'Caveat',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'Entity%20Description+Polymer%20Synonym+Entity%20Chain+Entity%20Mapping+Depositor%20Entity%20Mapping+Struct%20Keywords+Other%20Details+Entity%20Features+Title': ('entity+entity_name_com+entity_poly+struct_ref+pdbx_struct_ref_seq_depositor_info+struct_keywords+pdbx_entry_details+pdbx_depui_entity_features+struct', 'multi+multi+multi+multi+multi+multi+multi+multi+unit')},  # noqa:E501
-                 'id': 4,
-                 'dsply_lbl': 'Entity Description',
-                 'dsply_typ': 'no_dropdown'},
+            #     {'no_dropdown_dict': {'Entity%20Description+Polymer%20Synonym+Entity%20Chain+Entity%20Mapping+Depositor%20Entity%20Mapping+Struct%20Keywords+Other%20Details+Entity%20Features+Title': ('entity+entity_name_com+entity_poly+struct_ref+pdbx_struct_ref_seq_depositor_info+struct_keywords+pdbx_entry_details+pdbx_depui_entity_features+struct', 'multi+multi+multi+multi+multi+multi+multi+multi+unit')},  # noqa:E501
+            #      'id': 4,
+            #      'dsply_lbl': 'Entity Description',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'Genetically%20Engineered+Naturally%20Obtained+Synthesized': ('entity_src_gen+entity_src_nat+pdbx_entity_src_syn', 'multi+multi+multi')},
-                 'id': 5,
-                 'dsply_lbl': 'Polymer Source',
-                 'dsply_typ': 'no_dropdown'},
+            #     {'no_dropdown_dict': {'Genetically%20Engineered+Naturally%20Obtained+Synthesized': ('entity_src_gen+entity_src_nat+pdbx_entity_src_syn', 'multi+multi+multi')},
+            #      'id': 5,
+            #      'dsply_lbl': 'Polymer Source',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'exptl_crystal_grow+exptl_crystal+Temperature+diffrn_source+diffrn_radiation+diffrn_radiation_wavelength+Detector+Software': ('exptl_crystal_grow+exptl_crystal+diffrn+diffrn_source+diffrn_radiation+diffrn_radiation_wavelength+diffrn_detector+software', 'multi+multi+multi+multi+multi+multi+multi+multi')},  # noqa:E501
-                 'id': 6,
-                 'dsply_lbl': 'Data Collection',
-                 'dsply_typ': 'no_dropdown'},
+            #     {'no_dropdown_dict': {'exptl_crystal_grow+exptl_crystal+Temperature+diffrn_source+diffrn_radiation+diffrn_radiation_wavelength+Detector+Software': ('exptl_crystal_grow+exptl_crystal+diffrn+diffrn_source+diffrn_radiation+diffrn_radiation_wavelength+diffrn_detector+software', 'multi+multi+multi+multi+multi+multi+multi+multi')},  # noqa:E501
+            #      'id': 6,
+            #      'dsply_lbl': 'Data Collection',
+            #      'dsply_typ': 'no_dropdown'},
 
-                {'no_dropdown_dict': {'Overall%20Data+Highest%20Resolution%20Shell+Overall%20Refinement%20Data+Highest%20Resolution%20Refinement%20Shell': ('reflns+reflns_shell+refine+refine_ls_shell', 'unit+multi+multi+multi')},  # noqa:E501
-                 'id': 7,
-                 'dsply_lbl': 'Reflection/Refinement Data',
-                 'dsply_typ': 'no_dropdown'}
+            #     {'no_dropdown_dict': {'Overall%20Data+Highest%20Resolution%20Shell+Overall%20Refinement%20Data+Highest%20Resolution%20Refinement%20Shell': ('reflns+reflns_shell+refine+refine_ls_shell', 'unit+multi+multi+multi')},  # noqa:E501
+            #      'id': 7,
+            #      'dsply_lbl': 'Reflection/Refinement Data',
+            #      'dsply_typ': 'no_dropdown'}
 
-            ]
-            """
+            # ]
+            # """
         #
 
         return configList
@@ -875,7 +870,7 @@ class PdbxDataIo(object):
     def checkForMandatoryItems(self):
         """get list of category.items which are mandatory but which are currently missing non-null values"""
         logger.info("--------------------------------------------")
-        logger.info("Starting %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
         myPersist = PdbxPersist(self.__verbose, self.__lfh)
         #
@@ -953,7 +948,7 @@ class PdbxDataIo(object):
                                         curCtgryNm,
                                     )
                                     logger.info("---- DEBUG ---- EXCEPTION: record is '%r'", record)
-                                    traceback.print_exc(file=self.__lfh)
+                                    logger.exception("checkMandatoryItems filauire")
                         #
                         if bFoundViolation:
                             missingMndtryItemsDict["violation_map"][curCtgryNm] = newViolMapDict
@@ -1065,10 +1060,10 @@ class PdbxDataIo(object):
 
                 #
                 itemList = dictViewInfo.getItemList(viewId=currViewId, categoryDisplayName=p_catDispLabel, categoryName=p_categoryNm)
-                """ the itemList we get back above is derived from the config file
-                    and the view config file lists the cif items in order of desired display
-                    thus, in the itemList we now have a list of fully qualified cif item names in the order of desired display
-                """
+                # """ the itemList we get back above is derived from the config file
+                #     and the view config file lists the cif items in order of desired display
+                #     thus, in the itemList we now have a list of fully qualified cif item names in the order of desired display
+                # """
                 if len(itemList) > 0:
                     colNameList = []
                     #
@@ -1720,7 +1715,7 @@ class PdbxDataIo(object):
             ctgryObj = myPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, cifCtgryNm)
             #
             if self.__debug:
-                logger.info("++++++++++++%s %s just after call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+                logger.info("+++++++++++ just after call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
             if ctgryObj:
                 rowList = ctgryObj.getRowList()
@@ -1951,6 +1946,7 @@ class PdbxDataIo(object):
                 #
                 colIdx = None
 
+                attributeNm = 0
                 for index, attributeNm in enumerate(attributeList):
                     if EditorConfig.autoIncrDecrDict[p_ctgryNm] == attributeNm:
                         colIdx = index
@@ -2013,7 +2009,7 @@ class PdbxDataIo(object):
 
         """
         logger.info("--------------------------------------------")
-        logger.info("Starting %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
         bSuccess = False
         cloneDict = None
@@ -2021,12 +2017,12 @@ class PdbxDataIo(object):
         try:
             myPersist = PdbxPersist(self.__verbose, self.__lfh)
             if self.__debug:
-                logger.info("++++++++++++%s %s just before call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+                logger.info("++++++++++++just before call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
             ctgryObj = myPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, p_ctgryNm)
             #
             if self.__debug:
-                logger.info("++++++++++++%s %s just after call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+                logger.info("++++++++++++just after call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
             attributeList = ctgryObj.getAttributeList()
             rowList = ctgryObj.getRowList()
@@ -2322,12 +2318,17 @@ class PdbxDataIo(object):
 
         return str(int(currentMax) + 1)
 
-    def __orderBy(self, sortlist, orderby=[], desc=[]):
+    def __orderBy(self, sortlist, orderby=None, desc=None):
         """orderBy(sortlist, orderby, desc) >> List
 
         @sortlist: list to be sorted
         @orderby: list of indices of columns for which sorting will be performed
         @desc: list of indices of columns for which sorting will be performed in descending fashion"""
+
+        if orderby is None:
+            orderby = []
+        if desc is None:
+            desc = []
 
         if self.__verbose and self.__debug:
             for entry in sortlist:
@@ -2370,16 +2371,16 @@ class PdbxDataIo(object):
             drpDwnName = ""
 
             if len(dropDownLst) > 1:
-                """if there is more than one descriptor in dropDownLst we check for two situations:
-                1). if they are all equivalent to each other then there is no need to display several drop-down choices that all have the same label,
-                    and so this indicates that the corresponding cif categories are to be shown via user clicking on the topLevelMenuChoice (i.e. no drop-down list required)
-                2). if one descriptor differs from the previous then this warrants the display of a drop-down list with distinct drop-down choices underneath
-                    the topLevelMenuChoice
+                # if there is more than one descriptor in dropDownLst we check for two situations:
+                # 1). if they are all equivalent to each other then there is no need to display several drop-down choices that all have the same label,
+                #     and so this indicates that the corresponding cif categories are to be shown via user clicking on the topLevelMenuChoice (i.e. no drop-down list required)
+                # 2). if one descriptor differs from the previous then this warrants the display of a drop-down list with distinct drop-down choices underneath
+                #     the topLevelMenuChoice
 
-                The way the pdbx_display_view_info.cif config file is composed, the above two scenarios are the only *intended* possibilities
-                Acknowledging that this handling is non-intuitive and warrants a re-examination of the structure of the cif file governing editor display config
-                as current use/expectations of the UI have evolved to stray from the original design/strategy/purpose of the cif config file.
-                """
+                # The way the pdbx_display_view_info.cif config file is composed, the above two scenarios are the only *intended* possibilities
+                # Acknowledging that this handling is non-intuitive and warrants a re-examination of the structure of the cif file governing editor display config
+                # as current use/expectations of the UI have evolved to stray from the original design/strategy/purpose of the cif config file.
+                #
                 for idx, drpDwnName in enumerate(dropDownLst):
                     if idx > 0:
                         if drpDwnName != dropDownLst[idx - 1]:
@@ -2437,7 +2438,7 @@ class PdbxDataIo(object):
         return currViewId
 
     def __purgeSkeletonRows(self, p_myPersist):
-        """"skeleton" rows are those that rows that were never updated with real data, and should be purged.
+        """ "skeleton" rows are those that rows that were never updated with real data, and should be purged.
         these rows could have resulted either from the CIF editor's actions of creating "skeleton" categories for those that did not originally
         exist in the datafile, OR these rows could have come in as "junk" rows from the deposition process
         """
@@ -2446,9 +2447,9 @@ class PdbxDataIo(object):
         if not self.__pdbxDictStore:
             self.__pdbxDictStore = PdbxDictionaryInfoStore(verbose=self.__verbose, log=self.__lfh)
         #
-        """ the purgeSkeletonRowList is a list of categories for which "junk" rows are to be deleted,
-            regardless of whether or not the CIF editor created the row as a dummy placeholder
-        """
+        #  the purgeSkeletonRowList is a list of categories for which "junk" rows are to be deleted,
+        #  regardless of whether or not the CIF editor created the row as a dummy placeholder
+        #
         purgeCategoryList = list(EditorConfig.purgeSkeletonRowList)
         #
         if os.access(self.__skltnLstFlPath, os.R_OK):
@@ -2558,7 +2559,7 @@ class PdbxDataIo(object):
 
                     bSuccess = p_myPersist.updateOneObject(ctgryObj, self.__dbFilePath, self.__dataBlockName)
                     if self.__debug:
-                        logger.debug("++++++++++++%s %s just after call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+                        logger.debug("++++++++++++ just after call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
                     #
                 else:
                     if self.__verbose:
@@ -2645,7 +2646,7 @@ class PdbxDataIo(object):
                             indxSrcId = iNdx
 
                 if indxSrcTitle >= 0:
-                    for rowNum, row in enumerate(srcRowList):
+                    for _rowNum, row in enumerate(srcRowList):
                         if indxSrcId >= 0:
                             if row[indxSrcId] == "primary":
                                 srcTitleValue = row[indxSrcTitle]
@@ -2653,7 +2654,7 @@ class PdbxDataIo(object):
                             srcTitleValue = row[indxSrcTitle]
 
                     if self.__verbose:
-                        logger.info("title '%s' from source category '%s' obtained from row# %s", srcTitleValue, srcCtgry, rowNum)
+                        logger.info("title '%s' from source category '%s' obtained", srcTitleValue, srcCtgry)
 
                     targetRowList = targetCtgryObj.getRowList()
                     #
@@ -2769,7 +2770,7 @@ class PdbxDataIo(object):
             #
             bSuccess = myPersist.updateOneObject(categoryObj, self.__dbFilePath, self.__dataBlockName)
             if self.__debug:
-                logger.debug("++++++++++++%s %s just after call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+                logger.debug("++++++++++++ just after call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         else:
             bSuccess = True
         #
@@ -3069,7 +3070,7 @@ class PdbxDataIo(object):
             if self.__verbose and self.__debug:
                 logger.debug("performing global search for string '%s'", p_sGlobalSrchFilter)
             for trueIndxdRcrdDict in p_rsltSetList:
-                trueIndxKey, rcrdValue = (list(trueIndxdRcrdDict.items()))[0]
+                _trueIndxKey, rcrdValue = (list(trueIndxdRcrdDict.items()))[0]
                 for field in rcrdValue:
                     if p_sGlobalSrchFilter.lower() in str(field).lower():
                         fltrdList.append(trueIndxdRcrdDict)
@@ -3081,7 +3082,7 @@ class PdbxDataIo(object):
             #
             bAllCriteriaMet = False
             for trueIndxdRcrdDict in p_rsltSetList:
-                trueRowIdx, rcrd = (list(trueIndxdRcrdDict.items()))[0]
+                _trueRowIdx, rcrd = (list(trueIndxdRcrdDict.items()))[0]
                 #
                 for key in list(p_dictColSrchFilter.keys()):
                     if p_dictColSrchFilter[key].lower() in str(rcrd[key]).lower():
@@ -3118,16 +3119,3 @@ class PdbxDataIo(object):
             return None
         else:
             return name[i + 1 :]
-
-    def __categoryPart(self, name):
-        tname = ""
-        if name.startswith("_"):
-            tname = name[1:]
-        else:
-            tname = name
-
-        i = tname.find(".")
-        if i == -1:
-            return tname
-        else:
-            return tname[:i]

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import unittest
-import sys
 import os
 
 from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
@@ -9,18 +8,12 @@ from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDi
 
 class PdbxViewTests(unittest.TestCase):
     def setUp(self):
-        self.__lfh = sys.stderr
         self.__testConfig = os.path.join(os.path.dirname(__file__), "resources", "pdbx_display_view_info_master.cif")
 
         self.__dV = PdbxMasterViewDictionary(verbose=False)
         self.assertTrue(self.__dV.read(self.__testConfig))
 
     def tearDown(self):
-        pass
-
-    def testReadFiles(self):
-        """Tests reading of the configuration file"""
-        # Nothing as handled in setup...
         pass
 
     def testExpMethods(self):

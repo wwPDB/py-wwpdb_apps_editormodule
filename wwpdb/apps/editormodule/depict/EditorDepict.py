@@ -98,7 +98,6 @@ except ImportError:
 
 from json import loads
 from mmcif_utils.persist.PdbxPersist import PdbxPersist  # temporary for testing
-from mmcif_utils.persist.PdbxPyIoAdapter import PdbxPyIoAdapter as PdbxIoAdapter  # temporary for testing
 from wwpdb.apps.editormodule.io.PdbxDataIo import PdbxDataIo
 from wwpdb.apps.editormodule.config.EditorConfig import EditorConfig
 from wwpdb.io.graphics.GraphicsContext3D import GraphicsContext3D
@@ -120,7 +119,6 @@ class EditorDepict(object):
         self.__verbose = verbose
         self.__lfh = log
         self.__debug = False
-        self.__DEV = False
         #
         self.absltSessionPath = None
         self.absltEdtrSessionPath = None
@@ -128,30 +126,9 @@ class EditorDepict(object):
         #
         self.jmolCodeBase = os.path.join("/applets", "jmol")
         #
-        self.__pdbxDictStore = None
-        #
-        self.__htmlTemplatesDict = {"summaryreport": "anntasks_summaryreport_tmplt.html"}
         #
         self.__navTabGroups = []
         self.__navTabGroup_Other = {"id": "other", "dsply_lbl": "Other Categories", "dsply_typ": "dropdown", "dropdown_display_labels": []}
-        # below is temporary measure to supply config settings for cif category navigation groups
-        # will ultimately want to obtain this from config file or dictionary
-        self.__navTabGroupsDefault = [
-            {
-                "id": "deposition",
-                "dsply_lbl": "Deposition",
-                "categories": ["audit_author", "entity_poly", "pdbx_contact_author", "pdbx_database_related", "pdbx_database_status", "pdbx_SG_project", "struct"],
-            },
-            {"id": "citation", "dsply_lbl": "Citation", "categories": ["citation", "citation_author"]},
-            {"id": "advsry_rmrks", "dsply_lbl": "Advisory and Remarks", "categories": ["database_PDB_caveat", "pdbx_entry_details", "refine", "struct_keywords", "struct_biol"]},
-            {"id": "polymr_desc", "dsply_lbl": "Polymer Description", "categories": ["entity", "entity_name_com", "entity_src_gen", "entity_src_nat", "entity_src_syn"]},
-            {"id": "crystlztn", "dsply_lbl": "Crystallization", "categories": ["exptl_crystal_grow"]},
-            {"id": "crystl_data", "dsply_lbl": "Crystal Data", "categories": ["diffrn", "diffrn_detector", "diffrn_radiation", "diffrn_source", "exptl_crystal"]},
-            {"id": "data_collect", "dsply_lbl": "Data Collection", "categories": ["reflns", "reflns_shell"]},
-            {"id": "refine", "dsply_lbl": "Refinement", "categories": ["refine", "refine_ls_shell"]},
-            {"id": "links", "dsply_lbl": "Links", "categories": ["struct_conn"]},
-            self.__navTabGroup_Other,
-        ]
 
     def doRenderDevProto(self, p_reqObj, p_bIsWorkflow, p_dataBlockName):
         """DEV - PROTOTYPING PURPOSE:
@@ -181,8 +158,6 @@ class EditorDepict(object):
         if self.__verbose:
             logger.info(" -- datafile is:%s", dataFile)
         #
-        # depid = self.__formatDepositionDataId(depId, p_bIsWorkflow)
-        #
         if self.__verbose:
             logger.info("--------------------------------------------")
             logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
@@ -206,8 +181,8 @@ class EditorDepict(object):
         if p_bIsWorkflow:
             myD["identifier"] = depId
         else:
-            (pth, fileName) = os.path.split(p_reqObj.getValue("filePath"))
-            (fN, fileExt) = os.path.splitext(fileName)
+            (_pth, fileName) = os.path.split(p_reqObj.getValue("filePath"))
+            (fN, _fileExt) = os.path.splitext(fileName)
             if fN.upper().startswith("D_"):
                 depDataSetId = fN.upper()
             elif fN.lower().startswith("rcsb"):
@@ -217,8 +192,6 @@ class EditorDepict(object):
             myD["identifier"] = depDataSetId
         #
         myD["session_url_prefix"] = self.rltvSessionPath
-        myD["vrtcl_tabs_li_mrkp"] = self.__genCtgryNavTabs()
-        myD["tab_panels_li_mrkp"] = self.__genCtgryNavPanels()
         myD["datafile"] = dataFile
         myD["data_block_name"] = p_dataBlockName
         #
@@ -265,8 +238,6 @@ class EditorDepict(object):
         if len(context) < 1:
             context = None
         #
-        # depid = self.__formatDepositionDataId(depId, p_bIsWorkflow)
-        #
         if self.__verbose:
             logger.info("--------------------------------------------")
             logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
@@ -301,8 +272,8 @@ class EditorDepict(object):
             if depId is not None and len(depId) > 1:
                 myD["identifier"] = depId
             else:
-                (pth, fileName) = os.path.split(p_reqObj.getValue("filePath"))
-                (fN, fileExt) = os.path.splitext(fileName)
+                (_pth, fileName) = os.path.split(p_reqObj.getValue("filePath"))
+                (fN, _fileExt) = os.path.splitext(fileName)
                 if fN.upper().startswith("D_"):
                     depDataSetId = fN.upper()
                 elif fN.lower().startswith("rcsb"):
@@ -372,9 +343,9 @@ class EditorDepict(object):
         rcrdKeyValueDict = loads(rowKeyValueJson)
         #
         if self.__verbose:
-            self.__lfh.write("\n%s.%s() -- dictionary of attributes for record transmitted from UI follows\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+            logger.info("-- dictionary of attributes for record transmitted from UI follows")
             for (key, value) in rcrdKeyValueDict.items():
-                self.__lfh.write("\n%s.%s() -- dict[%s] : %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, key, value))
+                logger.info("-- dict[%s] : %s", key, value)
         #
 
         ###############################################################################################
@@ -404,9 +375,9 @@ class EditorDepict(object):
         return mrkpList
 
     # ####### BEGIN -- Specific to DataTable Implementation ##################
-    "NOTE: consider encapsulating DataTable functionality as separate class"
+    # NOTE: consider encapsulating DataTable functionality as separate class
 
-    def getJsonDataTable(self, p_reqObj, p_ctgryRcrdList, p_iDisplayStart, p_ctgryColList):
+    def getJsonDataTable(self, p_reqObj, p_ctgryRcrdList, p_iDisplayStart, p_ctgryColList):  # pylint: disable=unused-argument
         """Generate contents of json object expected by DataTables for populating display
         table with data.
 
@@ -432,16 +403,14 @@ class EditorDepict(object):
             sColumns += sComma + colName
         #
         if self.__debug:
-            self.__lfh.write("+%s.%s() -- sColumns is: %r\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, sColumns))
+            logger.info("-- sColumns is: %r", sColumns)
         #
         rtrnDict["sColumns"] = sColumns
 
         aaDataList = self.__createDataTableAaDataList(p_ctgryColList, p_ctgryRcrdList, p_iDisplayStart)
 
         if self.__verbose and self.__debug:
-            self.__lfh.write(
-                "+%s.%s() -- DEBUG -- aaDataList after call to createDataTableAaDataList is: %r \n" % (self.__class__.__name__, sys._getframe().f_code.co_name, aaDataList)
-            )
+            logger.debug("-- DEBUG -- aaDataList after call to createDataTableAaDataList is: %r", aaDataList)
 
         rtrnDict["aaData"] = aaDataList
 
@@ -471,7 +440,7 @@ class EditorDepict(object):
 
         start = time.time()
 
-        logger.info("Starting %s" % p_cifCtgryNm)
+        logger.info("Starting %s", p_cifCtgryNm)
 
         catObjDict = {}
 
@@ -480,7 +449,7 @@ class EditorDepict(object):
         else:
             catDispLabel = p_reqObj.getValue("displabel")
 
-        logger.debug("catDispLabel: %s" % catDispLabel)
+        logger.debug("catDispLabel: %s", catDispLabel)
         context = str(p_reqObj.getValue("context"))
 
         if sys.version_info[0] < 3:
@@ -619,7 +588,7 @@ class EditorDepict(object):
         # RETURNing both markup and config dictionary
 
         end = time.time()
-        logger.info("Done -- in %s ms" % ((end - start) * 1000))
+        logger.info("Done -- in %s ms", (end - start) * 1000)
 
         return mrkpList, catObjDict
 
@@ -667,7 +636,7 @@ class EditorDepict(object):
         inputTypes = {}
         colTypes = p_catObjDict["COLUMN_TYPES_ALT"] if len(p_catObjDict["COLUMN_TYPES_ALT"]) > 0 else p_catObjDict["COLUMN_TYPES"]
         enumOpts = p_catObjDict["COLUMN_ENUMS_ALT"] if len(p_catObjDict["COLUMN_ENUMS_ALT"]) > 0 else p_catObjDict["COLUMN_ENUMS"]
-        for idx, type in colTypes.items():
+        for idx, ctype in colTypes.items():
             # logger.debug("-- type for idx: [%s] is: %s" %(idx,type) )
             inputTypes[idx] = "text"
 
@@ -676,13 +645,12 @@ class EditorDepict(object):
                 # so that indexing went to "30" went should only have been "29" in colTypes, therefore not a matching correlation between
                 # colTypes "index" value and actual indexes in place for accessing elements in p_ctgryColList
 
-                if type == "select" or (len(enumOpts) > 0 and idx in enumOpts):
+                if ctype == "select" or (len(enumOpts) > 0 and idx in enumOpts):
                     # assuming here that if there are enum options, that type should be of selection list type
                     enumOpts[idx].sort(key=str.lower)
 
-                    """ 2013-06-11,RPS: accommodating annotator requests for special case behavior via coding one-offs below, BUT should
-                        establish way to accommodate these configurations via config file
-                    """
+                    # 2013-06-11,RPS: accommodating annotator requests for special case behavior via coding one-offs below, BUT should
+                    # establish way to accommodate these configurations via config file
                     if p_cifCtgryNm + "." + p_ctgryColList[idx] in [
                         "struct_keywords.pdbx_keywords",
                         "pdbx_reference_molecule.class",
@@ -714,8 +682,8 @@ class EditorDepict(object):
 
                 elif ("details" in p_ctgryColList[idx]) or ("description" in p_ctgryColList[idx]) or (p_ctgryColList[idx] == "pdbx_seq_one_letter_code"):
                     inputTypes[idx] = "textarea"
-                elif type == "date-time":
-                    inputTypes[idx] = type
+                elif ctype == "date-time":
+                    inputTypes[idx] = ctype
                 else:
                     inputTypes[idx] = "text"
 
@@ -723,7 +691,7 @@ class EditorDepict(object):
 
     # ####### BEGIN -- Specific to DataTable Implementation ##################
 
-    def __createDataTableAaDataList(self, p_colList, p_recordList, p_iDisplayStart):
+    def __createDataTableAaDataList(self, p_colList, p_recordList, p_iDisplayStart):  # pylint: disable=unused-argument
         """Generate contents of "aaData" json object expected by DataTables for populating display
         table with data.
 
@@ -738,16 +706,14 @@ class EditorDepict(object):
         :Returns:
             ``rtrnLst``: list of records for display on screen as complies with DataTables requirements for "aaData" object
         """
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         if self.__verbose:
-            self.__lfh.write("--------------------------------------------\n")
-            self.__lfh.write("Starting %s.%s() at %s\n" % (className, methodName, time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+            logger.info("--------------------------------------------")
+            logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         rtrnLst = []
 
         for indx, record in enumerate(p_recordList):
             if self.__verbose:
-                self.__lfh.write("+%s.%s() -- record[%s] is: %s\n" % (className, methodName, indx, record))
+                logger.info("-- record[%s] is: %s", indx, record)
             #
             newRecordJsonObj = {}
             #
@@ -768,11 +734,11 @@ class EditorDepict(object):
 
     # ####### END -- Specific to DataTable Implementation ##################
 
-    def __getAllCategoriesInDataFile(self, p_fileSource, p_dataFile, p_bIsWorkflow):
+    def __getAllCategoriesInDataFile(self, p_fileSource, p_dataFile, p_bIsWorkflow):  # pylint: disable=unused-argument
 
         if self.__verbose:
-            self.__lfh.write("--------------------------------------------\n")
-            self.__lfh.write("++%s.%s() -- starting at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+            logger.info("--------------------------------------------")
+            logger.info("-- starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
         ctgryList = []
 
@@ -780,38 +746,15 @@ class EditorDepict(object):
         myPersist = PdbxPersist(self.__verbose, self.__lfh)
         myInd = myPersist.getIndex(dbFileName=dbFilePath)
         containerNameList = myInd["__containers__"]
-        for containerName, containerType in containerNameList:
+        for containerName, _containerType in containerNameList:
             for objName in myInd[containerName]:
                 ctgryList.append(objName)
 
         if self.__verbose:
-            self.__lfh.write("++%s.%s() completed at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+            logger.info("+++ completed at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         return ctgryList
 
-    def __tempGenCtgryBttns(self, p_dataBlockName):
-
-        oL = ['<ul class="fltlft">']
-
-        if self.__verbose:
-            self.__lfh.write("--------------------------------------------\n")
-            self.__lfh.write("%s.%s() -- starting \n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
-
-        myReader = PdbxIoAdapter(self.__verbose, self.__lfh)
-        myReader.read(pdbxFilePath="/wwpdb/source/python/pdbx/data/" + p_dataBlockName.lower() + ".cif")
-
-        ctgryList = myReader.getContainerList()[0].getObjNameList()
-        ctgryList.sort()
-
-        for cifctgry in ctgryList:  # know in this line that there is only one item in ContainerList for 1KIP, which corresponds to '1KIP' DataContainer
-            if self.__verbose:
-                # self.__lfh.write("%s.%s() -- cifctgry is: %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, cifctgry) )
-                oL.append('<li><input style="display: inline;" class="cifctgry_submit" id="' + cifctgry + '" name="' + cifctgry + '" value="' + cifctgry + '" type="button"></li>')
-
-        oL.append("</ul>")
-
-        return oL
-
-    def __genCtgryNavBar(self, p_dataBlockName, p_fileSource, p_dataFile, p_bIsWorkflow, p_context):
+    def __genCtgryNavBar(self, p_dataBlockName, p_fileSource, p_dataFile, p_bIsWorkflow, p_context):  # pylint: disable=unused-argument
         """Generate markup used to render the navigation menu bar.
 
         :Params:
@@ -865,7 +808,7 @@ class EditorDepict(object):
                     otherCtgries = allCtgriesInDatafile.difference(stndrdCtgrySet)
 
                     # generate list of otherCtgries so we can sort for display
-                    for n in range(len(otherCtgries)):
+                    for _n in range(len(otherCtgries)):
                         otherCtgriesLst.append(otherCtgries.pop())
                     otherCtgriesLst.sort()
                     #
@@ -892,10 +835,7 @@ class EditorDepict(object):
 
                         for idx, ctgryTupl in enumerate(ctgryTuplLst):
                             if self.__debug:
-                                self.__lfh.write(
-                                    "%s.%s() ------ DEBUG ------ combo drop-down choice found. ctgryTupl is: %r\n"
-                                    % (self.__class__.__name__, sys._getframe().f_code.co_name, ctgryTupl)
-                                )
+                                logger.debug("------ DEBUG ------ combo drop-down choice found. ctgryTupl is: %r", ctgryTupl)
                             separator = ""
                             if idx > 0:
                                 separator = "+"
@@ -926,10 +866,10 @@ class EditorDepict(object):
                 hdrMrkp = hdrMrkpTmpltWthDrpDwns % grpDict
 
             else:  # no dropdown list for the top level menu choice
-                """{'no_dropdown_dict': {'Genetically%20Engineered+Naturally%20Obtained+Synthesized': ('entity_src_gen+entity_src_nat+pdbx_entity_src_syn', 'multi+multi+multi')},
-                'id': 5,
-                'dsply_lbl': 'Polymer Source',
-                'dsply_typ': 'no_dropdown'},"""
+                # """{'no_dropdown_dict': {'Genetically%20Engineered+Naturally%20Obtained+Synthesized': ('entity_src_gen+entity_src_nat+pdbx_entity_src_syn', 'multi+multi+multi')},
+                # 'id': 5,
+                # 'dsply_lbl': 'Polymer Source',
+                # 'dsply_typ': 'no_dropdown'},"""
 
                 hdrDict = navTabGrp.copy()
 
@@ -962,7 +902,7 @@ class EditorDepict(object):
                     otherCtgries = allCtgriesInDatafile.difference(stndrdCtgrySet)
 
                     # generate list of otherCtgries so we can sort for display
-                    for n in range(len(otherCtgries)):
+                    for _n in range(len(otherCtgries)):
                         otherCtgriesLst.append(otherCtgries.pop())
                     otherCtgriesLst.sort()
                     #
@@ -1025,10 +965,13 @@ class EditorDepict(object):
             # else we are in the standalone dev environment
             return False
 
-    def processTemplate(self, tmpltPth, fn, parameterDict={}):
+    def processTemplate(self, tmpltPth, fn, parameterDict=None):
         """Read the input HTML template data file and perform the key/value substitutions in the
         input parameter dictionary.
         """
+        if parameterDict is None:
+            parameterDict = {}
+
         fPath = os.path.join(tmpltPth, fn)
         with open(fPath, "r") as ifh:
             sIn = ifh.read()
@@ -1043,13 +986,6 @@ class EditorDepict(object):
                 return content[: maxlength + 1] + suffix
         else:
             return ""
-
-    def __formatDepositionDataId(self, p_depid, p_bIsWorkflow):
-        if p_bIsWorkflow or (p_depid.upper() == "TMP_ID"):
-            depId = p_depid.upper()
-        else:
-            depId = p_depid.lower()
-        return depId
 
     def __generateDropDownMarkup(self, p_ctgries, p_ctgryCrdnlties, p_ctgryDisplNm, p_grpId, p_inputMrkpTmplt, p_index=None, p_ctgryDisplyLbls=None):
         inputMrkp = ""

@@ -8,9 +8,9 @@ from mmcif.api.DataCategory import DataCategory
 class PdbxMasterViewDictionary(object):
     def __init__(self, verbose=True, log=sys.stderr):
         self.__verbose = verbose
-        self.__debug = False
         self.__lfh = log
         self.__myReader = None
+        self.__vMaster = None
 
     def read(self, fName):
         """Reads the master file"""
@@ -102,7 +102,7 @@ class PdbxMasterViewDictionary(object):
         """Returns the list of views available"""
 
         ret = []
-        for (key, value) in self.__vMaster["EXPTL_VIEW"].items():
+        for (_key, value) in self.__vMaster["EXPTL_VIEW"].items():
             ret.append(value["EXPTL"])
         return ret
 
@@ -110,7 +110,7 @@ class PdbxMasterViewDictionary(object):
         """Returns the list of method combinations available"""
 
         ret = []
-        for (key, value) in self.__vMaster["VIEW_MAP"].items():
+        for (_key, value) in self.__vMaster["VIEW_MAP"].items():
             ret.append(value["METHODS"])
         return ret
 

@@ -23,4 +23,7 @@ class ImportTests(unittest.TestCase):
 
     def testInstantiate(self):
         """Tests simple instantiation"""
-        pass
+        e = EditorWebApp()
+        ret = e.doOp()
+        for k, v in ret.items():
+            print("Key - %s  value - %r" % (k, v))

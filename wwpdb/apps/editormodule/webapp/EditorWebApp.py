@@ -78,7 +78,6 @@ import os
 import smtplib
 import sys
 import time
-import traceback
 import types
 
 #
@@ -86,11 +85,10 @@ from wwpdb.io.graphics.GraphicsContext3D import GraphicsContext3D
 
 #
 from wwpdb.io.locator.DataReference import DataFileReference
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
 #
-from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
+# from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 
 from wwpdb.apps.editormodule.depict.EditorDepict import EditorDepict
 from wwpdb.apps.editormodule.io.PdbxDataIo import PdbxDataIo
@@ -105,7 +103,7 @@ logger = logging.getLogger(__name__)
 class EditorWebApp(object):
     """Handle request and response object processing for the general annotation editor tool application."""
 
-    def __init__(self, parameterDict={}, verbose=False, log=sys.stderr, siteId="WWPDB_DEV"):
+    def __init__(self, parameterDict=None, verbose=False, log=sys.stderr, siteId="WWPDB_DEV"):
         """
         Create an instance of `EditorWebApp` to manage an editor web request.
 
@@ -115,11 +113,12 @@ class EditorWebApp(object):
          :param `log`:      stream for logging.
 
         """
+        if parameterDict is None:
+            parameterDict = {}
         self.__verbose = verbose
         self.__lfh = log
         self.__debug = False
         self.__siteId = siteId
-        self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__topSessionPath = self.__cICommon.get_site_web_apps_top_sessions_path()
         self.__templatePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
@@ -131,9 +130,9 @@ class EditorWebApp(object):
             self.__myParameterDict = {}
 
         if self.__verbose:
-            logger.info("REQUEST STARTING ------------------------------------\n")
-            logger.info("dumping input parameter dictionary \n")
-            logger.info("%s" % ("".join(self.__dumpRequest())))
+            logger.info("REQUEST STARTING ------------------------------------")
+            logger.info("dumping input parameter dictionary")
+            logger.info("%s", "".join(self.__dumpRequest()))
 
         self.__reqObj = EditorInputRequest(self.__myParameterDict, verbose=self.__verbose, log=self.__lfh)
         #
@@ -145,10 +144,10 @@ class EditorWebApp(object):
         self.__reqObj.setDefaultReturnFormat(return_format="html")
         #
         if self.__verbose:
-            logger.info("-----------------------------------------------------\n")
-            logger.info("Leaving _init with request contents\n")
+            logger.info("-----------------------------------------------------")
+            logger.info("Leaving _init with request contents")
             self.__reqObj.printIt(ofh=self.__lfh)
-            logger.info("---------------EditorWebApp - done -------------------------------\n")
+            logger.info("---------------EditorWebApp - done -------------------------------")
             self.__lfh.flush()
 
     def doOp(self):
@@ -163,12 +162,12 @@ class EditorWebApp(object):
         rC = stw.doOp()
         if self.__debug:
             rqp = self.__reqObj.getRequestPath()
-            logger.debug("+EditorWebApp.doOp() operation %s\n" % rqp)
-            logger.debug("+EditorWebApp.doOp() return format %s\n" % self.__reqObj.getReturnFormat())
+            logger.debug("+EditorWebApp.doOp() operation %s", rqp)
+            logger.debug("+EditorWebApp.doOp() return format %s", self.__reqObj.getReturnFormat())
             if rC is not None:
-                logger.info("%s" % ("".join(rC.dump())))
+                logger.info("%s", ("".join(rC.dump())))
             else:
-                logger.info("+EditorWebApp.doOp() return object is empty\n")
+                logger.info("+EditorWebApp.doOp() return object is empty")
 
         #
         # Package return according to the request return_format -
@@ -213,7 +212,6 @@ class EditorWebAppWorker(object):
         self.__sessionId = None
         self.__sessionPath = None
         self.__rltvSessionPath = None
-        self.__siteId = str(self.__reqObj.getValue("WWPDB_SITE_ID"))
         #
         self.__appPathD = {
             "/service/editor/environment/dump": "_dumpOp",
@@ -261,7 +259,7 @@ class EditorWebAppWorker(object):
         """
         return self.__doOpException()
 
-    def __doOpNoException(self):
+    def __doOpNoException(self):  # pylint: disable=unused-private-member
         """Map operation to path and invoke operation.  No exception handling is performed.
 
         :Returns:
@@ -453,7 +451,7 @@ Content-Disposition: attachment; filename=\"%s\"
             htmlStrDict["msg"] = "Error occurred when capturing feedback."
             logger.exception("Failure to send message")
             if self.__verbose:
-                logger.info("%s.%s() -- Failed to generate email from %s", senderEmail)
+                logger.info("-- Failed to generate email from %s", senderEmail)
         #
         rtrnHtmlTmplt = """<!DOCTYPE html>
 <html>
@@ -517,14 +515,15 @@ Content-Disposition: attachment; filename=\"%s\"
 
         if bIsWorkflow:
             # Update WF status database --
-            """
-            bSuccess = self.__updateWfTrackingDb("open")
-            if( not bSuccess ):
-                rC.setError(errMsg="+EditorWebAppWorker._launchOp() - TRACKING status, update to 'open' failed for session %s \n" % self.__sessionId )
-            else:
-                if self.__verbose:
-                    logger.info("+EditorWebAppWorker._launchOp() Tracking status set to open\n")
-            """
+            pass
+            # """
+            # bSuccess = self.__updateWfTrackingDb("open")
+            # if( not bSuccess ):
+            #     rC.setError(errMsg="+EditorWebAppWorker._launchOp() - TRACKING status, update to 'open' failed for session %s \n" % self.__sessionId )
+            # else:
+            #     if self.__verbose:
+            #         logger.info("+EditorWebAppWorker._launchOp() Tracking status set to open")
+            # """
         else:
             if fileSource and fileSource == "rcsb_dev":
                 pass
@@ -547,15 +546,15 @@ Content-Disposition: attachment; filename=\"%s\"
                     else:
                         fId = "000000"
                         if self.__verbose:
-                            logger.info("+EditorWebApp._launchOp() using default identifier for %s\n" % str(sFileName))
+                            logger.info("+EditorWebApp._launchOp() using default identifier for %s", str(sFileName))
 
                     self.__reqObj.setValue("identifier", fId)
                     #
                     if self.__verbose:
-                        logger.info("+EditorWebApp._launchOp() identifier %s\n" % self.__reqObj.getValue("identifier"))
+                        logger.info("+EditorWebApp._launchOp() identifier %s", self.__reqObj.getValue("identifier"))
 
                     if self.__isFileUpload("configfile"):
-                        bSuccessCnfg, sFileNameCnfg, sFileAbsPathCnfg = self.__uploadFile("configfile")
+                        bSuccessCnfg, _sFileNameCnfg, sFileAbsPathCnfg = self.__uploadFile("configfile")
 
                         if bSuccessCnfg:
                             self.__reqObj.setValue("configFilePath", sFileAbsPathCnfg)
@@ -582,7 +581,7 @@ Content-Disposition: attachment; filename=\"%s\"
 
         #
         if self.__verbose:
-            logger.info("+EditorWebAppWorker._launchOp() Call EditorDepict with workflow %r\n" % bIsWorkflow)
+            logger.info("+EditorWebAppWorker._launchOp() Call EditorDepict with workflow %r", bIsWorkflow)
         #
         self.__reqObj.setValue("entrytitle", entryTitle)
         self.__reqObj.setValue("datablockname", dataBlockName)
@@ -648,7 +647,7 @@ Content-Disposition: attachment; filename=\"%s\"
     def _devproto(self):
         """FOR DEV PROTOTYPING OF WEB PAGE UI"""
         if self.__verbose:
-            logger.info("+EditorWebAppWorker._devproto() Starting now\n")
+            logger.info("+EditorWebAppWorker._devproto() Starting now")
         # determine if currently operating in Workflow Managed environment
         bIsWorkflow = self.__isWorkflow()
         #
@@ -662,33 +661,33 @@ Content-Disposition: attachment; filename=\"%s\"
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
         #
         if self.__verbose:
-            logger.info("+EditorWebAppWorker._devproto() workflow flag is %r\n" % bIsWorkflow)
+            logger.info("+EditorWebAppWorker._devproto() workflow flag is %r", bIsWorkflow)
 
-        if bIsWorkflow:
-            # Update WF status database --
-            """
-            bSuccess = self.__updateWfTrackingDb("open")
-            if( not bSuccess ):
-                rC.setError(errMsg="+EditorWebAppWorker._devproto() - TRACKING status, update to 'open' failed for session %s \n" % self.__sessionId )
-            else:
-                if self.__verbose:
-                    logger.info("+EditorWebAppWorker._devproto() Tracking status set to open\n")
-            """
-        else:
-            """
-            if not self.__isFileUpload():
-                rC.setError(errMsg='No file uploaded')
-                return rC
-            #
-            self.__uploadFile()
-            """
+        # if bIsWorkflow:
+        #     # Update WF status database --
+        #     """
+        #     bSuccess = self.__updateWfTrackingDb("open")
+        #     if( not bSuccess ):
+        #         rC.setError(errMsg="+EditorWebAppWorker._devproto() - TRACKING status, update to 'open' failed for session %s \n" % self.__sessionId )
+        #     else:
+        #         if self.__verbose:
+        #             logger.info("+EditorWebAppWorker._devproto() Tracking status set to open")
+        #     """
+        # else:
+        #     """
+        #     if not self.__isFileUpload():
+        #         rC.setError(errMsg='No file uploaded')
+        #         return rC
+        #     #
+        #     self.__uploadFile()
+        #     """
         #
         if self.__verbose:
-            logger.info("+EditorWebAppWorker._devproto() Call EditorDepict with workflow %r\n" % bIsWorkflow)
+            logger.info("+EditorWebAppWorker._devproto() Call EditorDepict with workflow %r", bIsWorkflow)
         #
         # instantiate datastore to be used for capturing/persisting edits
         pdbxDataIo = PdbxDataIo(self.__reqObj, self.__verbose, self.__lfh)
-        dataBlockName, entryTitle, entryAccessionIdsLst = pdbxDataIo.initializeDataStore()
+        dataBlockName, _entryTitle, _entryAccessionIdsLst = pdbxDataIo.initializeDataStore()
         pdbxDataIo.initializeDictInfoStore()
         #
         edtrDpct = EditorDepict(self.__verbose, self.__lfh)
@@ -853,7 +852,7 @@ Content-Disposition: attachment; filename=\"%s\"
 
         cifCtgry = self.__reqObj.getValue("cifctgry")
         if self.__verbose:
-            logger.debug("  cifctgry is:%s\n" % (cifCtgry))
+            logger.debug("  cifctgry is:%s", cifCtgry)
 
         self.__reqObj.setReturnFormat(return_format="json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
@@ -871,7 +870,7 @@ Content-Disposition: attachment; filename=\"%s\"
 
         end = time.time()
         if self.__verbose:
-            logger.info("Done -- in %s ms" % ((end - start) * 1000))
+            logger.info("Done -- in %s ms", ((end - start) * 1000))
 
         return rC
 
@@ -904,7 +903,7 @@ Content-Disposition: attachment; filename=\"%s\"
         cifCtgries = self.__reqObj.getValue("cifctgry")
         dispLabels = self.__reqObj.getValue("displabels").split(",")
 
-        logger.debug("dispLabels is %s" % dispLabels)
+        logger.debug("dispLabels is %s", dispLabels)
 
         self.__reqObj.setReturnFormat(return_format="json")
 
@@ -917,7 +916,7 @@ Content-Disposition: attachment; filename=\"%s\"
             cifCtgry = cifCtgrySplit[i]
 
             if self.__verbose:
-                logger.debug("  cifctgry is:%s\n" % cifCtgry)
+                logger.debug("  cifctgry is:%s", cifCtgry)
 
             edtrDpct = EditorDepict(verbose=self.__verbose, log=self.__lfh)
             dataTblTmplt, catObjDict = edtrDpct.getDataTableTemplate(self.__reqObj, cifCtgry, dispLabels[i])
@@ -932,7 +931,7 @@ Content-Disposition: attachment; filename=\"%s\"
 
         end = time.time()
         if self.__verbose:
-            logger.info("Done -- in %s ms" % ((end - start) * 1000))
+            logger.info("Done -- in %s ms", ((end - start) * 1000))
 
         return rC
 
@@ -977,14 +976,14 @@ Content-Disposition: attachment; filename=\"%s\"
         cifCtgry = self.__reqObj.getValue("cifctgry")
         #
         if self.__verbose:
-            logger.debug("-- cifctgry is:%s\n" % cifCtgry)
+            logger.debug("-- cifctgry is:%s", cifCtgry)
         #
         self.__reqObj.setReturnFormat(return_format="json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
         #
         pdbxDataIo = PdbxDataIo(self.__reqObj, self.__verbose, self.__lfh)
         #
-        bOk, ctgryColList = pdbxDataIo.getCategoryColList(cifCtgry)
+        _bOk, ctgryColList = pdbxDataIo.getCategoryColList(cifCtgry)
         # ############# in below block we are accommodating any requests for column-specific search filtering ###################################
         numColumns = len(ctgryColList)
         colSearchDict = {}
@@ -1013,14 +1012,14 @@ Content-Disposition: attachment; filename=\"%s\"
         rC.addDictionaryItems(dataTblDict)
 
         end = time.time()
-        logger.info("Done -- in %s ms" % ((end - start) * 1000))
+        logger.info("Done -- in %s ms", ((end - start) * 1000))
         return rC
 
     def _getCifCategoryJsonOp(self):
         """for DEV -- return cif category to be displayed on webpage as JSON object for inspection"""
 
         if self.__verbose:
-            logger.info("+EditorWebAppWorker._getCifCategoryJsonOp() starting\n")
+            logger.info("+EditorWebAppWorker._getCifCategoryJsonOp() starting")
 
         self.__getSession()
         # iDisplayStart = int( self.__reqObj.getValue("iDisplayStart") )
@@ -1034,7 +1033,7 @@ Content-Disposition: attachment; filename=\"%s\"
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
 
         pdbxDataIo = PdbxDataIo(self.__reqObj, self.__verbose, self.__lfh)
-        bOk, ctgryColList = pdbxDataIo.getCategoryColList(cifCtgry)
+        _bOk, ctgryColList = pdbxDataIo.getCategoryColList(cifCtgry)
         ctgryRecordList, iTotalRecords, iTotalDisplayRecords = pdbxDataIo.getCategoryRowList(cifCtgry, 0, 20, "", {})
 
         edtrDpct = EditorDepict(verbose=self.__verbose, log=self.__lfh)
@@ -1163,8 +1162,6 @@ Content-Disposition: attachment; filename=\"%s\"
         if self.__debug:
             logger.debug("++++++++++++STARTING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         #
         rtrnDict = {}
         #
@@ -1174,8 +1171,8 @@ Content-Disposition: attachment; filename=\"%s\"
         editActnIndx = int(self.__reqObj.getValue("edit_actn_indx"))
         #
         if self.__verbose:
-            logger.info("+%s.%s() -- source cifctgry is:%s\n" % (className, methodName, targetCifCtgry))
-            logger.info("+%s.%s() -- editActnIndx is:%s\n" % (className, methodName, editActnIndx))
+            logger.info("-- source cifctgry is:%s", targetCifCtgry)
+            logger.info("-- editActnIndx is:%s", editActnIndx)
         #
         self.__reqObj.setReturnFormat("json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
@@ -1185,10 +1182,7 @@ Content-Disposition: attachment; filename=\"%s\"
         bOk, origValue = pdbxDataIo.propagateTitle(targetCifCtgry)
         #
         if self.__debug:
-            logger.debug(
-                "++++++++++++%s %s just after call to pdbxDataIo.setItemValue at %s\n"
-                % (self.__class__.__name__, sys._getframe().f_code.co_name, time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
-            )
+            logger.debug("++++++++++++ just after call to pdbxDataIo.setItemValue at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             self.__lfh.flush()
 
         if bOk:
@@ -1206,7 +1200,7 @@ Content-Disposition: attachment; filename=\"%s\"
         rC.addDictionaryItems(rtrnDict)
         #
         if self.__debug:
-            logger.debug("++++++++++++COMPLETING %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+            logger.debug("++++++++++++COMPLETING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
         return rC
 
@@ -1215,10 +1209,8 @@ Content-Disposition: attachment; filename=\"%s\"
         rtrnDict = {}
         #
         if self.__debug:
-            logger.debug("++++++++++++STARTING %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+            logger.debug("++++++++++++STARTING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         #
         cloneList = None
         self.__getSession()
@@ -1229,14 +1221,14 @@ Content-Disposition: attachment; filename=\"%s\"
         cloneItems = self.__reqObj.getValue("clone_items")
         #
         if self.__verbose:
-            logger.info("+%s.%s() -- cifctgry is:%s\n" % (className, methodName, cifCtgry))
-            logger.info("+%s.%s() -- editActnIndx is:%s\n" % (className, methodName, editActnIndx))
-            logger.info("+%s.%s() -- action is:%s\n" % (className, methodName, action))
+            logger.info("-- cifctgry is:%s", cifCtgry)
+            logger.info("-- editActnIndx is:%s", editActnIndx)
+            logger.info("-- action is:%s", action)
             #
         if action == "delrow" or action == "insert":
             rowIdx = self.__reqObj.getValue("row_idx")
             numRows = int(self.__reqObj.getValue("num_rows")) if self.__reqObj.getValue("num_rows") else None
-            logger.info("+%s.%s() -- rowIdx is:%s\n" % (className, methodName, rowIdx))
+            logger.info(" -- rowIdx is:%s", rowIdx)
             rowIdx = int(rowIdx.replace("row_", ""))  # remove prefix so that can be used by PdbxDataIo
 
             if context == "editorconfig" and action == "insert":
@@ -1271,7 +1263,7 @@ Content-Disposition: attachment; filename=\"%s\"
         rC.addDictionaryItems(rtrnDict)
         #
         if self.__debug:
-            logger.debug("++++++++++++COMPLETING %s %s at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+            logger.debug("++++++++++++COMPLETING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
         return rC
 
@@ -1288,15 +1280,13 @@ Content-Disposition: attachment; filename=\"%s\"
         if self.__debug:
             logger.debug("++++++++++++STARTING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         #
         self.__getSession()
         task = self.__reqObj.getValue("task")
         #
         if self.__verbose:
-            logger.info("+%s.%s() -- task is:%s\n" % (className, methodName, task))
-            logger.info("+%s.%s() -- action is:%s\n" % (className, methodName, action))
+            logger.info("-- task is:%s", task)
+            logger.info("-- action is:%s", action)
             #
         self.__reqObj.setReturnFormat("json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
@@ -1324,14 +1314,12 @@ Content-Disposition: attachment; filename=\"%s\"
         if self.__debug:
             logger.debug("++++++++++++STARTING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         #
         self.__getSession()
         task = self.__reqObj.getValue("task")
         #
         if self.__verbose:
-            logger.info("+%s.%s() -- task is:%s\n" % (className, methodName, task))
+            logger.info("task is:%s", task)
         #
         self.__reqObj.setReturnFormat("json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
@@ -1359,8 +1347,6 @@ Content-Disposition: attachment; filename=\"%s\"
         if self.__debug:
             logger.debug("++++++++++++STARTING at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         #
         self.__getSession()
         undoMode = self.__reqObj.getValue("mode")
@@ -1368,27 +1354,21 @@ Content-Disposition: attachment; filename=\"%s\"
         rewindIndex = int(self.__reqObj.getValue("rewind_idx"))
         #
         if self.__verbose:
-            logger.info("+%s.%s() -- undoMode is:%s\n" % (className, methodName, undoMode))
-            logger.info("+%s.%s() -- cifCtgry is:%s\n" % (className, methodName, cifCtgry))
-            logger.info("+%s.%s() -- rewindIndex is:%s\n" % (className, methodName, rewindIndex))
+            logger.info("undoMode is:%s", undoMode)
+            logger.info("cifCtgry is:%s", cifCtgry)
+            logger.info("rewindIndex is:%s", rewindIndex)
         #
         self.__reqObj.setReturnFormat("json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
         #
         pdbxDataIo = PdbxDataIo(self.__reqObj, self.__verbose, self.__lfh)
         if self.__debug:
-            logger.debug(
-                "++++++++++++%s %s just before call to pdbxDataIo._undoEdits at %s\n"
-                % (self.__class__.__name__, sys._getframe().f_code.co_name, time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
-            )
+            logger.debug("++++++++++++ just before call to pdbxDataIo._undoEdits at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
         ok = pdbxDataIo.undoEdits(cifCtgry, rewindIndex)
         #
         if self.__debug:
-            logger.debug(
-                "++++++++++++%s %s just after call to pdbxDataIo._undoEdits at %s\n"
-                % (self.__class__.__name__, sys._getframe().f_code.co_name, time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
-            )
+            logger.debug("++++++++++++ just after call to pdbxDataIo._undoEdits at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
         if ok:
             rtrnDict["status"] = "OK"
@@ -1474,7 +1454,7 @@ Content-Disposition: attachment; filename=\"%s\"
                 self.__verbose = False
 
             self.__verbose = False
-            os._exit(0)
+            os._exit(0)  # pylint: disable=protected-access
 
         return os.wait()[0]
 
@@ -1493,8 +1473,6 @@ Content-Disposition: attachment; filename=\"%s\"
         :Returns:
             ResponseContent object.
         """
-        className = self.__class__.__name__
-        methodName = sys._getframe().f_code.co_name
         #
         if self.__verbose:
             logger.info("--------------------------------------------")
@@ -1511,12 +1489,12 @@ Content-Disposition: attachment; filename=\"%s\"
         fileSource = str(self.__reqObj.getValue("filesource")).strip().lower()
         #
         if self.__verbose:
-            logger.info("--------------------------------------------\n")
-            logger.info("+%s.%s() -- depId is: %s\n" % (className, methodName, depId))
-            logger.info("+%s.%s() -- instId is: %s\n" % (className, methodName, instId))
-            logger.info("+%s.%s() -- classId is: %s\n" % (className, methodName, classId))
-            logger.info("+%s.%s() -- sessionId is: %s\n" % (className, methodName, sessionId))
-            logger.info("+%s.%s() -- fileSource is: %s\n" % (className, methodName, fileSource))
+            logger.info("--------------------------------------------")
+            logger.info(" -- depId is: %s", depId)
+            logger.info(" -- instId is: %s", instId)
+            logger.info(" -- classId is: %s", classId)
+            logger.info(" -- sessionId is: %s", sessionId)
+            logger.info(" -- fileSource is: %s", fileSource)
 
         #
         self.__reqObj.setReturnFormat("json")
@@ -1529,23 +1507,23 @@ Content-Disposition: attachment; filename=\"%s\"
             try:
                 if mode != "abort":
                     bOkay = self.__saveEditorModState()
-                    """
-                    if( bOkay ):
-                        bSuccess = self.__updateWfTrackingDb(state)
-                        if( not bSuccess ):
-                            rC.setError(errMsg="+EditorWebAppWorker.__exitEditorMod() - TRACKING status, update to '%s' failed for session %s \n" % (state,sessionId) )
-                    else:
-                        rC.setError(errMsg="+EditorWebAppWorker.__exitEditorMod() - problem saving cif file")
-                    """
+                    # """
+                    # if( bOkay ):
+                    #     bSuccess = self.__updateWfTrackingDb(state)
+                    #     if( not bSuccess ):
+                    #         rC.setError(errMsg="+EditorWebAppWorker.__exitEditorMod() - TRACKING status, update to '%s' failed for session %s \n" % (state,sessionId) )
+                    # else:
+                    #     rC.setError(errMsg="+EditorWebAppWorker.__exitEditorMod() - problem saving cif file")
+                    # """
                 else:
                     if self.__verbose:
-                        logger.info("+%s.%s() -- user aborted session for depid: %s\n" % (className, methodName, depId))
+                        logger.info("-- user aborted session for depid: %s", depId)
 
             except:  # noqa: E722 pylint: disable=bare-except
                 if self.__verbose:
                     logger.info("problem saving cif file")
-                traceback.print_exc(file=self.__lfh)
-                rC.setError(errMsg="+%s.%s() -- exception thrown on saving cif file\n" % (className, methodName))
+                logger.exception("Exception while saving file")
+                rC.setError(errMsg="+%s.%s() -- exception thrown on saving cif file\n" % ("EditorWebAppWorker", "__exitEditorMod"))
 
         else:
             try:
@@ -1561,54 +1539,54 @@ Content-Disposition: attachment; filename=\"%s\"
 
                 else:
                     if self.__verbose:
-                        logger.info("+%s.%s() -- user aborted session for depid: %s\n" % (className, methodName, depId))
+                        logger.info("user aborted session for depid: %s", depId)
 
             except:  # noqa: E722 pylint: disable=bare-except
                 if self.__verbose:
                     logger.info("failed to save cif file to session directory %s at %s", self.__sessionPath, time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
-                traceback.print_exc(file=self.__lfh)
-                rC.setError(errMsg="+%s.%s() -- exception thrown on saving cif file" % (className, methodName))
-            """
-            if self.__verbose:
-                    logger.info("+%s.%s() -- Not in WF environ so skipping status update to TRACKING database for session %s \n"%(className, methodName, sessionId) )
-            """
+                logger.exception("In save cif")
+                rC.setError(errMsg="+%s.%s() -- exception thrown on saving cif file" % ("EditorWebAppWorker", "__exitEditorMod"))
+            # """
+            # if self.__verbose:
+            #         logger.info("+%s.%s() -- Not in WF environ so skipping status update to TRACKING database for session %s \n"%(className, methodName, sessionId) )
+            # """
         #
         return rC
 
-    def __updateWfTrackingDb(self, p_status):
-        """Private function used to udpate the Workflow Status Tracking Database
+    # def __updateWfTrackingDb(self, p_status):
+    #     """Private function used to udpate the Workflow Status Tracking Database
 
-        :Params:
-            ``p_status``: the new status value to which the deposition data set is being set
+    #     :Params:
+    #         ``p_status``: the new status value to which the deposition data set is being set
 
-        :Helpers:
-            wwpdb.apps.editormodule.utils.WfTracking.WfTracking
+    #     :Helpers:
+    #         wwpdb.apps.editormodule.utils.WfTracking.WfTracking
 
-        :Returns:
-            ``bSuccess``: boolean indicating success/failure of the database update
-        """
-        #
-        bSuccess = False
-        #
-        sessionId = self.__sessionId
-        depId = self.__reqObj.getValue("identifier").upper()
-        instId = self.__reqObj.getValue("instance")
-        # classId=  str(self.__reqObj.getValue("classID")).lower()
-        classId = "View"
-        #
-        try:
-            wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
-            wft.setInstanceStatus(depId=depId, instId=instId, classId=classId, status=p_status)
-            bSuccess = True
-            if self.__verbose:
-                logger.info("+EditorWebAppWorker.__updateWfTrackingDb() -TRACKING status updated to '%s' for session %s \n" % (p_status, sessionId))
-        except:  # noqa: E722 pylint: disable=bare-except
-            bSuccess = False
-            if self.__verbose:
-                logger.info("+EditorWebAppWorker.__updateWfTrackingDb() - TRACKING status, update to '%s' failed for session %s \n" % (p_status, sessionId))
-            traceback.print_exc(file=self.__lfh)
-            #
-        return bSuccess
+    #     :Returns:
+    #         ``bSuccess``: boolean indicating success/failure of the database update
+    #     """
+    #     #
+    #     bSuccess = False
+    #     #
+    #     sessionId = self.__sessionId
+    #     depId = self.__reqObj.getValue("identifier").upper()
+    #     instId = self.__reqObj.getValue("instance")
+    #     # classId=  str(self.__reqObj.getValue("classID")).lower()
+    #     classId = "View"
+    #     #
+    #     try:
+    #         wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
+    #         wft.setInstanceStatus(depId=depId, instId=instId, classId=classId, status=p_status)
+    #         bSuccess = True
+    #         if self.__verbose:
+    #             logger.info("+EditorWebAppWorker.__updateWfTrackingDb() -TRACKING status updated to '%s' for session %s \n" % (p_status, sessionId))
+    #     except:  # noqa: E722 pylint: disable=bare-except
+    #         bSuccess = False
+    #         if self.__verbose:
+    #             logger.info("+EditorWebAppWorker.__updateWfTrackingDb() - TRACKING status, update to '%s' failed for session %s \n" % (p_status, sessionId))
+    #         traceback.print_exc(file=self.__lfh)
+    #         #
+    #     return bSuccess
 
     def __saveEditorModState(self):
         """PLACEHOLDER"""
@@ -1625,7 +1603,7 @@ Content-Disposition: attachment; filename=\"%s\"
             logger.info("+EditorWebAppWorker.__saveEditorModState() - dataFile   %s", dataFile)
         #
         if fileSource in ["archive", "wf-archive", "wf_archive"]:
-            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing archive | filesource %r \n" % fileSource)
+            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing archive | filesource %r", fileSource)
             dfRef = DataFileReference()
             dfRef.setDepositionDataSetId(depId)
             dfRef.setStorageType("archive")
@@ -1637,14 +1615,14 @@ Content-Disposition: attachment; filename=\"%s\"
                 exprtFilePath = dfRef.getFilePathReference()
                 sP = dfRef.getSitePrefix()
                 if self.__verbose:
-                    logger.info("+EditorWebAppWorker.__saveEditorModState() site prefix             : %s\n" % sP)
-                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export directory path: %s\n" % exprtDirPath)
-                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export file      path: %s\n" % exprtFilePath)
+                    logger.info("+EditorWebAppWorker.__saveEditorModState() site prefix             : %s", sP)
+                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export directory path: %s", exprtDirPath)
+                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export file      path: %s", exprtFilePath)
             else:
-                logger.info("+EditorWebAppWorker.__saveEditorModState() Bad archival reference for id %s \n" % depId)
+                logger.info("+EditorWebAppWorker.__saveEditorModState() Bad archival reference for id %s", depId)
 
         elif fileSource in ["wf-instance", "wf_instance"]:
-            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing instance | filesource %r \n" % fileSource)
+            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing instance | filesource %r", fileSource)
             dfRef = DataFileReference()
             dfRef.setDepositionDataSetId(depId)
             dfRef.setWorkflowInstanceId(instId)
@@ -1657,17 +1635,17 @@ Content-Disposition: attachment; filename=\"%s\"
                 exprtFilePath = dfRef.getFilePathReference()
                 sP = dfRef.getSitePrefix()
                 if self.__verbose:
-                    logger.info("+EditorWebAppWorker.__saveEditorModState() site prefix             : %s\n" % sP)
-                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export directory path: %s\n" % exprtDirPath)
-                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export           path: %s\n" % exprtFilePath)
+                    logger.info("+EditorWebAppWorker.__saveEditorModState() site prefix             : %s", sP)
+                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export directory path: %s", exprtDirPath)
+                    logger.info("+EditorWebAppWorker.__saveEditorModState() CC assign details export           path: %s", exprtFilePath)
             else:
-                logger.info("+EditorWebAppWorker.__saveEditorModState() Bad wf-instance reference for id %s wf id %s\n" % (depId, instId))
+                logger.info("+EditorWebAppWorker.__saveEditorModState() Bad wf-instance reference for id %s wf id %s", depId, instId)
         elif fileSource in ["rcsb_dev"]:
-            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing for 'rcsb_dev' filesource.\n")
+            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing for 'rcsb_dev' filesource.")
             exprtDirPath = self.__sessionPath
             exprtFilePath = os.path.join(self.__sessionPath, "rcsb_dev_testCifFileSave.cif")
         else:
-            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing undefined | filesource %r \n" % fileSource)
+            logger.info("+EditorWebAppWorker.__saveEditorModState() - processing undefined | filesource %r", fileSource)
             exprtDirPath = self.__sessionPath
             exprtFilePath = os.path.join(self.__sessionPath, dataFile)
             subdirectory = self.__reqObj.getValue("subdirectory")
@@ -1689,29 +1667,29 @@ Content-Disposition: attachment; filename=\"%s\"
         self.__sessionPath = self.__sObj.getPath()
         self.__rltvSessionPath = self.__sObj.getRelativePath()
         if self.__verbose:
-            logger.info("------------------------------------------------------\n")
-            logger.info("+EditorWebApp.__getSession() - creating/joining session %s\n" % self.__sessionId)
+            logger.info("------------------------------------------------------")
+            logger.info("+EditorWebApp.__getSession() - creating/joining session %s", self.__sessionId)
             # logger.info("+EditorWebApp.__getSession() - workflow storage path    %s\n" % self.__workflowStoragePath)
-            logger.info("+EditorWebApp.__getSession() - session path %s\n" % self.__sessionPath)
-            logger.info("+EditorWebApp.__getSession() - relative session path %s\n" % self.__rltvSessionPath)
+            logger.info("+EditorWebApp.__getSession() - session path %s", self.__sessionPath)
+            logger.info("+EditorWebApp.__getSession() - relative session path %s", self.__rltvSessionPath)
 
     def __isFileUpload(self, fileTag="file"):
         """Generic check for the existence of request parameter "file"."""
         # Gracefully exit if no file is provide in the request object -
         fs = self.__reqObj.getRawValue(fileTag)
         if sys.version_info[0] < 3:
-            if (fs is None) or (isinstance(fs, types.StringType)) or (isinstance(fs, types.UnicodeType)):
+            if (fs is None) or (isinstance(fs, types.StringType)) or (isinstance(fs, types.UnicodeType)):  # pylint: disable=no-member
                 return False
         else:
             if (fs is None) or (isinstance(fs, str)) or (isinstance(fs, bytes)):
                 return False
         return True
 
-    def __uploadFile(self, fileTag="file", fileTypeTag="filetype"):
+    def __uploadFile(self, fileTag="file"):
         #
         #
         if self.__verbose:
-            logger.info("+EditorWebApp.__uploadFile() - file upload starting\n")
+            logger.info("+EditorWebApp.__uploadFile() - file upload starting")
 
         #
         # Copy upload file to session directory -
@@ -1730,8 +1708,8 @@ Content-Disposition: attachment; filename=\"%s\"
 
             #
             if self.__verbose:
-                logger.info("+EditorWebApp.__uploadFile() - upload file %s\n" % fs.filename)
-                logger.info("+EditorWebApp.__uploadFile() - base file   %s\n" % fName)
+                logger.info("+EditorWebApp.__uploadFile() - upload file %s", fs.filename)
+                logger.info("+EditorWebApp.__uploadFile() - base file   %s", fName)
                 #
             # Store upload file in session directory -
 
@@ -1740,11 +1718,11 @@ Content-Disposition: attachment; filename=\"%s\"
             ofh.write(fs.file.read())
             ofh.close()
             if self.__verbose:
-                logger.info("+EditorWebApp.__uploadFile() Uploaded file %s\n" % str(fName))
+                logger.info("+EditorWebApp.__uploadFile() Uploaded file %s", str(fName))
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
-                logger.info("+EditorWebApp.__uploadFile() File upload processing failed for %s\n" % str(fs.filename))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+EditorWebApp.__uploadFile() File upload processing failed for %s", str(fs.filename))
+                logger.exception("File upload processing failure")
 
             return False
 
@@ -1755,7 +1733,7 @@ Content-Disposition: attachment; filename=\"%s\"
         #
         #
         if self.__verbose:
-            logger.info("+EditorWebApp.__uploadFeedbackFile() - file upload starting\n")
+            logger.info("+EditorWebApp.__uploadFeedbackFile() - file upload starting")
         # Copy upload file to session directory -
         try:
             fs = self.__reqObj.getRawValue(fileTag)
@@ -1773,9 +1751,9 @@ Content-Disposition: attachment; filename=\"%s\"
             mimeType = mimetypes.guess_type(fNameInput)[0]
             #
             if self.__verbose:
-                logger.info("+EditorWebApp.__uploadFeedbackFile() - upload file %s\n" % fs.filename)
-                logger.info("+EditorWebApp.__uploadFeedbackFile() - base file   %s\n" % fName)
-                logger.info("+EditorWebApp.__uploadFeedbackFile() - mime type %s\n" % mimeType)
+                logger.info("+EditorWebApp.__uploadFeedbackFile() - upload file %s", fs.filename)
+                logger.info("+EditorWebApp.__uploadFeedbackFile() - base file   %s", fName)
+                logger.info("+EditorWebApp.__uploadFeedbackFile() - mime type   %s", mimeType)
                 #
             # Store upload file in session directory -
 
@@ -1787,11 +1765,11 @@ Content-Disposition: attachment; filename=\"%s\"
             self.__reqObj.setValue("filePath", fPathAbs)
             self.__reqObj.setValue("mimeType", mimeType)
             if self.__verbose:
-                logger.info("+EditorWebApp.__uploadFeedbackFile() Uploaded file %s\n" % str(fName))
+                logger.info("+EditorWebApp.__uploadFeedbackFile() Uploaded file %s", str(fName))
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
-                logger.info("+EditorWebApp.__uploadFeedbackFile() File upload processing failed for %s\n" % str(fs.filename))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+EditorWebApp.__uploadFeedbackFile() File upload processing failed for %s", str(fs.filename))
+                logger.exception("Failure in upload feedback file")
 
             return False
         #
@@ -1806,60 +1784,12 @@ Content-Disposition: attachment; filename=\"%s\"
         fPathAbs = os.path.join(self.__sessionPath, semaphore + ".log")
         self.__lfh = open(fPathAbs, "w")
 
-    def __closeSemaphoreLog(self, semaphore="TMP_"):
-        self.__lfh.flush()
-        self.__lfh.close()
-
     def __postSemaphore(self, semaphore="TMP_", value="OK"):
         fPathAbs = os.path.join(self.__sessionPath, semaphore)
         fp = open(fPathAbs, "w")
         fp.write("%s\n" % value)
         fp.close()
         return semaphore
-
-    def __semaphoreExists(self, semaphore="TMP_"):
-        fPathAbs = os.path.join(self.__sessionPath, semaphore)
-        if os.access(fPathAbs, os.F_OK):
-            return True
-        else:
-            return False
-
-    def __getSemaphore(self, semaphore="TMP_"):
-
-        fPathAbs = os.path.join(self.__sessionPath, semaphore)
-        if self.__verbose:
-            logger.info("+EditorWebApp.__getSemaphore() - checking %s in path %s\n" % (semaphore, fPathAbs))
-        try:
-            fp = open(fPathAbs, "r")
-            lines = fp.readlines()
-            fp.close()
-            sval = lines[0][:-1]
-        except:  # noqa: E722 pylint: disable=bare-except
-            sval = "FAIL"
-        return sval
-
-    def __openChildProcessLog(self, label="TMP_"):
-        fPathAbs = os.path.join(self.__sessionPath, label + ".log")
-        self.__lfh = open(fPathAbs, "w")
-
-    def __processTemplate(self, fn, parameterDict={}):
-        """Read the input HTML template data file and perform the key/value substitutions in the
-        input parameter dictionary.
-
-        :Params:
-            ``parameterDict``: dictionary where
-            key = name of subsitution placeholder in the template and
-            value = data to be used to substitute information for the placeholder
-
-        :Returns:
-            string representing entirety of content with subsitution placeholders now replaced with data
-        """
-        tPath = self.__reqObj.getValue("TemplatePath")
-        fPath = os.path.join(tPath, fn)
-        ifh = open(fPath, "r")
-        sIn = ifh.read()
-        ifh.close()
-        return sIn % parameterDict
 
     def __isWorkflow(self):
         """Determine if currently operating in Workflow Managed environment
@@ -1871,7 +1801,7 @@ Content-Disposition: attachment; filename=\"%s\"
         fileSource = str(self.__reqObj.getValue("filesource")).lower()
         #
         if self.__verbose:
-            logger.info("+EditorWebAppWorker.__isWorkflow() - filesource is %s\n" % fileSource)
+            logger.info("+EditorWebAppWorker.__isWorkflow() - filesource is %s", fileSource)
         #
         # add wf_archive to fix PDBe wfm issue -- jdw 2011-06-30
         #
@@ -1886,10 +1816,3 @@ Content-Disposition: attachment; filename=\"%s\"
 class RedirectDevice:
     def write(self, s):
         pass
-
-
-if __name__ == "__main__":
-    sTool = EditorWebApp()
-    d = sTool.doOp()
-    for k, v in d.items():
-        sys.stdout.write("Key - %s  value - %r\n" % (k, v))
