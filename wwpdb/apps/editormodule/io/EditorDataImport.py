@@ -13,116 +13,114 @@ Class to encapsulate data import for files requested by General Annotation Edito
 
 """
 __docformat__ = "restructuredtext en"
-__author__    = "John Westbrook"
-__email__     = "jwest@rcsb.rutgers.edu"
-__license__   = "Creative Commons Attribution 3.0 Unported"
-__version__   = "V0.01"
+__author__ = "John Westbrook"
+__email__ = "jwest@rcsb.rutgers.edu"
+__license__ = "Creative Commons Attribution 3.0 Unported"
+__version__ = "V0.01"
+
+import sys
+import os
+import os.path
+import logging
 
 
-import sys, os, os.path, traceback, time
+from wwpdb.io.locator.DataReference import DataFileReference
 
-from wwpdb.io.locator.DataReference  import DataFileReference
+logger = logging.getLogger(__name__)
+
 
 class EditorDataImport(object):
-    """ Controlling class for data import operations
+    """Controlling class for data import operations
 
-        Supported file sources:
-        + archive         -  WF archive storage  
-        + wf-instance     -  WF instance storage 
-        
+    Supported file sources:
+    + archive         -  WF archive storage
+    + wf-instance     -  WF instance storage
+
     """
-    def __init__(self,reqObj=None,verbose=False,log=sys.stderr):
-        self.__verbose=verbose
-        self.__reqObj=reqObj
-        self.__lfh=log
+
+    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
+        self.__verbose = verbose
+        self.__reqObj = reqObj
         #
         self.__sessionObj = None
         #
-        if (self.__verbose):
-            self.__lfh.write("+EditorDataImport() starting\n")
-            self.__lfh.flush()
+        if self.__verbose:
+            logger.info("+EditorDataImport() starting")
         #
         self.__setup()
         #
 
     def __setup(self):
-        
+
         try:
-            self.__sessionObj  = self.__reqObj.getSessionObj()
-            self.__sessionPath = self.__sessionObj.getPath()
-            self.__identifier  = str(self.__reqObj.getValue("identifier")).upper()
-            self.__instance    = str(self.__reqObj.getValue("instance")).upper()
-            self.__fileSource = "archive" # 2012-09-25, decision made to always source model file from archival storage instead of instance (may need to revisit)
-            '''
-            self.__fileSource  = str(self.__reqObj.getValue("filesource")).lower()
-            if self.__fileSource not in ['archive','wf-archive','wf-instance','wf_archive','wf_instance']:
-                self.__fileSource = 'archive'            
-            '''
-            if (self.__verbose):
-                self.__lfh.write("+EditorDataImport.__setup() file source %s\n" % self.__fileSource)
-                self.__lfh.write("+EditorDataImport.__setup() identifier  %s\n" % self.__identifier)
-                self.__lfh.write("+EditorDataImport.__setup() instance    %s\n" % self.__instance)
+            self.__sessionObj = self.__reqObj.getSessionObj()
+            self.__identifier = str(self.__reqObj.getValue("identifier")).upper()
+            self.__instance = str(self.__reqObj.getValue("instance")).upper()
+            self.__fileSource = "archive"  # 2012-09-25, decision made to always source model file from archival storage instead of instance (may need to revisit)
+            #
+            # self.__fileSource  = str(self.__reqObj.getValue("filesource")).lower()
+            # if self.__fileSource not in ['archive', 'wf-archive', 'wf-instance', 'wf_archive', 'wf_instance']:
+            #     self.__fileSource = 'archive'
+            #
+            if self.__verbose:
+                logger.info("+EditorDataImport.__setup() file source %s", self.__fileSource)
+                logger.info("+EditorDataImport.__setup() identifier  %s", self.__identifier)
+                logger.info("+EditorDataImport.__setup() instance    %s", self.__instance)
                 #
-                self.__lfh.flush()                
-        except:
-            if (self.__verbose):
-                self.__lfh.write("+EditorDataImport.__setup() sessionId %s failed\n" % self.__sessionObj.getId())
+        except Exception as _e:  # noqa: F841
+            if self.__verbose:
+                logger.info("+EditorDataImport.__setup() sessionId %s failed", self.__sessionObj.getId())
 
     def getModelPdxFilePath(self):
-        return self.__getWfFilePath(contentType='model',format='pdbx',fileSource=self.__fileSource,version='latest')
+        return self.__getWfFilePath(contentType="model", fmt="pdbx", fileSource=self.__fileSource, version="latest")
 
-    def __getWfFilePath(self,contentType='model',format='pdbx',fileSource='archive',version='latest'):
+    def __getWfFilePath(self, contentType="model", fmt="pdbx", fileSource="archive", version="latest"):
         try:
-            fPath=self.__getWfFilePathRef(contentType=contentType,format=format,fileSource=fileSource,version=version)
-            if (self.__verbose):
-                self.__lfh.write("+EditorDataImport.__getWfFilePath() checking %s  path %s\n" % (contentType,fPath))            
-            if fPath is not None and os.access(fPath,os.R_OK):
+            fPath = self.__getWfFilePathRef(contentType=contentType, fmt=fmt, fileSource=fileSource, version=version)
+            if self.__verbose:
+                logger.info("+EditorDataImport.__getWfFilePath() checking %s  path %s", contentType, fPath)
+            if fPath is not None and os.access(fPath, os.R_OK):
                 return fPath
             else:
                 return None
-        except:
-            if (self.__verbose):
-                traceback.print_exc(file=self.__lfh)
-                self.__lfh.flush()                                        
+        except Exception as _e:  # noqa:F841
+            if self.__verbose:
+                logger.exception("In __getWfFilePath")
             return None
-        
-    def __getWfFilePathRef(self,contentType='model',format='pdbx',fileSource='archive',version='latest'):
-        """ Return the path to the latest version of the 
-        """                
+
+    def __getWfFilePathRef(self, contentType="model", fmt="pdbx", fileSource="archive", version="latest"):
+        """Return the path to the latest version of the"""
         #
         # Get PDBx model file -
         #
-        dfRef=DataFileReference()
-        self.__lfh.write("+EditorDataImport.__getWfFilePath() site id is %s\n" % dfRef.getSitePrefix())        
+        dfRef = DataFileReference()
+        logger.info("+EditorDataImport.__getWfFilePath() site id is %s", dfRef.getSitePrefix())
 
-        dfRef.setDepositionDataSetId(self.__identifier)        
-        if (fileSource in ['archive','wf-archive','wf_archive']):
-            dfRef.setStorageType('archive')
-        elif (fileSource in ['wf-instance','wf_instance']):
-            dfRef.setWorkflowInstanceId(self.__instance)            
-            dfRef.setStorageType('wf-instance')
+        dfRef.setDepositionDataSetId(self.__identifier)
+        if fileSource in ["archive", "wf-archive", "wf_archive"]:
+            dfRef.setStorageType("archive")
+        elif fileSource in ["wf-instance", "wf_instance"]:
+            dfRef.setWorkflowInstanceId(self.__instance)
+            dfRef.setStorageType("wf-instance")
         else:
-            self.__lfh.write("+EditorDataImport.__getWfFilePath() Bad file source for %s id %s wf id %s\n" %
-                             (contentType,self.__identifier,self.__instance))
+            logger.info("+EditorDataImport.__getWfFilePath() Bad file source for %s id %s wf id %s", contentType, self.__identifier, self.__instance)
         #
-        dfRef.setContentTypeAndFormat(contentType,format)
-        dfRef.setVersionId(version)        
+        dfRef.setContentTypeAndFormat(contentType, fmt)
+        dfRef.setVersionId(version)
         #
-        fP=None
-        if (dfRef.isReferenceValid()):                  
-            dP=dfRef.getDirPathReference()
-            fP=dfRef.getFilePathReference()
-            if (self.__verbose):                
-                self.__lfh.write("+EditorDataImport.__getWfFilePath() file directory path: %s\n" % dP)
-                self.__lfh.write("+EditorDataImport.__getWfFilePath() file           path: %s\n" % fP)
+        fP = None
+        if dfRef.isReferenceValid():
+            dP = dfRef.getDirPathReference()
+            fP = dfRef.getFilePathReference()
+            if self.__verbose:
+                logger.info("+EditorDataImport.__getWfFilePath() file directory path: %s", dP)
+                logger.info("+EditorDataImport.__getWfFilePath() file           path: %s", fP)
         else:
-            self.__lfh.write("+EditorDataImport.__getWfFilePath() bad reference for %s id %s wf id %s\n" %
-                             (contentType,self.__identifier,self.__instance))                                
-        
-        self.__lfh.flush()        
+            logger.info("+EditorDataImport.__getWfFilePath() bad reference for %s id %s wf id %s", contentType, self.__identifier, self.__instance)
+
         #
         return fP
 
 
-if __name__ == '__main__':
-    di=EditorDataImport()
+if __name__ == "__main__":
+    di = EditorDataImport()
