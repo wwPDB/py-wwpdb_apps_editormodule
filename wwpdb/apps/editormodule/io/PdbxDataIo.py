@@ -1277,7 +1277,7 @@ class PdbxDataIo(object):
             #
 
         except:  # noqa: E722 pylint: disable=bare-except
-            logger.excepton("Error in getCategoryRowList")
+            logger.exception("Error in getCategoryRowList")
 
         return (rtrnList[(p_iDisplayStart) : (p_iDisplayStart + p_iDisplayLength)], iTotalRecords, iTotalDisplayRecords)
 
@@ -1577,7 +1577,7 @@ class PdbxDataIo(object):
                 dicAttributeList = ctgryMetaDict["COLUMN_NAMES"]
                 for dicattributeNm in dicAttributeList:
                     if self.__debug:
-                        logger.debu("++++++++++++ building skeleton cifCategory container with attribute: %s", dicattributeNm)
+                        logger.debug("++++++++++++ building skeleton cifCategory container with attribute: %s", dicattributeNm)
                     #
                     ctgryObj.appendAttribute(dicattributeNm)
 
@@ -2682,7 +2682,7 @@ class PdbxDataIo(object):
                                 targetTitleValue = record[idxTargetTitle]
 
                         if self.__verbose:
-                            logger.inf("title '%s' from target category '%s' obtained from row# %s", targetTitleValue, p_targetCtgry, targetRowNmbr)
+                            logger.info("title '%s' from target category '%s' obtained from row# %s", targetTitleValue, p_targetCtgry, targetRowNmbr)
 
                         origTitleValue = targetTitleValue
                         targetCtgryObj.setValue(srcTitleValue, targetAttributeNm, targetRowNmbr)
