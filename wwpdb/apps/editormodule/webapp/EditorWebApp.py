@@ -93,6 +93,7 @@ from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.apps.editormodule.depict.EditorDepict import EditorDepict
 from wwpdb.apps.editormodule.io.PdbxDataIo import PdbxDataIo
 from wwpdb.apps.editormodule.webapp.WebRequest import EditorInputRequest, ResponseContent
+from wwpdb.apps.editormodule.config.AccessTemplateFiles import get_template_file_path
 
 # from json import loads, dumps
 # from time import localtime, strftime
@@ -121,7 +122,7 @@ class EditorWebApp(object):
         self.__siteId = siteId
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__topSessionPath = self.__cICommon.get_site_web_apps_top_sessions_path()
-        self.__templatePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+        self.__templatePath = get_template_file_path()
         #
 
         if isinstance(parameterDict, dict):
