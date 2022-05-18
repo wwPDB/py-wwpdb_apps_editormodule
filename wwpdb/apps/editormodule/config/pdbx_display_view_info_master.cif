@@ -892,6 +892,7 @@ struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_asym_id'    
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_seq_id'                         end_auth_seq_id                             N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_component_id'                       pdbx_component_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_refine_code'                        pdbx_refine_code                            N
+struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_ens_id'                             pdbx_ens_id                                 N
 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_auth_asym_id'                      pdbx_auth_asym_id                           N
 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_refine_id'                         pdbx_refine_id                              Y
 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.dom_id'                                 dom_id                                      Y
