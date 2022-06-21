@@ -388,8 +388,8 @@ class PdbxDataIo(object):
                 pdbxReader = IoAdapterCore(verbose=self.__verbose)
                 self.__containerList = pdbxReader.readFile(inputFilePath=self.__pathPdbxDataFile, enforceAscii=True)
 
-                iCountNames = len(self.__containerList)
-                assert iCountNames == 1, "initializeDataStore -- expecting containerNameList to have single member but list had %s members" % iCountNames
+                # iCountNames = len(self.__containerList)
+                # assert iCountNames == 1, "initializeDataStore -- expecting containerNameList to have single member but list had %s members" % iCountNames
                 #
                 if sys.version_info[0] < 3:
                     self.__dataBlockName = self.__containerList[0].getName().encode("utf-8")
