@@ -803,6 +803,7 @@ _pdbx_display_view_category_info.category_cardinality
 'Reflection/Refinement Data' struct_ncs_dom                      'Reflection/Refinement Data' struct_ncs_dom                        multi
 'Reflection/Refinement Data' struct_ncs_dom_lim                  'Reflection/Refinement Data' struct_ncs_dom_lim                    mutil
 'Reflection/Refinement Data' refine_ls_restr_ncs                 'Reflection/Refinement Data' refine_ls_restr_ncs                   unit
+'Reflection/Refinement Data' refine_ls_restr                     'Reflection/Refinement Data' refine_ls_restr                       multi
 
 loop_
 _pdbx_display_view_item_info.category_display_name
@@ -906,6 +907,13 @@ refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_B_iso'       
 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_number'                            pdbx_number                                 Y
 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_type'                              pdbx_type                                   Y
 
+refine_ls_restr                       '_refine_ls_restr.pdbx_refine_id'                             pdbx_refine_id                              N
+refine_ls_restr                       '_refine_ls_restr.type'                                       type                                        N
+refine_ls_restr                       '_refine_ls_restr.dev_ideal'                                  dev_ideal                                   N
+refine_ls_restr                       '_refine_ls_restr.dev_ideal_target'                           dev_ideal_target                            N
+refine_ls_restr                       '_refine_ls_restr.number'                                     number                                      N
+refine_ls_restr                       '_refine_ls_restr.pdbx_restraint_function'                    pdbx_restraint_function                     N
+refine_ls_restr                       '_refine_ls_restr.weight'                                     weight                                      N
 
 data_XRAY_SX
 loop_
