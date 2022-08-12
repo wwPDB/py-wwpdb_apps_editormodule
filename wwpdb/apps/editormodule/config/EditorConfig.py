@@ -102,6 +102,7 @@ class EditorConfig(object):
         "pdbx_serial_crystallography_sample_delivery_fixed_target",
         "pdbx_serial_crystallography_data_reduction",
         "refine_ls_restr_ncs",
+        "refine_ls_restr",
         "refine_ls_shell",
         "reflns_shell",
         "struct_biol",

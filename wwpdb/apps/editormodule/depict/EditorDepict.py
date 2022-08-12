@@ -735,7 +735,7 @@ class EditorDepict(object):
     # ####### END -- Specific to DataTable Implementation ##################
 
     def __getAllCategoriesInDataFile(self, p_fileSource, p_dataFile, p_bIsWorkflow):  # pylint: disable=unused-argument
-
+        """Returns list of categories in the first data block"""
         if self.__verbose:
             logger.info("--------------------------------------------")
             logger.info("-- starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
@@ -746,9 +746,9 @@ class EditorDepict(object):
         myPersist = PdbxPersist(self.__verbose, self.__lfh)
         myInd = myPersist.getIndex(dbFileName=dbFilePath)
         containerNameList = myInd["__containers__"]
-        for containerName, _containerType in containerNameList:
-            for objName in myInd[containerName]:
-                ctgryList.append(objName)
+        dataBlockName = containerNameList[0][0]
+        for objName in myInd[dataBlockName]:
+            ctgryList.append(objName)
 
         if self.__verbose:
             logger.info("+++ completed at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
