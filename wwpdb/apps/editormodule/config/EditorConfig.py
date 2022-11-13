@@ -112,6 +112,7 @@ class EditorConfig(object):
         "struct_ncs_dom_lim",
         "struct_ref_seq_dif",
         "pdbx_audit_support",
+        "pdbx_initial_refinement_model",
         "pdbx_reference_entity_sequence",
         "pdbx_reference_entity_poly",
     ]
@@ -174,6 +175,7 @@ class EditorConfig(object):
         "refine_ls_shell",
         "struct_conn",
         "struct_ncs_dom",
+        "pdbx_initial_refinement_model",
         "pdbx_related_exp_data_set",
         "pdbx_serial_crystallography_measurement",
         "pdbx_serial_crystallography_sample_delivery",

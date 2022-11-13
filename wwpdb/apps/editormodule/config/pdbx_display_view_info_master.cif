@@ -796,6 +796,7 @@ _pdbx_display_view_category_info.category_display_name
 _pdbx_display_view_category_info.category_cardinality
 'Reflection/Refinement Data' reflns                              'Reflection/Refinement Data' 'Overall Data'                        unit
 'Reflection/Refinement Data' reflns_shell                        'Reflection/Refinement Data' 'Highest Resolution Shell'            multi
+'Reflection/Refinement Data' pdbx_initial_refinement_model       'Reflection/Refinement Data' 'Starting Model'                      multi
 'Reflection/Refinement Data' refine                              'Reflection/Refinement Data' 'Overall Refinement Data'             multi
 'Reflection/Refinement Data' refine_ls_shell                     'Reflection/Refinement Data' 'Highest Resolution Refinement Shell' multi
 'Reflection/Refinement Data' pdbx_refine_tls_group               'Reflection/Refinement Data' pdbx_refine_tls_group                 multi
@@ -848,6 +849,12 @@ _pdbx_display_view_item_info.read_only_flag
 'Highest Resolution Shell'            '_reflns_shell.pdbx_Rrim_I_all_anomalous'                     'Rmeas_anom'                                N
 'Highest Resolution Shell'            '_reflns_shell.meanI_over_sigI_obs'                           'Net I over sigma I'                        N
 'Highest Resolution Shell'            '_reflns_shell.percent_possible_all'                          percent_possible_all                        N
+'Starting Model'                      '_pdbx_initial_refinement_model.id'                           ID                                          N
+'Starting Model'                      '_pdbx_initial_refinement_model.type'                         'Type'                                      N
+'Starting Model'                      '_pdbx_initial_refinement_model.entity_id_list'               'Entity list'                               N
+'Starting Model'                      '_pdbx_initial_refinement_model.source_name'                  'Source name'                               N
+'Starting Model'                      '_pdbx_initial_refinement_model.accession_code'               'Accession code'                            N
+'Starting Model'                      '_pdbx_initial_refinement_model.details'                       'Details'                                   N
 'Overall Refinement Data'             '_refine.pdbx_refine_id'                                      'Diffraction method'                        N
 'Overall Refinement Data'             '_refine.pdbx_diffrn_id'                                      'Diffraction id'                            Y
 'Overall Refinement Data'             '_refine.pdbx_method_to_determine_struct'                     'Method to determine the structure'         N
