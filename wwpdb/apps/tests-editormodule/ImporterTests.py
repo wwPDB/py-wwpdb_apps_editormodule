@@ -14,7 +14,8 @@ __version__ = "V0.01"
 
 import unittest
 
-from wwpdb.apps.editormodule.webapp.EditorWebApp import EditorWebApp
+from wwpdb.apps.editormodule.webapp.EditorWebApp import EditorWebApp  # noqa: F401
+
 
 class ImportTests(unittest.TestCase):
     def setUp(self):
@@ -22,4 +23,7 @@ class ImportTests(unittest.TestCase):
 
     def testInstantiate(self):
         """Tests simple instantiation"""
-        pass
+        e = EditorWebApp()
+        ret = e.doOp()
+        for k, v in ret.items():
+            print("Key - %s  value - %r" % (k, v))

@@ -1,2 +1,2 @@
 recursive-include wwpdb/apps/editormodule/config *.cif
-recursive-include wwpdb/apps/editormodule/webapp/templates  *
+recursive-include wwpdb/apps/editormodule/templates  *
