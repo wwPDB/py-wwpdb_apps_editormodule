@@ -142,6 +142,7 @@ from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary  import PdbxMasterViewD
 from wwpdb.apps.editormodule.config.EditorConfig          import EditorConfig
 from wwpdb.apps.editormodule.config.AccessConfigCifFiles import get_display_view_info_master_cif, get_display_view_info_cif
 from wwpdb.utils.db.DBLoadUtil                            import DBLoadUtil
+from wwpdb.utils.db.DepositorSyncUtil                     import DepositorSyncUtil
 from mmcif.api.DataCategory                               import DataCategory
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
@@ -791,6 +792,11 @@ class PdbxDataIo(object):
                     if fileSource in ['archive','wf-archive','wf_archive']:
                         dbLoader = DBLoadUtil(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
                         dbLoader.doLoading([exprtFilePath])
+
+                        # syncing depositor data to database
+                        depId = self.__reqObj.getValue("identifier")
+                        syncdep = DepositorSyncUtil(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+                        syncdep.syncWithDatabase(depId=depId, modelFilePath=exprtFilePath)
                     # ZF, end DB loading
                     if( self.__verbose ):
                         self.__lfh.write("+%s.%s() -- exported updated cif file to %s\n" % (self.__class__.__name__,
