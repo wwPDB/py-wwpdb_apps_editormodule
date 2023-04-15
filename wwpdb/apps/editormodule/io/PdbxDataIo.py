@@ -147,9 +147,9 @@ from wwpdb.apps.editormodule.io.EditorDataImport import EditorDataImport
 from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
 from wwpdb.apps.editormodule.config.EditorConfig import EditorConfig
 from wwpdb.apps.editormodule.config.AccessConfigCifFiles import get_display_view_info_master_cif, get_display_view_info_cif
-from wwpdb.utils.db.DBLoadUtil                            import DBLoadUtil
-from wwpdb.utils.db.DepositorSyncUtil                     import DepositorSyncUtil
-from mmcif.api.DataCategory                               import DataCategory
+from wwpdb.utils.db.DBLoadUtil import DBLoadUtil
+from wwpdb.utils.dp.DepositorSyncUtil import DepositorSyncUtil
+from mmcif.api.DataCategory import DataCategory
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
 import logging
