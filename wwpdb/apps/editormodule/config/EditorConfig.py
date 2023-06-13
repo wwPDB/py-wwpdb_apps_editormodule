@@ -96,6 +96,8 @@ class EditorConfig(object):
         "pdbx_related_exp_data_set",
         "pdbx_struct_assembly_auth_evidence",
         "pdbx_struct_assembly_prop",
+        "pdbx_struct_assembly_auth_evidence_depositor_info",
+        "pdbx_struct_assembly_gen_depositor_info",
         "pdbx_serial_crystallography_measurement",
         "pdbx_serial_crystallography_sample_delivery",
         "pdbx_serial_crystallography_sample_delivery_injection",

@@ -1134,6 +1134,9 @@ Derived                      pdbx_struct_assembly_auth_evidence  'Biological Ass
 Derived                      pdbx_struct_assembly_gen            'Biological Assembly'        pdbx_struct_assembly_gen              multi
 Derived                      pdbx_struct_assembly_prop           'Biological Assembly'        pdbx_struct_assembly_prop             multi
 Derived                      struct_biol                         'Biological Assembly'        'Assembly details'                    multi
+Derived                      pdbx_struct_assembly_auth_evidence_depositor_info  'Biological Assembly'  'Author Evidence depui'      multi
+Derived                      pdbx_struct_assembly_gen_depositor_info 'Biological Assembly'   'Author assem gen depui'              multi
+
 Derived                      pdbx_distant_solvent_atoms          'Solvent Re-position'        'distant solvent'                     multi
 Derived                      pdbx_solvent_atom_site_mapping      'Solvent Re-position'        'solvent atom mapping'                multi
 
@@ -1293,6 +1296,21 @@ pdbx_struct_assembly_prop             '_pdbx_struct_assembly_prop.details'      
 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.method_details'         'depositor assembly method'                 N
 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.oligomeric_details'     'depositor assembly details'                N
 'Depositor Assembly details'          '_pdbx_struct_assembly_depositor_info.oligomeric_count'       'depositor assembly count'                  N
+
+'Author Evidence depui'               '_pdbx_struct_assembly_auth_evidence_depositor_info.id'       id                                          N
+'Author Evidence depui'               '_pdbx_struct_assembly_auth_evidence_depositor_info.assembly_id'   'assembly id'                          N
+'Author Evidence depui'               '_pdbx_struct_assembly_auth_evidence_depositor_info.experimental_support'   'exptl supp'                  N
+'Author Evidence depui'               '_pdbx_struct_assembly_auth_evidence_depositor_info.details'   'details'                                  N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.id'                 id                                          N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.all_chains'         'all chains'                                N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.assembly_id'        'assembly id'                               N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.at_unit_matrix'     at_unit_matric                              N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.oper_expression'    operator                                    N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.symmetry_operation' symm                                        N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.chain_id_list'      chains                                      N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.asym_id_list'       asym_id_list                                N
+'Author assem gen depui'              '_pdbx_struct_assembly_gen_depositor_info.full_matrices'      matrices                                    N
+
 'distant solvent'                     '_pdbx_distant_solvent_atoms.id'                              id                                          Y
 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_comp_id'                    auth_comp_id                                Y
 'distant solvent'                     '_pdbx_distant_solvent_atoms.auth_asym_id'                    auth_asym_id                                Y
