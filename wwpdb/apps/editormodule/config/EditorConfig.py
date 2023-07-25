@@ -155,7 +155,6 @@ class EditorConfig(object):
         "pdbx_entity_src_gen_depositor_info",
         "pdbx_helical_symmetry_depositor_info",
         "pdbx_point_symmetry_depositor_info",
-        "pdbx_struct_assembly_gen_depositor_info",
         "pdbx_struct_assembly_prop_depositor_info",
         "pdbx_struct_oper_list_depositor_info",
         "pdbx_struct_ref_seq_depositor_info",
