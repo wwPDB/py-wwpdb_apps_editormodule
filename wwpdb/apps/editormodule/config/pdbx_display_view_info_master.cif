@@ -81,6 +81,7 @@ Summary                   software                            Summary           
 Summary                   reflns                              Summary                   'Overall Data0'                        unit
 Summary                   reflns_shell                        Summary                   'Highest Resolution Shell0'            multi
 Summary                   refine                              Summary                   'Overall Refinement Data0'             multi
+Summary                   pdbx_initial_refinement_model       Summary                   'Starting Model0'                      multi
 Summary                   refine_ls_shell                     Summary                   'Highest Resolution Refinement Shell0' multi
 
 
@@ -154,6 +155,12 @@ _pdbx_display_view_item_info.read_only_flag
 'Highest Resolution Refinement Shell0' '_refine_ls_shell.R_factor_R_free'                            R-free                                      N
 'Highest Resolution Refinement Shell0' '_refine_ls_shell.number_reflns_R_free'                       'Number reflns R-free'                      N
 'Highest Resolution Refinement Shell0' '_refine_ls_shell.R_factor_R_free_error'                      R_factor_R_free_error                       N
+'Starting Model0'                      '_pdbx_initial_refinement_model.id'                           ID                                          N
+'Starting Model0'                      '_pdbx_initial_refinement_model.type'                         'Type'                                      N
+'Starting Model0'                      '_pdbx_initial_refinement_model.entity_id_list'               'Entity list'                               N
+'Starting Model0'                      '_pdbx_initial_refinement_model.source_name'                  'Source name'                               N
+'Starting Model0'                      '_pdbx_initial_refinement_model.accession_code'               'Accession code'                            N
+'Starting Model0'                      '_pdbx_initial_refinement_model.details'                       'Details'                                   N
 
 
 
