@@ -1715,7 +1715,7 @@ em_3d_reconstruction               '_em_3d_reconstruction.algorithm'            
 em_3d_reconstruction               '_em_3d_reconstruction.refinement_type'                             refinement_type                                  N
 em_3d_reconstruction               '_em_3d_reconstruction.details'                               details                                          N
 em_3d_reconstruction               '_em_3d_reconstruction.num_class_averages'                    num_classes_used                                 N
-em_3d_reconstruction               '_em_3d_reconstruction.num_particles'                         num_images_used                                  N
+em_3d_reconstruction               '_em_3d_reconstruction.num_particles'                         num_particles                                    N
 # em_3d_reconstruction               '_em_3d_reconstruction.num_subtomograms'                      num_subtomograms_used                            N
 em_3d_reconstruction               '_em_3d_reconstruction.resolution'                            resolution                                       N
 em_3d_reconstruction               '_em_3d_reconstruction.resolution_method'                     resolution_method                                N
