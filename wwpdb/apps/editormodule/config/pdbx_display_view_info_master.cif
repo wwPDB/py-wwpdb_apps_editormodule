@@ -52,8 +52,8 @@ loop_
 _pdbx_view_combine.exptl
 _pdbx_view_combine.viewName
 _pdbx_view_combine.sections
-X-RAY    AV1      XraySum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,XRAY1,XRAY2,XRAY_SX,T7
-NMR      NMR1     T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,NMR1,T7
+X-RAY    AV1      SumBase,XraySum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,XRAY1,XRAY2,XRAY_SX,T7
+NMR      NMR1     SumBase,NMRSum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,NMR1,T7
 EM       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,T7,EM2,EM3,EM4,EM5,EM6,EM7,EM8,EM9_REFI
 EMmap    EM2      EM1A,T1contacts,EM1B,EM1C,T2A,T2C,T2D,T3B,T3EM,T6EM,T6,EM2,EM3,EM4,EM5,EM6,EM7,EM8
 EM_NMR   EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,NMR1,T7,EM2,EM3,EM4,EM5,EM6,EM7,EM8,EM9_REFI
@@ -67,13 +67,6 @@ _pdbx_display_view_category_info.category_name
 _pdbx_display_view_category_info.category_group_display_name
 _pdbx_display_view_category_info.category_display_name
 _pdbx_display_view_category_info.category_cardinality
-Summary                   struct                              Summary                   Title                                  unit
-Summary                   citation                            Summary                   Citation                               multi
-Summary                   audit_author                        Summary                   'Entry Authors'                        multi
-Summary                   citation_author                     Summary                   'Citation Authors'                     multi
-Summary                   pdbx_database_related               Summary                   'Related Entries'                      multi
-Summary                   struct_keywords                     Summary                   'Struct Keywords'                      multi
-Summary                   entity                              Summary                   'Entity Description'                   multi
 Summary                   exptl_crystal_grow                  Summary                   exptl_crystal_grow                     multi
 Summary                   diffrn_source                       Summary                   diffrn_source                          multi
 Summary                   diffrn_detector                     Summary                   Detector                               multi
@@ -162,6 +155,38 @@ _pdbx_display_view_item_info.read_only_flag
 'Starting Model0'                      '_pdbx_initial_refinement_model.accession_code'               'Accession code'                            N
 'Starting Model0'                      '_pdbx_initial_refinement_model.details'                       'Details'                                   N
 
+###############################################################################################################
+data_SumBase
+loop_
+_pdbx_display_view_category_info.category_menu_display_name
+_pdbx_display_view_category_info.category_name
+_pdbx_display_view_category_info.category_group_display_name
+_pdbx_display_view_category_info.category_display_name
+_pdbx_display_view_category_info.category_cardinality
+Summary                   struct                              Summary                   Title                                  unit
+Summary                   citation                            Summary                   Citation                               multi
+Summary                   audit_author                        Summary                   'Entry Authors'                        multi
+Summary                   citation_author                     Summary                   'Citation Authors'                     multi
+Summary                   pdbx_database_related               Summary                   'Related Entries'                      multi
+Summary                   struct_keywords                     Summary                   'Struct Keywords'                      multi
+Summary                   entity                              Summary                   'Entity Description'                   multi
+
+
+###############################################################################################################
+##### NMR Summary ####
+data_NMRSum
+loop_
+_pdbx_display_view_category_info.category_menu_display_name
+_pdbx_display_view_category_info.category_name
+_pdbx_display_view_category_info.category_group_display_name
+_pdbx_display_view_category_info.category_display_name
+_pdbx_display_view_category_info.category_cardinality
+Summary                   pdbx_nmr_ensemble                  Summary     pdbx_nmr_ensemble                    unit
+Summary                   pdbx_nmr_sample_details            Summary     pdbx_nmr_sample_details              multi
+Summary                   pdbx_nmr_exptl_sample              Summary     pdbx_nmr_exptl_sample                multi
+Summary                   pdbx_nmr_spectrometer              Summary     pdbx_nmr_spectrometer                multi
+Summary                   pdbx_nmr_software                  Summary     pdbx_nmr_software                    multi
+Summary                   pdbx_nmr_chem_shift_ref            Summary     pdbx_nmr_chem_shift_ref              multi
 
 
 ###############################################################################################################
