@@ -1530,7 +1530,7 @@ em_specimen                        '_em_specimen.staining_applied'              
 em_specimen                        '_em_specimen.vitrification_applied'                          vitrification_applied                            N
 em_buffer                          '_em_buffer.id'                                               id                                               N
 em_buffer                          '_em_buffer.specimen_id'                                      specimen_id                                      N
-em_buffer                          '_em_buffer.pH'                                               ph                                               N
+em_buffer                          '_em_buffer.pH'                                               pH                                               N
 em_buffer                          '_em_buffer.details'                                          details                                          N
 em_buffer_component                '_em_buffer_component.id'                                     id                                               N
 em_buffer_component                '_em_buffer_component.buffer_id'                              buffer_id                                        N
