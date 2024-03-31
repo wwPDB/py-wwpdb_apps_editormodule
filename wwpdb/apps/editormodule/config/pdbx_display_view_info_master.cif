@@ -924,26 +924,23 @@ pdbx_refine_tls_group                 '_pdbx_refine_tls_group.end_auth_seq_id'  
 pdbx_refine_tls_group                 '_pdbx_refine_tls_group.selection_details'                    selection_details                           N
 struct_ncs_ens                        '_struct_ncs_ens.id'                                          id                                          N
 struct_ncs_ens                        '_struct_ncs_ens.details'                                     details                                     N
+struct_ncs_dom                        '_struct_ncs_dom.id'                                          id                                          N
 struct_ncs_dom                        '_struct_ncs_dom.details'                                     details                                     N
 struct_ncs_dom                        '_struct_ncs_dom.pdbx_ens_id'                                 pdbx_ens_id                                 N
 
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.dom_id'                                  dom_id                                      N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_asym_id'                        beg_auth_asym_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_seq_id'                         beg_auth_seq_id                             N
-
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_alt_id'                        beg_label_alt_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_asym_id'                       beg_label_asym_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_comp_id'                       beg_label_comp_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_seq_id'                        beg_label_seq_id                            N
-
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_asym_id'                        end_auth_asym_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_seq_id'                         end_auth_seq_id                             N
-
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_alt_id'                        end_label_alt_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_asym_id'                       end_label_asym_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_comp_id'                       end_label_comp_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_seq_id'                        end_label_seq_id                            N
-
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_component_id'                       pdbx_component_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_refine_code'                        pdbx_refine_code                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.pdbx_ens_id'                             pdbx_ens_id                                 N
@@ -952,17 +949,21 @@ struct_ncs_dom_lim                    '_struct_ncs_dom_lim.selection_details'   
 
 
 refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_auth_asym_id'                      pdbx_auth_asym_id                           N
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_refine_id'                         pdbx_refine_id                              Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.dom_id'                                 dom_id                                      Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_ens_id'                            pdbx_ens_id                                 Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_ordinal'                           pdbx_ordinal                                Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.ncs_model_details'                      ncs_model_details                           Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.rms_dev_position'                       rms_dev_position                            Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_position'                        weight_position                             Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.rms_dev_B_iso'                          rms_dev_B_iso                               Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_B_iso'                           weight_B_iso                                Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_number'                            pdbx_number                                 Y
-refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_type'                              pdbx_type                                   Y
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_refine_id'                         pdbx_refine_id                              N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.dom_id'                                 dom_id                                      N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_ens_id'                            pdbx_ens_id                                 N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_ordinal'                           pdbx_ordinal                                N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.ncs_model_details'                      ncs_model_details                           N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.rms_dev_position'                       rms_dev_position                            N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_position'                        weight_position                             N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.rms_dev_B_iso'                          rms_dev_B_iso                               N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.weight_B_iso'                           weight_B_iso                                N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_number'                            pdbx_number                                 N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_type'                              pdbx_type                                   N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_rms'                               pdbx_rms                                    N
+refine_ls_restr_ncs                   '_refine_ls_restr_ncs.pdbx_weight'                            pdbx_weight                                 N
+
+
 
 refine_ls_restr                       '_refine_ls_restr.pdbx_refine_id'                             pdbx_refine_id                              N
 refine_ls_restr                       '_refine_ls_restr.type'                                       type                                        N
