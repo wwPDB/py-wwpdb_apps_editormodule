@@ -931,12 +931,14 @@ struct_ncs_dom                        '_struct_ncs_dom.pdbx_ens_id'             
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.dom_id'                                  dom_id                                      N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_asym_id'                        beg_auth_asym_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_seq_id'                         beg_auth_seq_id                             N
+struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_auth_comp_id'                        beg_auth_comp_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_alt_id'                        beg_label_alt_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_asym_id'                       beg_label_asym_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_comp_id'                       beg_label_comp_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.beg_label_seq_id'                        beg_label_seq_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_asym_id'                        end_auth_asym_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_seq_id'                         end_auth_seq_id                             N
+struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_auth_comp_id'                        end_auth_comp_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_alt_id'                        end_label_alt_id                            N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_asym_id'                       end_label_asym_id                           N
 struct_ncs_dom_lim                    '_struct_ncs_dom_lim.end_label_comp_id'                       end_label_comp_id                           N
