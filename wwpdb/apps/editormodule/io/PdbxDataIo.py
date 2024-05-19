@@ -1599,6 +1599,8 @@ class PdbxDataIo(object):
                     valueToSupply = "solvent position" if p_task == "solventpos" else p_task
                 elif attributeNm == "status":
                     valueToSupply = "skip"
+                else:
+                    valueToSupply = "None"
                 #
                 rowToAdd.append(valueToSupply)
 
@@ -2587,6 +2589,8 @@ class PdbxDataIo(object):
             targetAttributeNm = "ordinal"
         elif p_ctgryName == "em_author_list":
             targetAttributeNm = "ordinal"
+        else:
+            targetAttributeNm = "None"  # Will cause an error
 
         ctgryObj = p_myPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, p_ctgryName)
         #
@@ -2620,9 +2624,11 @@ class PdbxDataIo(object):
 
     def propagateTitle(self, p_targetCtgry):
         """copy title to/from citation from/to struct"""
-        if os.access(self.__dbFilePath, os.R_OK):
 
-            origTitleValue = None
+        origTitleValue = None
+        bSuccess = False
+
+        if os.access(self.__dbFilePath, os.R_OK):
             bSuccess = True
             myPersist = PdbxPersist(self.__verbose, self.__lfh)
 
@@ -2634,6 +2640,8 @@ class PdbxDataIo(object):
                 srcCtgry = "citation"
             elif p_targetCtgry == "citation":
                 srcCtgry = "struct"
+            else:
+                srcCtgry = "None"  # Error - but what can you do
 
             srcCtgryObj = myPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, srcCtgry)
             targetCtgryObj = myPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, p_targetCtgry)
@@ -2653,6 +2661,7 @@ class PdbxDataIo(object):
                             indxSrcId = iNdx
 
                 if indxSrcTitle >= 0:
+                    srcTitleValue = None
                     for _rowNum, row in enumerate(srcRowList):
                         if indxSrcId >= 0:
                             if row[indxSrcId] == "primary":
@@ -2670,6 +2679,7 @@ class PdbxDataIo(object):
                     idxTargetTitle = -1
                     idxTargetId = -1
                     targetRowNmbr = 0
+                    targetTitleValue = None
                     for idx, attribNm in enumerate(targetAttributeList):
                         if attribNm == targetAttributeNm:
                             idxTargetTitle = idx

@@ -328,6 +328,10 @@ class EditorWebAppWorker(object):
         haveUploadFile = False
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
         #
+        # Keep pylint happy - define variable - only needed if haveUploadFile is True
+        encodedContent = None
+        uploadFlMimeTyp = None
+        uploadFlName = None
         #
         if self.__isFileUpload():
             haveUploadFile = self.__uploadFeedbackFile()
@@ -1226,6 +1230,8 @@ Content-Disposition: attachment; filename=\"%s\"
             logger.info("-- editActnIndx is:%s", editActnIndx)
             logger.info("-- action is:%s", action)
             #
+
+        numRows = None  # Not really needed as only delrow will need variable
         if action == "delrow" or action == "insert":
             rowIdx = self.__reqObj.getValue("row_idx")
             numRows = int(self.__reqObj.getValue("num_rows")) if self.__reqObj.getValue("num_rows") else None
