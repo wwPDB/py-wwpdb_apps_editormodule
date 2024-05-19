@@ -368,9 +368,9 @@ _pdbx_display_view_item_info.item_display_name
 _pdbx_display_view_item_info.read_only_flag
 em_admin                           '_em_admin.entry_id'                                          id                                               Y
 em_admin                           '_em_admin.title'                                             'entry title'                                    N
-em_admin                           '_em_admin.current_status'                                    'current status'                                 N
-em_admin                           '_em_admin.map_release_date'                                  'map release date'                               N
-em_admin                           '_em_admin.obsoleted_date'                                    'obsoleted date'                                 N
+em_admin                           '_em_admin.current_status'                                    'current status'                                 Y
+em_admin                           '_em_admin.map_release_date'                                  'map release date'                               Y
+em_admin                           '_em_admin.obsoleted_date'                                    'obsoleted date'                                 Y
 em_admin                           '_em_admin.replace_existing_entry_flag'                       'replace existing entry flag'                    N
 
 data_EM1B
