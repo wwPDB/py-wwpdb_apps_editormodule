@@ -934,7 +934,7 @@ class EditorDepict(object):
                 separator = ", "
             crdnltyJavaScriptStr += separator + '"' + ctgryName + '": ' + '"' + crdnlty + '"'
         crdnltyJavaScriptStr += " }"
-                
+
         return "\n".join(hdrLst), crdnltyJavaScriptStr
 
     def setSessionPaths(self, p_reqObj):
