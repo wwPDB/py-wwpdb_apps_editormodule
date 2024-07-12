@@ -820,6 +820,17 @@ class EditorDepict(object):
                             if ctgryName not in crdnltyDict:
                                 crdnltyDict[ctgryName] = "unit"
 
+                else:  # Not other - nested pulldown - need cardinality for items
+                    labels = navTabGrp["dropdown_display_labels"]
+                    for (_nm, ldict) in labels:
+                        # ldict looks like {'struct_conn': ('struct_conn', 'multi'), 'Cis-peptide': ('struct_mon_prot_cis', 'multi'), 'pcm': ('pdbx_modification_feature', 'unit')}
+                        for _vname, tupl in ldict.items():
+                            ctgryName = tupl[0]
+                            crdnltyStr = tupl[1]
+
+                            if ctgryName not in crdnltyDict:
+                                crdnltyDict[ctgryName] = crdnltyStr
+
                 for dropDwnDisplLbl, ctgryDict in navTabGrp["dropdown_display_labels"]:
                     ctgries = ""
                     ctgryDsplNmLst = ""
@@ -876,7 +887,6 @@ class EditorDepict(object):
                 ctgryNmLst = []
                 crdnltyStr = ""
                 crdnltyLst = []
-                crdnltyJavaScriptStr = "{ "
 
                 if navTabGrp["id"] != "other":
 
@@ -913,17 +923,18 @@ class EditorDepict(object):
                             crdnltyDict[ctgryName] = "unit"
                 #
 
-                for idx, (ctgryName, crdnlty) in enumerate(crdnltyDict.items()):
-                    separator = ""
-                    if idx > 0:
-                        separator = ", "
-                    crdnltyJavaScriptStr += separator + '"' + ctgryName + '": ' + '"' + crdnlty + '"'
-                crdnltyJavaScriptStr += " }"
-
                 hdrMrkp = hdrMrkpTmpltNoDrpDwns % hdrDict
 
             hdrLst.append(hdrMrkp)
 
+        crdnltyJavaScriptStr = "{ "
+        for idx, (ctgryName, crdnlty) in enumerate(crdnltyDict.items()):
+            separator = ""
+            if idx > 0:
+                separator = ", "
+            crdnltyJavaScriptStr += separator + '"' + ctgryName + '": ' + '"' + crdnlty + '"'
+        crdnltyJavaScriptStr += " }"
+                
         return "\n".join(hdrLst), crdnltyJavaScriptStr
 
     def setSessionPaths(self, p_reqObj):

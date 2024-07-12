@@ -1171,8 +1171,9 @@ _pdbx_display_view_category_info.category_name
 _pdbx_display_view_category_info.category_group_display_name
 _pdbx_display_view_category_info.category_display_name
 _pdbx_display_view_category_info.category_cardinality
-Derived                      struct_conn                         Links                        struct_conn                           multi
-Derived                      struct_mon_prot_cis                 Links                        Cis-peptide                           multi
+Derived                      struct_conn                         'Links/PCM'                  struct_conn                           multi
+Derived                      struct_mon_prot_cis                 'Links/PCM'                  Cis-peptide                           multi
+Derived                      pdbx_modification_feature           'Links/PCM'                  pcm                                   unit
 Derived                      struct_site                         'SITE record'                struct_site                           multi
 Derived                      struct_site_gen                     'SITE record'                struct_site_gen                       multi
 Derived                      struct_sheet                        Strands                      struct_sheet                          multi
@@ -1238,6 +1239,34 @@ Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_ins_code_2'
 Cis-peptide                           '_struct_mon_prot_cis.pdbx_label_seq_id_2'                    'To seq_id'                                 N
 Cis-peptide                           '_struct_mon_prot_cis.pdbx_omega_angle'                       'Omega angle'                               N
 Cis-peptide                           '_struct_mon_prot_cis.pdbx_PDB_model_num'                     'Model number'                              N
+pcm                                   '_pdbx_modification_feature.ordinal'                          'ordinal'                                   Y
+pcm                                   '_pdbx_modification_feature.label_comp_id'                    comp_id                                     Y
+pcm                                   '_pdbx_modification_feature.label_asym_id'                    asym_id                                     Y
+pcm                                   '_pdbx_modification_feature.label_seq_id'                     seq_id                                      Y
+pcm                                   '_pdbx_modification_feature.label_alt_id'                     alt_id                                      Y
+pcm                                   '_pdbx_modification_feature.modified_residue_label_comp_id'   mod_comp_id                                 Y
+pcm                                   '_pdbx_modification_feature.modified_residue_label_asym_id'   mod_asym_id                                 Y
+pcm                                   '_pdbx_modification_feature.modified_residue_label_seq_id'    mod_seq_id                                  Y
+pcm                                   '_pdbx_modification_feature.modified_residue_label_alt_id'    mol_alt_id                                  Y
+pcm                                   '_pdbx_modification_feature.auth_comp_id'                     auth_comp_id                                Y
+pcm                                   '_pdbx_modification_feature.auth_asym_id'                     auth_asym_id                                Y
+pcm                                   '_pdbx_modification_feature.auth_seq_id'                      auth_seq_id                                 Y
+pcm                                   '_pdbx_modification_feature.PDB_ins_code'                     "Ins code"                                  Y
+pcm                                   '_pdbx_modification_feature.symmetry'                         symmetry                                    Y
+pcm                                   '_pdbx_modification_feature.modified_residue_auth_comp_id'    mod_auth_comp_id                            Y
+pcm                                   '_pdbx_modification_feature.modified_residue_auth_asym_id'    mod_auth_asym_id                            Y
+pcm                                   '_pdbx_modification_feature.modified_residue_auth_seq_id'     mod_auth_seq_id                             Y
+pcm                                   '_pdbx_modification_feature.modified_residue_PDB_ins_code'    "mod Ins Code"                              Y
+pcm                                   '_pdbx_modification_feature.modified_residue_symmetry'        "mod symmetry"                              Y
+pcm                                   '_pdbx_modification_feature.comp_id_linking_atom'             comp_id_linking_atom                        Y
+pcm                                   '_pdbx_modification_feature.modified_residue_id_linking_atom' mod_linking_atom                            Y
+pcm                                   '_pdbx_modification_feature.modified_residue_id'              mod_residue_id                              Y
+pcm                                   '_pdbx_modification_feature.ref_pcm_id'                       ref_pcm_ic                                  Y
+pcm                                   '_pdbx_modification_feature.ref_comp_id'                      ref_comp_id                                 Y
+pcm                                   '_pdbx_modification_feature.type'                             type                                        Y
+pcm                                   '_pdbx_modification_feature.category'                         category                                    Y
+
+
 struct_site                           '_struct_site.id'                                             id                                          N
 struct_site                           '_struct_site.details'                                        details                                     N
 struct_site                           '_struct_site.pdbx_evidence_code'                             pdbx_evidence_code                          N
@@ -1979,4 +2008,3 @@ refine_ls_restr_em                    '_refine_ls_restr.dev_ideal_target'       
 refine_ls_restr_em                    '_refine_ls_restr.number'                                     number                                      N
 refine_ls_restr_em                    '_refine_ls_restr.pdbx_restraint_function'                    pdbx_restraint_function                     N
 refine_ls_restr_em                    '_refine_ls_restr.weight'                                     weight                                      N
-
