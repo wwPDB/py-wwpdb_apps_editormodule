@@ -84,6 +84,8 @@ class EditorConfig(object):
     purgeSkeletonRowList = [
         "database_PDB_caveat",
         "diffrn_radiation_wavelength",
+        "em_diffraction_stats",
+        "em_diffraction_shell",
         "em_sample_support",
         "em_focused_ion_beam",
         "entity_src_gen",

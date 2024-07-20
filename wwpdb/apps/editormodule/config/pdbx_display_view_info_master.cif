@@ -42,7 +42,7 @@ EC        EC,EMmap
 # T7 Derived
 # EM2 EM Sample
 # EM3 EM Specimen
-# EM4 EM Imaging
+# EM4 EM Imaging A + B EM4_EC for electron crystallography
 # EM5 EM Reconstruction
 # EM6 EM Symmetry
 # EM7 EM Fitting
@@ -54,10 +54,10 @@ _pdbx_view_combine.viewName
 _pdbx_view_combine.sections
 X-RAY    AV1      SumBase,XraySum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,XRAY1,XRAY2,XRAY_SX,T7
 NMR      NMR1     SumBase,NMRSum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,NMR1,T7
-EM       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,T7,EM2,EM3,EM4,EM5,EM6,EM7,EM8,EM9_REFI
-EMmap    EM2      EM1A,T1contacts,EM1B,EM1C,T2A,T2C,T2D,T3B,T3EM,T6EM,T6,EM2,EM3,EM4,EM5,EM6,EM7,EM8
-EM_NMR   EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,NMR1,T7,EM2,EM3,EM4,EM5,EM6,EM7,EM8,EM9_REFI
-EC       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,XRAY1,XRAY2,T7,EM2,EM3,EM4,EM5,EM6,EM7,EM8
+EM       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,T7,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8,EM9_REFI
+EMmap    EM2      EM1A,T1contacts,EM1B,EM1C,T2A,T2C,T2D,T3B,T3EM,T6EM,T6,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8
+EM_NMR   EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,NMR1,T7,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8,EM9_REFI
+EC       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,XRAY1,XRAY2,T7,EM2,EM3,EM4A,EM4_EC,EM4B,EM5,EM6,EM7,EM8
 
 ###############################################################################################################
 data_XraySum
@@ -1653,7 +1653,7 @@ em_vitrification                   '_em_vitrification.details'                  
 em_vitrification                   '_em_vitrification.instrument'                                instrument                                       N
 
 ###################################################################################
-data_EM4
+data_EM4A
 
 loop_
 _pdbx_display_view_category_info.category_menu_display_name
@@ -1665,9 +1665,6 @@ _pdbx_display_view_category_info.category_cardinality
 'EM Imaging'         em_image_recording                  'EM Imaging'          em_image_recording                 multi
 'EM Imaging'         em_image_scans                      'EM Imaging'          em_image_scans                     multi
 'EM Imaging'         em_diffraction                      'EM Imaging'          em_diffraction                     multi
-'EM Imaging'         em_tomography                       'EM Imaging'          em_tomography                      multi
-'EM Imaging'         em_imaging_optics                   'EM Imaging'          em_imaging_optics                  multi
-'EM Imaging'         em_focused_ion_beam                 'EM Imaging'          em_focused_ion_beam                multi
 
 loop_
 _pdbx_display_view_item_info.category_display_name
@@ -1719,6 +1716,25 @@ em_diffraction                     '_em_diffraction.tilt_angle_list'            
 
 
 
+
+###############################################################################################
+data_EM4B
+
+loop_
+_pdbx_display_view_category_info.category_menu_display_name
+_pdbx_display_view_category_info.category_name
+_pdbx_display_view_category_info.category_group_display_name
+_pdbx_display_view_category_info.category_display_name
+_pdbx_display_view_category_info.category_cardinality
+'EM Imaging'         em_tomography                       'EM Imaging'          em_tomography                      multi
+'EM Imaging'         em_imaging_optics                   'EM Imaging'          em_imaging_optics                  multi
+'EM Imaging'         em_focused_ion_beam                 'EM Imaging'          em_focused_ion_beam                multi
+
+loop_
+_pdbx_display_view_item_info.category_display_name
+_pdbx_display_view_item_info.item_name
+_pdbx_display_view_item_info.item_display_name
+_pdbx_display_view_item_info.read_only_flag
 em_tomography                      '_em_tomography.id'                                           id                                               N
 em_tomography                      '_em_tomography.imaging_id'                                   imaging_id                                       N
 em_tomography                      '_em_tomography.axis1_angle_increment'                        ax1_ang_inc                                      N
@@ -1753,6 +1769,49 @@ em_focused_ion_beam                '_em_focused_ion_beam.details'				 details			
 em_focused_ion_beam                '_em_focused_ion_beam.dose_rate'				 dose_rate					  N
 
 ###############################################################################################
+data_EM4_EC
+
+loop_
+_pdbx_display_view_category_info.category_menu_display_name
+_pdbx_display_view_category_info.category_name
+_pdbx_display_view_category_info.category_group_display_name
+_pdbx_display_view_category_info.category_display_name
+_pdbx_display_view_category_info.category_cardinality
+'EM Imaging'         em_diffraction_stats                'EM Imaging'          em_diffraction_stats               multi
+'EM Imaging'         em_diffraction_shell                'EM Imaging'          em_diffraction_shell               multi
+
+loop_
+_pdbx_display_view_item_info.category_display_name
+_pdbx_display_view_item_info.item_name
+_pdbx_display_view_item_info.item_display_name
+_pdbx_display_view_item_info.read_only_flag
+
+em_diffraction_stats               '_em_diffraction_stats.id'                                   id                         N
+em_diffraction_stats               '_em_diffraction_stats.fourier_space_coverage'      	       	Fourier_space_coverage     N
+em_diffraction_stats               '_em_diffraction_stats.high_resolution'                      high_res       	       	   N
+em_diffraction_stats               '_em_diffraction_stats.image_processing_id'			image_processing_id        N
+em_diffraction_stats               '_em_diffraction_stats.num_intensities_measured'		num_intens_meas            N
+em_diffraction_stats               '_em_diffraction_stats.num_structure_factors'   		num_struct_factors         N
+em_diffraction_stats               '_em_diffraction_stats.overall_phase_error' 			overall_phase_err      	   N
+em_diffraction_stats               '_em_diffraction_stats.overall_phase_residual'	       	overall_phase_residual	   N
+em_diffraction_stats               '_em_diffraction_stats.phase_error_rejection_criteria'	phase_err_rej_criteria 	   N
+em_diffraction_stats               '_em_diffraction_stats.r_merge'     	       	       	 	Rmerge                     N
+em_diffraction_stats               '_em_diffraction_stats.r_sym'  				Rsym                       N
+em_diffraction_stats               '_em_diffraction_stats.details'			        details                    N
+
+em_diffraction_shell               '_em_diffraction_shell.id'                                   id                         N
+em_diffraction_shell               '_em_diffraction_shell.em_diffraction_stats_id'              diffn_stats_id             N
+em_diffraction_shell               '_em_diffraction_shell.high_resolution'                      high_res                   N
+em_diffraction_shell               '_em_diffraction_shell.low_resolution'                       low_res                    N
+em_diffraction_shell               '_em_diffraction_shell.multiplicity'                         multiplicity               N
+em_diffraction_shell               '_em_diffraction_shell.fourier_space_coverage'               Fourier_space_coverage     N
+em_diffraction_shell               '_em_diffraction_shell.num_structure_factors'                '# SF'                     N
+em_diffraction_shell               '_em_diffraction_shell.phase_residual'                       phase_residual             N
+
+
+###################################################################################
+
+
 data_EM5
 
 loop_
