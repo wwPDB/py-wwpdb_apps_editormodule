@@ -371,6 +371,8 @@ em_admin                           '_em_admin.title'                            
 em_admin                           '_em_admin.current_status'                                    'current status'                                 Y
 em_admin                           '_em_admin.map_release_date'                                  'map release date'                               Y
 em_admin                           '_em_admin.obsoleted_date'                                    'obsoleted date'                                 Y
+em_admin                           '_em_admin.process_site'                                      'process site'                                   N
+em_admin                           '_em_admin.composite_map'                                     'composite_map'                                  N
 em_admin                           '_em_admin.replace_existing_entry_flag'                       'replace existing entry flag'                    N
 
 data_EM1B
