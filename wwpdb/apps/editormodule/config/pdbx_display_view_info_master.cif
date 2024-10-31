@@ -1064,7 +1064,7 @@ _pdbx_display_view_category_info.category_cardinality
 'NMR Categories'        'pdbx_nmr_refine'       'NMR Categories'     'pdbx_nmr_refine'       multi
 'NMR Categories'        'pdbx_nmr_software'     'NMR Categories'     'pdbx_nmr_software'     multi
 'NMR Categories'        'pdbx_nmr_constraints'  'NMR Categories'     'pdbx_nmr_constraints'  unit
-'NMR Categories'        'pdbx_nmr_constraint_file'      'NMR Categories'     'pdbx_nmr_constraint_file'      unit
+'NMR Categories'        'pdbx_nmr_constraint_file'      'NMR Categories'     'pdbx_nmr_constraint_file'      multi
 'NMR Categories'        'pdbx_nmr_chem_shift_ref'       'NMR Categories'     'pdbx_nmr_chem_shift_ref'       multi
 
 
