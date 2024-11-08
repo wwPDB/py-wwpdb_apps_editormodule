@@ -410,9 +410,11 @@ class PdbxDataIo(object):
             logger.exception("problem processing file")
 
         try:
+            logger.info("About to shelve")
             myPersist = PdbxPersist(self.__verbose, self.__lfh)
             myPersist.setContainerList(self.__containerList)
             myPersist.store(self.__dbFilePath)
+            logger.info("Done shelve")
 
             if self.__verbose:
                 logger.info("shelved cif data to %s", self.__dbFilePath)
@@ -1552,7 +1554,7 @@ class PdbxDataIo(object):
         :param `p_task`:        name of task for which "skip calculation" request being made
                               can be one of:
 
-                                link | site | helix | sheet | solventpos
+                                link | site | helix | sheet | solventpos | linkdisulf
 
 
         """
@@ -1560,7 +1562,6 @@ class PdbxDataIo(object):
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
         bSuccess = False
-        rowToAdd = []
         cifCtgryNm = "pdbx_data_processing_status"
 
         try:
@@ -1590,25 +1591,52 @@ class PdbxDataIo(object):
             #
             attributeList = ctgryObj.getAttributeList()
             #
+            # Extract current values - so not to duplicate
+            colIdx = None
+            for index, attributeNm in enumerate(attributeList):
+                if attributeNm == "task_name":
+                    colIdx = index
+                    break
+
+            listedtasks = []
+            if colIdx is not None:
+                rowList = ctgryObj.getRowList()
+                for idx, record in enumerate(rowList):
+                    try:
+                        taskName = record[colIdx]
+                        listedtasks.append(taskName)
+                    except ValueError:
+                        if self.__verbose and self.__debug:
+                            logger.info(
+                                "-- ValueError found when extracting tasks %s", idx)
+                            continue
+
+            #
             if self.__verbose:
                 logger.info("-- Attribute list retrieved is: %s", str(attributeList))
             #
-            for attributeNm in attributeList:
+            p_task = "solvent position" if p_task == "solventpos" else p_task
+            p_task_list = [p_task.lower()] if p_task != "linkdisulf" else ["link", "ssbond"]
 
-                if attributeNm == "task_name":
-                    valueToSupply = "solvent position" if p_task == "solventpos" else p_task
-                elif attributeNm == "status":
-                    valueToSupply = "skip"
-                else:
-                    valueToSupply = "None"
+            # Do not add if already present - for case of linkdisulf might already be present
+            p_task_list = [x for x in p_task_list if x not in listedtasks]
+
+            for p in p_task_list:
+                rowToAdd = []
+                for attributeNm in attributeList:
+                    if attributeNm == "task_name":
+                        valueToSupply = p
+                    elif attributeNm == "status":
+                        valueToSupply = "skip"
+                    else:
+                        valueToSupply = "None"
+                    #
+                    rowToAdd.append(valueToSupply)
                 #
-                rowToAdd.append(valueToSupply)
-
-            #
-            if self.__verbose:
-                logger.info("-- About to update category '%s' with new row as %r", cifCtgryNm, rowToAdd)
-            #
-            ctgryObj.append(rowToAdd)
+                if self.__verbose:
+                    logger.info("-- About to update category '%s' with new row as %r", cifCtgryNm, rowToAdd)
+                #
+                ctgryObj.append(rowToAdd)
             #
             if self.__debug:
                 logger.debug("++++++++++++ just before call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
@@ -1628,7 +1656,7 @@ class PdbxDataIo(object):
         :param `p_task`:        name of task for which "skip calculation" request being made
                               can be one of:
 
-                                link | site | helix | sheet | solventpos
+                                link | site | helix | sheet | solventpos | linkdisulf
 
         """
         logger.info("--------------------------------------------")
@@ -1647,6 +1675,10 @@ class PdbxDataIo(object):
             if self.__debug:
                 logger.info("++++++++++++ just after call to myPersist.fetchOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             #
+            # Bypass.  Front end should not invoke unless already skipped..
+            if not ctgryObj:
+                return True
+
             rowList = ctgryObj.getRowList()
 
             attributeList = ctgryObj.getAttributeList()
@@ -1657,34 +1689,38 @@ class PdbxDataIo(object):
             rowIdx = None
             rowBeingDeleted = None
             p_task = "solvent position" if p_task == "solventpos" else p_task
+            p_task_list = [p_task.lower()] if p_task != "linkdisulf" else ["link", "ssbond"]
             #
             for index, attributeNm in enumerate(attributeList):
                 if attributeNm == "task_name":
                     colIdx = index
                     break
 
+            rmidx = []
             if colIdx is not None:
                 for idx, record in enumerate(rowList):
                     try:
                         taskName = record[colIdx]
-                        if taskName.lower() == p_task.lower():
-                            rowIdx = idx
-                            break
+                        if taskName.lower() in p_task_list:
+                            rmidx.append(idx)
 
                     except ValueError:
                         if self.__verbose and self.__debug:
                             logger.info(
                                 "ValueError found when comparing '%s' with '%s' so comparison not used to determine need for readjusting values of ordinal id field.",
                                 record[colIdx],
-                                taskName,
+                                p_task_list,
                             )
                         continue
 
-                if rowIdx is not None:
-                    rowBeingDeleted = rowList.pop(rowIdx)
+                if len(rmidx) > 0:
+                    # Remove highest index fist
+                    rmidx.reverse()
+                    for rowIdx in rmidx:
+                        rowBeingDeleted = rowList.pop(rowIdx)
 
-            if self.__verbose:
-                logger.info("About to update category '%s' by deleting row #%s, %r", cifCtgryNm, rowIdx, rowBeingDeleted)
+                        if self.__verbose:
+                            logger.info("About to update category '%s' by deleting row #%s, %r", cifCtgryNm, rowIdx, rowBeingDeleted)
             #
             ctgryObj.setRowList(rowList)
 
@@ -1701,12 +1737,12 @@ class PdbxDataIo(object):
         return bSuccess
 
     def checkSkipCalcRequest(self, p_task):
-        """delete row corresponding to skip calc request from persistent store
+        """returns data corresponding to skip calc request from persistent store
 
         :param `p_task`:        name of task for which "skip calculation" request being made
                               can be one of:
 
-                                link | site | helix | sheet
+                                link | site | helix | sheet | solventpo | linkdisulf
 
         """
         logger.info("--------------------------------------------")
@@ -1727,15 +1763,20 @@ class PdbxDataIo(object):
             #
             if ctgryObj:
                 rowList = ctgryObj.getRowList()
+                # rowList is a list of lists:  [['skip', 'site']]
 
                 attributeList = ctgryObj.getAttributeList()
                 if self.__verbose:
                     logger.info("-- Attribute list retrieved is: %s", str(attributeList))
                 #
                 colIdx = None
-                rowIdx = None
+                rowidxs = {}
                 p_task = "solvent position" if p_task == "solventpos" else p_task
                 #
+                p_task_list = [p_task.lower()] if p_task != "linkdisulf" else ["link", "ssbond"]
+                for task in p_task_list:
+                    rowidxs[task] = False
+
                 for index, attributeNm in enumerate(attributeList):
                     if attributeNm == "task_name":
                         colIdx = index
@@ -1745,9 +1786,8 @@ class PdbxDataIo(object):
                     for idx, record in enumerate(rowList):
                         try:
                             taskName = record[colIdx]
-                            if taskName.lower() == p_task.lower():
-                                rowIdx = idx
-                                break
+                            if taskName.lower() in p_task_list:
+                                rowidxs[taskName.lower()] = idx
 
                         except ValueError:
                             if self.__verbose and self.__debug:
@@ -1758,11 +1798,16 @@ class PdbxDataIo(object):
                                 )
                             continue
 
-                    if rowIdx is not None:
-                        bSkipRequested = True
+                    # Decide if all found
+                    found = True
+                    for task in p_task_list:
+                        if rowidxs[task] is False:
+                            found = False
 
-                if self.__verbose:
-                    logger.info("-- '%s' did contain request to skip calculation for %s", cifCtgryNm, p_task)
+                    bSkipRequested = found
+
+                    if self.__verbose:
+                        logger.info("-- '%s' did contain status request to skip calculation for %s %s", cifCtgryNm, p_task, found)
                 #
 
         except:  # noqa: E722 pylint: disable=bare-except
