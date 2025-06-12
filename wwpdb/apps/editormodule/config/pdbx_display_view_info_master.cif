@@ -119,7 +119,7 @@ _pdbx_display_view_item_info.read_only_flag
 'Highest Resolution Shell0'            '_reflns_shell.pdbx_Rpim_I_all_anomalous'                     'Rpim_anom'                                 N
 'Highest Resolution Shell0'            '_reflns_shell.pdbx_Rrim_I_all'                               'Rmeas'                                     N
 'Highest Resolution Shell0'            '_reflns_shell.pdbx_Rrim_I_all_anomalous'                     'Rmeas_anom'                                N
-'Highest Resolution Shell0'            '_reflns_shell.meanI_over_sigI_obs'                           'Net I over sigma I'                        N
+'Highest Resolution Shell0'            '_reflns_shell.meanI_over_sigI_obs'                           'Mean I over sigma I observed'              N
 'Highest Resolution Shell0'            '_reflns_shell.percent_possible_all'                          percent_possible_all                        N
 'Overall Refinement Data0'             '_refine.pdbx_refine_id'                                      'Diffraction method'                        N
 'Overall Refinement Data0'             '_refine.pdbx_diffrn_id'                                      'Diffraction id'                            Y
@@ -881,7 +881,7 @@ _pdbx_display_view_item_info.read_only_flag
 'Highest Resolution Shell'            '_reflns_shell.pdbx_Rpim_I_all_anomalous'                     'Rpim_anom'                                 N
 'Highest Resolution Shell'            '_reflns_shell.pdbx_Rrim_I_all'                               'Rmeas'                                     N
 'Highest Resolution Shell'            '_reflns_shell.pdbx_Rrim_I_all_anomalous'                     'Rmeas_anom'                                N
-'Highest Resolution Shell'            '_reflns_shell.meanI_over_sigI_obs'                           'Net I over sigma I'                        N
+'Highest Resolution Shell'            '_reflns_shell.meanI_over_sigI_obs'                           'Mean I over sigma I obs'                   N
 'Highest Resolution Shell'            '_reflns_shell.percent_possible_all'                          percent_possible_all                        N
 'Starting Model'                      '_pdbx_initial_refinement_model.id'                           ID                                          N
 'Starting Model'                      '_pdbx_initial_refinement_model.type'                         'Type'                                      N
