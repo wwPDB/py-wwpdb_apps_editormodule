@@ -226,6 +226,7 @@ class PdbxDataIo(object):
         self.__entryTitle = None
         self.__entryAccessionIdsLst = None
         self.__entryExptlMethodsLst = None
+        self.__entrydatabasedict = {}
         #
         self.__dbFilePath = os.path.join(self.__sessionPath, "dataFile.db")
         self.__dictDbFilePath = os.path.join(self.__sessionPath, "mmcifDict.db")
@@ -421,6 +422,7 @@ class PdbxDataIo(object):
             if self.__editCifViewConfig:
                 self.__entryTitle = ""
             else:
+                self.__entrydatabasedict = self.getDatabase2(myPersist)
                 self.__entryTitle = self.getEntryTitle(myPersist)
                 self.__entryAccessionIdsLst = self.getEntryAccessionIds(myPersist)
                 self.__entryExptlMethodsLst = self.__getEntryExptlList(myPersist)
@@ -466,7 +468,42 @@ class PdbxDataIo(object):
 
         return accessionIdsLst
 
+    def getDatabase2(self, p_pdbxPersist):
+        logger.info("--------------------------------------------")
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+
+        db2 = {}
+        try:
+            ctgryObj = p_pdbxPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, "database_2")
+            if ctgryObj:
+                dbid = None
+                dbcodeid = None
+                if ctgryObj.hasAttribute("database_id"):
+                    dbid = ctgryObj.getIndex("database_id");
+
+                if ctgryObj.hasAttribute("database_code"):
+                    dbcodeid = ctgryObj.getIndex("database_code");
+
+                if dbid or dbcodeid:
+                    for row in ctgryObj.getRowList():
+                        db = row[dbid]
+                        dbcode = row[dbcodeid]
+                        db2[db] = dbcode
+
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("Failure to get experimental methods")
+        
+        return db2
+
     def getEntryTitle(self, p_pdbxPersist):
+        if self.__entrydatabasedict and "EMDB" in self.__entrydatabasedict \
+           and "PDB" not in self.__entrydatabasedict:
+            # Map only 
+            return self.getEntryTitleEmdb(p_pdbxPersist)
+
+        return self.getEntryTitlePdb(p_pdbxPersist)
+    
+    def getEntryTitlePdb(self, p_pdbxPersist):
         logger.info("--------------------------------------------")
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
@@ -483,6 +520,43 @@ class PdbxDataIo(object):
 
                 assert iTotalRecords == 1, "expecting 'struct' category to contain a single record but had %s records" % iTotalRecords
                 ctgryColList = (self.getCategoryColList("struct"))[1]
+                if self.__verbose and self.__debug:
+                    logger.info("ctgryColList obtained as: %r", ctgryColList)
+                #
+                for idx, name in enumerate(ctgryColList):
+
+                    if name == "title":
+                        if self.__verbose and self.__debug:
+                            logger.info("found 'title' field at index: %s with value: %s", idx, (fullRsltSet[0])[idx])
+                        entryTitle = fullRsltSet[0][idx]
+                        break
+
+                logger.info("entryTitle obtained as: '%s'", entryTitle)
+            else:
+                if self.__verbose:
+                    logger.info("'struct' category not present in the model data file")
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("Failure retreiving title")
+
+        return entryTitle
+
+    def getEntryTitleEmdb(self, p_pdbxPersist):
+        logger.info("--------------------------------------------")
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        #
+        entryTitle = ""
+        try:
+            ctgryObj = p_pdbxPersist.fetchOneObject(self.__dbFilePath, self.__dataBlockName, "em_admin")
+            #
+            if ctgryObj:
+                fullRsltSet = ctgryObj.getRowList()
+                iTotalRecords = len(fullRsltSet)
+
+                if self.__verbose and self.__debug:
+                    logger.info("fullRsltSet obtained as: %r", fullRsltSet)
+
+                assert iTotalRecords == 1, "expecting 'em_admin' category to contain a single record but had %s records" % iTotalRecords
+                ctgryColList = (self.getCategoryColList("em_admin"))[1]
                 if self.__verbose and self.__debug:
                     logger.info("ctgryColList obtained as: %r", ctgryColList)
                 #
