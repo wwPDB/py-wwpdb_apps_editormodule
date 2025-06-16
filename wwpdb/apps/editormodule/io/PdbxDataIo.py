@@ -479,10 +479,10 @@ class PdbxDataIo(object):
                 dbid = None
                 dbcodeid = None
                 if ctgryObj.hasAttribute("database_id"):
-                    dbid = ctgryObj.getIndex("database_id");
+                    dbid = ctgryObj.getIndex("database_id")
 
                 if ctgryObj.hasAttribute("database_code"):
-                    dbcodeid = ctgryObj.getIndex("database_code");
+                    dbcodeid = ctgryObj.getIndex("database_code")
 
                 if dbid or dbcodeid:
                     for row in ctgryObj.getRowList():
@@ -492,17 +492,17 @@ class PdbxDataIo(object):
 
         except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failure to get experimental methods")
-        
+
         return db2
 
     def getEntryTitle(self, p_pdbxPersist):
         if self.__entrydatabasedict and "EMDB" in self.__entrydatabasedict \
            and "PDB" not in self.__entrydatabasedict:
-            # Map only 
+            # Map only
             return self.getEntryTitleEmdb(p_pdbxPersist)
 
         return self.getEntryTitlePdb(p_pdbxPersist)
-    
+
     def getEntryTitlePdb(self, p_pdbxPersist):
         logger.info("--------------------------------------------")
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
