@@ -333,6 +333,7 @@ _pdbx_display_view_item_info.read_only_flag
 'External reference'                  '_pdbx_related_exp_data_set.data_set_type'                    'Type'                                      N
 'External reference'                  '_pdbx_related_exp_data_set.data_reference'                   'Data reference'                            N
 'External reference'                  '_pdbx_related_exp_data_set.metadata_reference'               'Metadata reference'                        N
+'External reference'                  '_pdbx_related_exp_data_set.db_source'                        'DB Source'                                 N
 'External reference'                  '_pdbx_related_exp_data_set.details'                          'Details'                                   N
 
 data_T2E
