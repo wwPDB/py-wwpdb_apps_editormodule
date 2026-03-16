@@ -1830,6 +1830,7 @@ _pdbx_display_view_category_info.category_cardinality
 'EM Reconstruction'  em_euler_angle_assignment           'EM Reconstruction'   em_euler_angle_assignment          multi
 'EM Reconstruction'  em_ctf_correction                   'EM Reconstruction'   em_ctf_correction                  multi
 'EM Reconstruction'  em_start_model                      'EM Reconstruction'   em_start_model                     multi
+'EM Reconstruction'  pdbx_initial_refinement_model       'EM Reconstruction'  'Starting Model1'                   multi
 
 
 loop_
@@ -1892,6 +1893,12 @@ em_start_model                     '_em_start_model.random_conical_tilt_angle'  
 em_start_model                     '_em_start_model.random_conical_tilt_num_images'              random_conical_tilt_number_images                N
 em_start_model                     '_em_start_model.type'                                        type                                             N
 em_start_model                     '_em_start_model.details'                                     details                                          N
+'Starting Model1'                  '_pdbx_initial_refinement_model.id'                           ID                                               N
+'Starting Model1'                  '_pdbx_initial_refinement_model.type'                         'Type'                                           N
+'Starting Model1'                  '_pdbx_initial_refinement_model.entity_id_list'               'Entity list'                                    N
+'Starting Model1'                  '_pdbx_initial_refinement_model.source_name'                  'Source name'                                    N
+'Starting Model1'                  '_pdbx_initial_refinement_model.accession_code'               'Accession code'                                 N
+'Starting Model1'                  '_pdbx_initial_refinement_model.details'                       'Details'                                       N
 
 #####################################################################################################
 data_EM6
