@@ -171,6 +171,7 @@ class EditorConfig(object):
     # list of categories for which deletion of last remaining row will be allowed in the UI
     arrAllowLastRowDeleteCtgries = [
         "em_db_reference",
+        "em_3d_fitting_list",
         "em_entity_assembly_molwt",
         "em_entity_assembly_recombinant",
         "em_single_particle_entity",
