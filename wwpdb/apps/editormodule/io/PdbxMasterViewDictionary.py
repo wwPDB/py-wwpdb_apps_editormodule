@@ -1,11 +1,11 @@
 import sys
 
-from mmcif_utils.persist.PdbxPyIoAdapter import PdbxPyIoAdapter as PdbxIoAdapter
-from mmcif.api.PdbxContainers import DataContainer
 from mmcif.api.DataCategory import DataCategory
+from mmcif.api.PdbxContainers import DataContainer
+from mmcif_utils.persist.PdbxPyIoAdapter import PdbxPyIoAdapter as PdbxIoAdapter
 
 
-class PdbxMasterViewDictionary(object):
+class PdbxMasterViewDictionary:
     def __init__(self, verbose=True, log=sys.stderr):
         self.__verbose = verbose
         self.__lfh = log
@@ -102,7 +102,7 @@ class PdbxMasterViewDictionary(object):
         """Returns the list of views available"""
 
         ret = []
-        for (_key, value) in self.__vMaster["EXPTL_VIEW"].items():
+        for value in self.__vMaster["EXPTL_VIEW"].values():
             ret.append(value["EXPTL"])
         return ret
 
@@ -110,7 +110,7 @@ class PdbxMasterViewDictionary(object):
         """Returns the list of method combinations available"""
 
         ret = []
-        for (_key, value) in self.__vMaster["VIEW_MAP"].items():
+        for value in self.__vMaster["VIEW_MAP"].values():
             ret.append(value["METHODS"])
         return ret
 
@@ -208,7 +208,7 @@ class PdbxMasterViewDictionary(object):
             rContainer = self.__myReader.getContainer(containerName=blockName)
             if rContainer is not None:
                 # For each category - append to container
-                for (catName, attrList) in __catMap.items():
+                for catName, attrList in __catMap.items():
                     rCat = rContainer.getObj(catName)
                     dCat = container.getObj(catName)
                     if not rCat:
@@ -225,7 +225,6 @@ class PdbxMasterViewDictionary(object):
                                 rAttrId = rCat.getIndex(attr)
                                 cData += (row[rAttrId],)
                         dCat.append(cData)
-            else:
-                if self.__verbose:
-                    self.__lfh.write("+ViewMaster: datablock %s missing\n" % (blockName))
+            elif self.__verbose:
+                self.__lfh.write("+ViewMaster: datablock %s missing\n" % (blockName))
         return container

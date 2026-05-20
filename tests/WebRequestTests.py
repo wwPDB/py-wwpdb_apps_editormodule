@@ -4,8 +4,7 @@
 #
 # Updates:
 ##
-"""Test cases for WebRequests
-"""
+"""Test cases for WebRequests"""
 
 __docformat__ = "restructuredtext en"
 __author__ = "Ezra Peisach"
@@ -14,10 +13,10 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 import os
-import unittest
 import platform
+import unittest
 
-from wwpdb.apps.editormodule.webapp.WebRequest import WebRequest, EditorInputRequest, ResponseContent
+from wwpdb.apps.editormodule.webapp.WebRequest import EditorInputRequest, ResponseContent, WebRequest
 
 
 class MyWebRequest(WebRequest):

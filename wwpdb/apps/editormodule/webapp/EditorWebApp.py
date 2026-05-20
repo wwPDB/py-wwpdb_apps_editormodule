@@ -64,6 +64,7 @@ This software is provided under a Creative Commons Attribution 3.0 Unported
 License described at http://creativecommons.org/licenses/by/3.0/.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -78,7 +79,6 @@ import os
 import smtplib
 import sys
 import time
-import types
 
 #
 from wwpdb.io.graphics.GraphicsContext3D import GraphicsContext3D
@@ -87,13 +87,13 @@ from wwpdb.io.graphics.GraphicsContext3D import GraphicsContext3D
 from wwpdb.io.locator.DataReference import DataFileReference
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
+from wwpdb.apps.editormodule.config.AccessTemplateFiles import get_template_file_path
+
 #
 # from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
-
 from wwpdb.apps.editormodule.depict.EditorDepict import EditorDepict
 from wwpdb.apps.editormodule.io.PdbxDataIo import PdbxDataIo
 from wwpdb.apps.editormodule.webapp.WebRequest import EditorInputRequest, ResponseContent
-from wwpdb.apps.editormodule.config.AccessTemplateFiles import get_template_file_path
 
 # from json import loads, dumps
 # from time import localtime, strftime
@@ -101,7 +101,7 @@ from wwpdb.apps.editormodule.config.AccessTemplateFiles import get_template_file
 logger = logging.getLogger(__name__)
 
 
-class EditorWebApp(object):
+class EditorWebApp:
     """Handle request and response object processing for the general annotation editor tool application."""
 
     def __init__(self, parameterDict=None, verbose=False, log=sys.stderr, siteId="WWPDB_DEV"):
@@ -193,7 +193,7 @@ class EditorWebApp(object):
         return retL
 
 
-class EditorWebAppWorker(object):
+class EditorWebAppWorker:
     def __init__(self, reqObj=None, verbose=False, log=sys.stderr):
         """
         Worker methods for the general annotation editor application
@@ -247,7 +247,7 @@ class EditorWebAppWorker(object):
             "/service/editor/wf/exit_not_finished": "_exit_notFinished",
             "/service/editor/wf/exit_finished": "_exit_finished",
             ###################################################################################################
-            "/service/feedback": "_captureFeedback"
+            "/service/feedback": "_captureFeedback",
             # this is for capturing tester feedback for common d&a tool
         }
 
@@ -274,9 +274,8 @@ class EditorWebAppWorker(object):
             rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             rC.setError(errMsg="Unknown operation")
             return rC
-        else:
-            mth = getattr(self, self.__appPathD[reqPath], None)
-            rC = mth()
+        mth = getattr(self, self.__appPathD[reqPath], None)
+        rC = mth()
         return rC
 
     def __doOpException(self):
@@ -529,40 +528,39 @@ Content-Disposition: attachment; filename=\"%s\"
             #     if self.__verbose:
             #         logger.info("+EditorWebAppWorker._launchOp() Tracking status set to open")
             # """
-        else:
-            if fileSource and fileSource == "rcsb_dev":
-                pass
-            elif fileSource and fileSource == "upload":
-                if not self.__isFileUpload("cifinput"):
-                    rC.setError(errMsg="No file uploaded")
-                    return rC
-                #
-                bSuccess, sFileName, sFileAbsPath = self.__uploadFile("cifinput")
+        elif fileSource and fileSource == "rcsb_dev":
+            pass
+        elif fileSource and fileSource == "upload":
+            if not self.__isFileUpload("cifinput"):
+                rC.setError(errMsg="No file uploaded")
+                return rC
+            #
+            bSuccess, sFileName, sFileAbsPath = self.__uploadFile("cifinput")
 
-                if bSuccess:
-                    self.__reqObj.setValue("datafile", sFileName)
-                    self.__reqObj.setValue("filePath", sFileAbsPath)
+            if bSuccess:
+                self.__reqObj.setValue("datafile", sFileName)
+                self.__reqObj.setValue("filePath", sFileAbsPath)
 
-                    fName = sFileName.strip()
-                    if fName.lower().startswith("rcsb"):
-                        fId = fName.lower()[:10]
-                    elif fName.lower().startswith("d_"):
-                        fId = fName[:12]
-                    else:
-                        fId = "000000"
-                        if self.__verbose:
-                            logger.info("+EditorWebApp._launchOp() using default identifier for %s", str(sFileName))
-
-                    self.__reqObj.setValue("identifier", fId)
-                    #
+                fName = sFileName.strip()
+                if fName.lower().startswith("rcsb"):
+                    fId = fName.lower()[:10]
+                elif fName.lower().startswith("d_"):
+                    fId = fName[:12]
+                else:
+                    fId = "000000"
                     if self.__verbose:
-                        logger.info("+EditorWebApp._launchOp() identifier %s", self.__reqObj.getValue("identifier"))
+                        logger.info("+EditorWebApp._launchOp() using default identifier for %s", str(sFileName))
 
-                    if self.__isFileUpload("configfile"):
-                        bSuccessCnfg, _sFileNameCnfg, sFileAbsPathCnfg = self.__uploadFile("configfile")
+                self.__reqObj.setValue("identifier", fId)
+                #
+                if self.__verbose:
+                    logger.info("+EditorWebApp._launchOp() identifier %s", self.__reqObj.getValue("identifier"))
 
-                        if bSuccessCnfg:
-                            self.__reqObj.setValue("configFilePath", sFileAbsPathCnfg)
+                if self.__isFileUpload("configfile"):
+                    bSuccessCnfg, _sFileNameCnfg, sFileAbsPathCnfg = self.__uploadFile("configfile")
+
+                    if bSuccessCnfg:
+                        self.__reqObj.setValue("configFilePath", sFileAbsPathCnfg)
 
         #
         # instantiate datastore to be used for capturing/persisting edits
@@ -703,7 +701,6 @@ Content-Disposition: attachment; filename=\"%s\"
         return rC
 
     def _checkForMandatoryItems(self):
-
         #
         if self.__verbose:
             logger.info("Starting.")
@@ -729,7 +726,6 @@ Content-Disposition: attachment; filename=\"%s\"
         return rC
 
     def _checkForDictViolations(self):
-
         #
         if self.__verbose:
             logger.info("Starting.")
@@ -992,7 +988,7 @@ Content-Disposition: attachment; filename=\"%s\"
         # ############# in below block we are accommodating any requests for column-specific search filtering ###################################
         numColumns = len(ctgryColList)
         colSearchDict = {}
-        for n in range(0, numColumns):
+        for n in range(numColumns):
             qryStrParam = "sSearch_" + str(n)
             qryBoolParam = "bSearchable_" + str(n)
 
@@ -1410,8 +1406,8 @@ Content-Disposition: attachment; filename=\"%s\"
     def __encodeUtf8ToCif(self, p_content):
         """Encoding unicode/utf-8 content into cif friendly ascii"""
         text = p_content.encode("ascii", "xmlcharrefreplace")
-        if sys.version_info[0] > 2:
-            text = text.decode("ascii")
+        #
+        text = text.decode("ascii")
         return text
 
     def __makeDataStoreSnapShot(self, p_editActnIndx):
@@ -1522,9 +1518,8 @@ Content-Disposition: attachment; filename=\"%s\"
                     # else:
                     #     rC.setError(errMsg="+EditorWebAppWorker.__exitEditorMod() - problem saving cif file")
                     # """
-                else:
-                    if self.__verbose:
-                        logger.info("-- user aborted session for depid: %s", depId)
+                elif self.__verbose:
+                    logger.info("-- user aborted session for depid: %s", depId)
 
             except:  # noqa: E722 pylint: disable=bare-except
                 if self.__verbose:
@@ -1544,9 +1539,8 @@ Content-Disposition: attachment; filename=\"%s\"
                             logger.info("failed to save cif file to session directory %s at %s", self.__sessionPath, time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
                         rC.setError(errMsg="+EditorWebAppWorker.__exitEditorMod() - problem saving cif file")
 
-                else:
-                    if self.__verbose:
-                        logger.info("user aborted session for depid: %s", depId)
+                elif self.__verbose:
+                    logger.info("user aborted session for depid: %s", depId)
 
             except:  # noqa: E722 pylint: disable=bare-except
                 if self.__verbose:
@@ -1684,12 +1678,8 @@ Content-Disposition: attachment; filename=\"%s\"
         """Generic check for the existence of request parameter "file"."""
         # Gracefully exit if no file is provide in the request object -
         fs = self.__reqObj.getRawValue(fileTag)
-        if sys.version_info[0] < 3:
-            if (fs is None) or (isinstance(fs, types.StringType)) or (isinstance(fs, types.UnicodeType)):  # pylint: disable=no-member
-                return False
-        else:
-            if (fs is None) or (isinstance(fs, str)) or (isinstance(fs, bytes)):
-                return False
+        if (fs is None) or isinstance(fs, (str, bytes)):
+            return False
         return True
 
     def __uploadFile(self, fileTag="file"):
@@ -1736,7 +1726,6 @@ Content-Disposition: attachment; filename=\"%s\"
         return True, fName, fPathAbs
 
     def __uploadFeedbackFile(self, fileTag="file"):
-
         #
         #
         if self.__verbose:
@@ -1815,9 +1804,8 @@ Content-Disposition: attachment; filename=\"%s\"
         if fileSource in ["archive", "wf-archive", "wf_archive", "wf-instance", "wf_instance"]:
             # if the file source is any of the above then we are in the workflow manager environment
             return True
-        else:
-            # else we are in the standalone dev environment
-            return False
+        # else we are in the standalone dev environment
+        return False
 
 
 class RedirectDevice:

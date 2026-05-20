@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import unittest
 import os
+import unittest
 
 from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
 

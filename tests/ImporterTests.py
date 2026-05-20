@@ -26,4 +26,4 @@ class ImportTests(unittest.TestCase):
         e = EditorWebApp()
         ret = e.doOp()
         for k, v in ret.items():
-            print("Key - %s  value - %r" % (k, v))
+            print("Key - %s  value - %r" % (k, v))  # noqa: T201

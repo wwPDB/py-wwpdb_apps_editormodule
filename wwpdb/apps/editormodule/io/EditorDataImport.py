@@ -12,24 +12,24 @@
 Class to encapsulate data import for files requested by General Annotation Editor from the workflow directory hierarchy.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import sys
+import logging
 import os
 import os.path
-import logging
-
+import sys
 
 from wwpdb.io.locator.DataReference import DataFileReference
 
 logger = logging.getLogger(__name__)
 
 
-class EditorDataImport(object):
+class EditorDataImport:
     """Controlling class for data import operations
 
     Supported file sources:
@@ -38,7 +38,7 @@ class EditorDataImport(object):
 
     """
 
-    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
+    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # noqa: ARG002 pylint: disable=unused-argument
         self.__verbose = verbose
         self.__reqObj = reqObj
         #
@@ -51,7 +51,6 @@ class EditorDataImport(object):
         #
 
     def __setup(self):
-
         try:
             self.__sessionObj = self.__reqObj.getSessionObj()
             self.__identifier = str(self.__reqObj.getValue("identifier")).upper()
@@ -67,7 +66,7 @@ class EditorDataImport(object):
                 logger.info("+EditorDataImport.__setup() identifier  %s", self.__identifier)
                 logger.info("+EditorDataImport.__setup() instance    %s", self.__instance)
                 #
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: BLE001,F841
             if self.__verbose:
                 logger.info("+EditorDataImport.__setup() sessionId %s failed", self.__sessionObj.getId())
 
@@ -81,8 +80,7 @@ class EditorDataImport(object):
                 logger.info("+EditorDataImport.__getWfFilePath() checking %s  path %s", contentType, fPath)
             if fPath is not None and os.access(fPath, os.R_OK):
                 return fPath
-            else:
-                return None
+            return None
         except Exception as _e:  # noqa:F841
             if self.__verbose:
                 logger.exception("In __getWfFilePath")

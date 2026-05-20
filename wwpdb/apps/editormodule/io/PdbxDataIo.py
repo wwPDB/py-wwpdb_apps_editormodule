@@ -125,39 +125,39 @@ Serves needs for displaying on front-end and
 persisting in backend for Pdbx/WFM data storage
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "Raul Sala"
 __email__ = "rsala@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import sys
-import time
+import logging
 import os
 import os.path
-import shutil
 import re
+import shutil
+import sys
+import time
 
-from mmcif_utils.persist.PdbxPersist import PdbxPersist
+from mmcif.api.DataCategory import DataCategory
 from mmcif.io.IoAdapterCore import IoAdapterCore
-
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from mmcif_utils.persist.PdbxDictionaryInfo import PdbxDictionaryInfo, PdbxDictionaryInfoStore, PdbxDictionaryViewInfo
-from wwpdb.apps.editormodule.io.EditorDataImport import EditorDataImport
-from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
-from wwpdb.apps.editormodule.config.EditorConfig import EditorConfig
-from wwpdb.apps.editormodule.config.AccessConfigCifFiles import get_display_view_info_master_cif, get_display_view_info_cif
+from mmcif_utils.persist.PdbxPersist import PdbxPersist
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.utils.db.DBLoadUtil import DBLoadUtil
 from wwpdb.utils.dp.DepositorSyncUtil import DepositorSyncUtil
-from mmcif.api.DataCategory import DataCategory
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
-import logging
+from wwpdb.apps.editormodule.config.AccessConfigCifFiles import get_display_view_info_cif, get_display_view_info_master_cif
+from wwpdb.apps.editormodule.config.EditorConfig import EditorConfig
+from wwpdb.apps.editormodule.io.EditorDataImport import EditorDataImport
+from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
 
 logger = logging.getLogger(__name__)
 
 
-class PdbxDataIo(object):
+class PdbxDataIo:
     def __init__(self, reqObj, verbose=False, log=sys.stderr):
         self.__reqObj = reqObj
         self.__lfh = log
@@ -329,52 +329,49 @@ class PdbxDataIo(object):
                 if self.__verbose:
                     logger.info("+++- pre-processing of pdbx data file %s, failed for deposition id:  %s", self.__pathPdbxDataFile, depDataSetId)
                     logger.exception("Setting pdbxModelPath")
-        else:  # non-"workflow" processsing
-            if dataFile:
-                sessionFilePath = os.path.join(self.__sessionPath, dataFile)
-                #
-                if fileSource and fileSource == "rcsb_dev":
-                    # make copy of file in sessions directory for any access/processing required by front-end
-                    devDataExamplesPath = os.path.join("/wwpdb/source/python/wwpdb/apps/editormodule/data/", dataFile)
-                    shutil.copyfile(devDataExamplesPath, sessionFilePath)
-                #
-                self.__pathPdbxDataFile = sessionFilePath
+        elif dataFile:
+            sessionFilePath = os.path.join(self.__sessionPath, dataFile)
+            #
+            if fileSource and fileSource == "rcsb_dev":
+                # make copy of file in sessions directory for any access/processing required by front-end
+                devDataExamplesPath = os.path.join("/wwpdb/source/python/wwpdb/apps/editormodule/data/", dataFile)
+                shutil.copyfile(devDataExamplesPath, sessionFilePath)
+            #
+            self.__pathPdbxDataFile = sessionFilePath
 
         logger.info("+++- pdbx data file path is: %s", self.__pathPdbxDataFile)
 
     def getPdbxDataFilePath(self):
         if self.__pathPdbxDataFile is not None and os.access(self.__pathPdbxDataFile, os.R_OK):
             return self.__pathPdbxDataFile
-        else:
-            dataFile = str(self.__reqObj.getValue("datafile"))
+        dataFile = str(self.__reqObj.getValue("datafile"))
+        if self.__verbose:
+            logger.info("-- datafile is:%s", dataFile)
+        #
+        bIsWorkflow = self.__isWorkflow()
+        #
+        if bIsWorkflow:
+            depDataSetId = self.__reqObj.getValue("identifier")
             if self.__verbose:
-                logger.info("-- datafile is:%s", dataFile)
-            #
-            bIsWorkflow = self.__isWorkflow()
-            #
-            if bIsWorkflow:
-                depDataSetId = self.__reqObj.getValue("identifier")
-                if self.__verbose:
-                    logger.info("+++Starting.")
-                    #
-                    if bIsWorkflow:
-                        logger.info("SITE_ID is: %s.", self.__cI.get("SITE_PREFIX"))
-                        logger.info("deposition data set id is: %s.", depDataSetId)
+                logger.info("+++Starting.")
                 #
-                # Local path details - i.e. for processing within given session
-                lclPdbxFileName = depDataSetId + "-model.cif"
-                lclPdbxFilePath = os.path.join(self.__sessionPath, lclPdbxFileName)
-                #
-                if os.access(lclPdbxFilePath, os.R_OK):
-                    self.__pathPdbxDataFile = lclPdbxFilePath
-                    return self.__pathPdbxDataFile
-                else:
-                    logger.error("could not find/access pdbx data file path at: %s", lclPdbxFilePath)
-                    return None
+                if bIsWorkflow:
+                    logger.info("SITE_ID is: %s.", self.__cI.get("SITE_PREFIX"))
+                    logger.info("deposition data set id is: %s.", depDataSetId)
+            #
+            # Local path details - i.e. for processing within given session
+            lclPdbxFileName = depDataSetId + "-model.cif"
+            lclPdbxFilePath = os.path.join(self.__sessionPath, lclPdbxFileName)
+            #
+            if os.access(lclPdbxFilePath, os.R_OK):
+                self.__pathPdbxDataFile = lclPdbxFilePath
+                return self.__pathPdbxDataFile
+            logger.error("could not find/access pdbx data file path at: %s", lclPdbxFilePath)
+            return None
 
-            # Should never get here
-            logger.info("Leaving and pdbx data file path is: %s", self.__pathPdbxDataFile)
-            return self.__pathPdbxDataFile
+        # Should never get here
+        logger.info("Leaving and pdbx data file path is: %s", self.__pathPdbxDataFile)
+        return self.__pathPdbxDataFile
 
     def initializeDataStore(self):
         logger.info("--------------------------------------------")
@@ -393,17 +390,13 @@ class PdbxDataIo(object):
                 # iCountNames = len(self.__containerList)
                 # assert iCountNames == 1, "initializeDataStore -- expecting containerNameList to have single member but list had %s members" % iCountNames
                 #
-                if sys.version_info[0] < 3:
-                    self.__dataBlockName = self.__containerList[0].getName().encode("utf-8")
-                else:
-                    self.__dataBlockName = self.__containerList[0].getName()
+                self.__dataBlockName = self.__containerList[0].getName()
                 logger.info("Datablock name %r", self.__dataBlockName)
                 logger.info("--------------------------------------------")
                 logger.info("identified datablock name %s in sample pdbx data file at: %s", self.__dataBlockName, self.__pathPdbxDataFile)
                 #
-            else:
-                if self.__verbose:
-                    logger.info("pdbx data file not found/accessible at: %s", self.__pathPdbxDataFile)
+            elif self.__verbose:
+                logger.info("pdbx data file not found/accessible at: %s", self.__pathPdbxDataFile)
         #
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
@@ -433,7 +426,6 @@ class PdbxDataIo(object):
         return self.__dataBlockName, self.__entryTitle, self.__entryAccessionIdsLst
 
     def getEntryAccessionIds(self, p_pdbxPersist):
-
         logger.info("--------------------------------------------")
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
@@ -448,13 +440,12 @@ class PdbxDataIo(object):
                 if self.__verbose and self.__debug:
                     logger.info("fullRsltSet obtained as: %r", fullRsltSet)
 
-                assert iTotalRecords == 1, " getEntryAccesionIds expecting 'pdbx_depui_entry_details' category to contain a single record but had %s records" % iTotalRecords
+                assert iTotalRecords == 1, " getEntryAccesionIds expecting 'pdbx_depui_entry_details' category to contain a single record but had %s" % iTotalRecords  # noqa: S101
                 ctgryColList = (self.getCategoryColList("pdbx_depui_entry_details"))[1]
                 if self.__verbose and self.__debug:
                     logger.info("ctgryColList obtained as: %r", ctgryColList)
                 #
                 for idx, name in enumerate(ctgryColList):
-
                     if name == "requested_accession_types":
                         if self.__verbose and self.__debug:
                             logger.info("found 'requested_accession_types' field at index: %s with value: %s", idx, (fullRsltSet[0])[idx])
@@ -496,8 +487,7 @@ class PdbxDataIo(object):
         return db2
 
     def getEntryTitle(self, p_pdbxPersist):
-        if self.__entrydatabasedict and "EMDB" in self.__entrydatabasedict \
-           and "PDB" not in self.__entrydatabasedict:
+        if self.__entrydatabasedict and "EMDB" in self.__entrydatabasedict and "PDB" not in self.__entrydatabasedict:
             # Map only
             return self.getEntryTitleEmdb(p_pdbxPersist)
 
@@ -518,13 +508,12 @@ class PdbxDataIo(object):
                 if self.__verbose and self.__debug:
                     logger.info("fullRsltSet obtained as: %r", fullRsltSet)
 
-                assert iTotalRecords == 1, "expecting 'struct' category to contain a single record but had %s records" % iTotalRecords
+                assert iTotalRecords == 1, "expecting 'struct' category to contain a single record but had %s records" % iTotalRecords  # noqa: S101
                 ctgryColList = (self.getCategoryColList("struct"))[1]
                 if self.__verbose and self.__debug:
                     logger.info("ctgryColList obtained as: %r", ctgryColList)
                 #
                 for idx, name in enumerate(ctgryColList):
-
                     if name == "title":
                         if self.__verbose and self.__debug:
                             logger.info("found 'title' field at index: %s with value: %s", idx, (fullRsltSet[0])[idx])
@@ -532,9 +521,8 @@ class PdbxDataIo(object):
                         break
 
                 logger.info("entryTitle obtained as: '%s'", entryTitle)
-            else:
-                if self.__verbose:
-                    logger.info("'struct' category not present in the model data file")
+            elif self.__verbose:
+                logger.info("'struct' category not present in the model data file")
         except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failure retreiving title")
 
@@ -555,13 +543,12 @@ class PdbxDataIo(object):
                 if self.__verbose and self.__debug:
                     logger.info("fullRsltSet obtained as: %r", fullRsltSet)
 
-                assert iTotalRecords == 1, "expecting 'em_admin' category to contain a single record but had %s records" % iTotalRecords
+                assert iTotalRecords == 1, "expecting 'em_admin' category to contain a single record but had %s records" % iTotalRecords  # noqa: S101
                 ctgryColList = (self.getCategoryColList("em_admin"))[1]
                 if self.__verbose and self.__debug:
                     logger.info("ctgryColList obtained as: %r", ctgryColList)
                 #
                 for idx, name in enumerate(ctgryColList):
-
                     if name == "title":
                         if self.__verbose and self.__debug:
                             logger.info("found 'title' field at index: %s with value: %s", idx, (fullRsltSet[0])[idx])
@@ -569,16 +556,14 @@ class PdbxDataIo(object):
                         break
 
                 logger.info("entryTitle obtained as: '%s'", entryTitle)
-            else:
-                if self.__verbose:
-                    logger.info("'struct' category not present in the model data file")
+            elif self.__verbose:
+                logger.info("'struct' category not present in the model data file")
         except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failure retreiving title")
 
         return entryTitle
 
     def __getEntryExptlList(self, p_pdbxPersist):
-
         logger.info("--------------------------------------------")
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
@@ -624,22 +609,19 @@ class PdbxDataIo(object):
                 if self.__verbose:
                     logger.info("skipping over creation of zero-index dataFileSnapShot b/c already exists at:  %s", snapShotFilePath)
                 return
-            else:
-                if self.__verbose:
-                    logger.info("zero-index dataFileSnapShot does not yet exist at:  %s", snapShotFilePath)
+            if self.__verbose:
+                logger.info("zero-index dataFileSnapShot does not yet exist at:  %s", snapShotFilePath)
         #
         try:
             if self.__dbFilePath is not None and os.access(self.__dbFilePath, os.R_OK):
                 if self.__sessionSnapShotsPath is not None and os.access(self.__sessionSnapShotsPath, os.R_OK):
-
                     shutil.copyfile(self.__dbFilePath, snapShotFilePath)
 
                     if os.access(snapShotFilePath, os.R_OK):
                         if self.__verbose:
                             logger.info("dataFileSnapShot successfully created at: %s", snapShotFilePath)
-                    else:
-                        if self.__verbose:
-                            logger.info("problem creating dataFileSnapShot at: %s", snapShotFilePath)
+                    elif self.__verbose:
+                        logger.info("problem creating dataFileSnapShot at: %s", snapShotFilePath)
         #
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
@@ -670,9 +652,8 @@ class PdbxDataIo(object):
                         if self.__verbose:
                             logger.info("problem removing dataFileSnapShot at: %s", snpShotFilePath)
                         logger.exception("Issue removing dataFileSnapShot")
-        else:
-            if self.__verbose:
-                logger.info("dataFileSnapShots directory not accessible at: %s", self.__sessionSnapShotsPath)
+        elif self.__verbose:
+            logger.info("dataFileSnapShots directory not accessible at: %s", self.__sessionSnapShotsPath)
 
     def getDataStorePath(self):
         logger.info("--------------------------------------------")
@@ -684,10 +665,9 @@ class PdbxDataIo(object):
                     logger.info("spersistent dataStore DB file accessible at %s", self.__dbFilePath)
                 return self.__dbFilePath
 
-            else:
-                if self.__verbose:
-                    logger.info("persistent dataStore DB file not found/accessible at %s", self.__dbFilePath)
-                return None
+            if self.__verbose:
+                logger.info("persistent dataStore DB file not found/accessible at %s", self.__dbFilePath)
+            return None
 
         except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Failure in getDataStorePath")
@@ -766,24 +746,22 @@ class PdbxDataIo(object):
                         logger.info(" -- WARNING: problem exporting updated cif file to %s", exprtFilePath)
                     return False
 
-                else:
-                    # 2015-02-06, ZF -- loading archive model cif file into da_internal database
-                    fileSource = str(self.__reqObj.getValue("filesource")).strip().lower()
-                    if fileSource in ["archive", "wf-archive", "wf_archive"]:
-                        dbLoader = DBLoadUtil(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-                        dbLoader.doLoading([exprtFilePath])
+                # 2015-02-06, ZF -- loading archive model cif file into da_internal database
+                fileSource = str(self.__reqObj.getValue("filesource")).strip().lower()
+                if fileSource in ["archive", "wf-archive", "wf_archive"]:
+                    dbLoader = DBLoadUtil(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+                    dbLoader.doLoading([exprtFilePath])
 
-                        # syncing depositor data to database
-                        depId = self.__reqObj.getValue("identifier")
-                        syncdep = DepositorSyncUtil(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-                        syncdep.syncWithDatabase(depId=depId, modelFilePath=exprtFilePath)
-                    # ZF, end DB loading
-                    if self.__verbose:
-                        logger.info("-- exported updated cif file to %s", exprtFilePath)
-                    return True
+                    # syncing depositor data to database
+                    depId = self.__reqObj.getValue("identifier")
+                    syncdep = DepositorSyncUtil(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+                    syncdep.syncWithDatabase(depId=depId, modelFilePath=exprtFilePath)
+                # ZF, end DB loading
+                if self.__verbose:
+                    logger.info("-- exported updated cif file to %s", exprtFilePath)
+                return True
                 #
-            else:
-                return False
+            return False
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
                 logger.info("-- export of updated cif file to %s FAILED.", exprtFilePath)
@@ -829,7 +807,6 @@ class PdbxDataIo(object):
             if menuType == "dropdown":
                 # in case of "dropdown" menu types, we use descriptors list as list of labels for the dropdown choices
                 for idx, dropDwnLbl in enumerate(descriptors):
-
                     if idx > 0 and (dropDwnLbl == descriptors[idx - 1]):
                         continue
 
@@ -936,7 +913,7 @@ class PdbxDataIo(object):
 
         if os.access(self.__skltnLstFlPath, os.R_OK):
             try:
-                ifh = open(self.__skltnLstFlPath, "r")
+                ifh = open(self.__skltnLstFlPath)
                 for line in ifh:
                     ctgryName = line.strip()
                     if ctgryName not in skltnCtgryLst:
@@ -967,7 +944,6 @@ class PdbxDataIo(object):
         skltnCtgryList = self.__getCurrentSkeletonCategories()
         #
         for curCtgryNm, ctgryDisplLbl, topLevelMenuChoice in categoryList:
-
             # proceed only if haven't handled the category and category is not one of the artificial skeleton constructs
             if curCtgryNm not in categoryHndldList and curCtgryNm not in skltnCtgryList:
                 categoryHndldList.append(curCtgryNm)
@@ -1021,7 +997,6 @@ class PdbxDataIo(object):
                                             )
 
                                 except:  # noqa: E722 pylint: disable=bare-except
-
                                     logger.info(
                                         "---- DEBUG ---- EXCEPTION: Current rowIdx is '%s', colIdx is '%s', and length of record is '%s' for category '%s'",
                                         rowIdx,
@@ -1035,14 +1010,12 @@ class PdbxDataIo(object):
                         if bFoundViolation:
                             missingMndtryItemsDict["violation_map"][curCtgryNm] = newViolMapDict
 
-                    else:
-                        if self.__debug:
-                            logger.debug("---- DEBUG ---- category '%s' not found in deposited data", curCtgryNm)
+                    elif self.__debug:
+                        logger.debug("---- DEBUG ---- category '%s' not found in deposited data", curCtgryNm)
         #
         return missingMndtryItemsDict
 
     def __getCategoryListForCurrentContext(self):
-
         currViewId = self.__getConfigViewId()
 
         categoryList = []
@@ -1058,12 +1031,10 @@ class PdbxDataIo(object):
         logger.info("-- topLevelMenuList obtained as %r", topLevelMenuList)
         #
         for topLevelMenuChoice in topLevelMenuList:
-
             descriptors = dictViewInfo.getCategoryGroupListInMenu(viewId=currViewId, menuName=topLevelMenuChoice)
             # descriptors is a list of display-friendly labels for user selections
 
             for idx, memberLbl in enumerate(descriptors):
-
                 if idx > 0 and memberLbl == descriptors[idx - 1]:
                     continue
 
@@ -1379,7 +1350,6 @@ class PdbxDataIo(object):
         categoryList = self.__getCategoryListForCurrentContext()
         #
         for curCtgryNm, ctgryDisplLbl, topLevelMenuChoice in categoryList:
-
             # proceed only if haven't handled the category
             if curCtgryNm not in categoryHndldList:
                 categoryHndldList.append(curCtgryNm)
@@ -1413,12 +1383,11 @@ class PdbxDataIo(object):
                                         if ctgryMetaDict is None:
                                             if self.__debug:
                                                 logger.debug("-- WARNING: failed to obtain ctgryMetaDict for '%s'", curCtgryNm)
-                                        else:
-                                            if self.__debug:
-                                                logger.debug(" -- ctgryMetaDict obtained as %r", list(ctgryMetaDict.items()))
+                                        elif self.__debug:
+                                            logger.debug(" -- ctgryMetaDict obtained as %r", list(ctgryMetaDict.items()))
                                         #
                                         vldtnTstRslts = self.__validateAgainstDict(ctgryMetaDict, curCtgryNm, truAttribName, itemValue)
-                                        if vldtnTstRslts["pass_regex_tst"] == "false" or vldtnTstRslts["pass_bndry_tst"] == "false":
+                                        if vldtnTstRslts["pass_regex_tst"] == "false" or vldtnTstRslts["pass_bndry_tst"] == "false":  # noqa: S105
                                             msg = ""
 
                                             if len(newViolMapDict["top_menu_label"]) < 1:
@@ -1428,10 +1397,10 @@ class PdbxDataIo(object):
                                                 newViolMapDict["col_names"].append(colDisplName)
                                             newViolMapDict["data_positions"].append((rowIdx, colIdx))
 
-                                            if vldtnTstRslts["pass_regex_tst"] == "false":
+                                            if vldtnTstRslts["pass_regex_tst"] == "false":  # noqa: S105
                                                 msg = vldtnTstRslts["fail_msg_regex"]
 
-                                            if vldtnTstRslts["pass_bndry_tst"] == "false":
+                                            if vldtnTstRslts["pass_bndry_tst"] == "false":  # noqa: S105
                                                 msg += vldtnTstRslts["fail_msg_bndry"]
 
                                             newViolMapDict["violation_msgs"].append(msg)
@@ -1457,9 +1426,8 @@ class PdbxDataIo(object):
                         if bFoundViolation:
                             violationsDict["violation_map"][curCtgryNm] = newViolMapDict
 
-                    else:
-                        if self.__debug:
-                            logger.debug("---- DEBUG ---- category '%s' not found in deposited data.", curCtgryNm)
+                    elif self.__debug:
+                        logger.debug("---- DEBUG ---- category '%s' not found in deposited data.", curCtgryNm)
         #
         return violationsDict
 
@@ -1511,9 +1479,8 @@ class PdbxDataIo(object):
             if ctgryMetaDict is None:
                 if self.__verbose:
                     logger.info("-- WARNING: failed to obtain ctgryMetaDict for '%s'", p_ctgryNm)
-            else:
-                if self.__debug:
-                    logger.debug("-- ctgryMetaDict obtained as %r", list(ctgryMetaDict.items()))
+            elif self.__debug:
+                logger.debug("-- ctgryMetaDict obtained as %r", list(ctgryMetaDict.items()))
                 #
             rtrnDict = self.__validateAgainstDict(ctgryMetaDict, p_ctgryNm, attributeNm, p_newValue)
         #
@@ -1524,8 +1491,8 @@ class PdbxDataIo(object):
 
     def __validateAgainstDict(self, p_ctgryMetaDict, p_ctgryNm, p_attributeNm, p_value):
         rtrnDict = {}
-        rtrnDict["pass_regex_tst"] = ""
-        rtrnDict["pass_bndry_tst"] = ""
+        rtrnDict["pass_regex_tst"] = ""  # noqa: S105
+        rtrnDict["pass_bndry_tst"] = ""  # noqa: S105
         bValueInCsvListForm = True if p_ctgryNm + "." + p_attributeNm in EditorConfig.itemsInCsvListForm else False
         regexAllowOverride = True if p_ctgryNm + "." + p_attributeNm in EditorConfig.itemsAllowingOverrideRegex else False
 
@@ -1533,9 +1500,9 @@ class PdbxDataIo(object):
         if p_ctgryMetaDict:
             rslt, msg = self.__regexValidation(p_ctgryMetaDict, p_ctgryNm, p_attributeNm, p_value)
             if rslt is True:
-                rtrnDict["pass_regex_tst"] = "true"
+                rtrnDict["pass_regex_tst"] = "true"  # noqa: S105
             else:
-                rtrnDict["pass_regex_tst"] = "false"
+                rtrnDict["pass_regex_tst"] = "false"  # noqa: S105
                 rtrnDict["fail_msg_regex"] = msg.rstrip()
                 rtrnDict["fail_typ_regex"] = "soft" if regexAllowOverride else "hard"
 
@@ -1545,9 +1512,9 @@ class PdbxDataIo(object):
             for value in valuesList:
                 rslt, msg, vldtype = self.__boundaryValidation(p_ctgryMetaDict, p_ctgryNm, p_attributeNm, value)
                 if rslt is True:
-                    rtrnDict["pass_bndry_tst"] = "true"
+                    rtrnDict["pass_bndry_tst"] = "true"  # noqa: S105
                 else:
-                    rtrnDict["pass_bndry_tst"] = "false"
+                    rtrnDict["pass_bndry_tst"] = "false"  # noqa: S105
                     rtrnDict["fail_msg_bndry"] = msg.rstrip()
                     rtrnDict["fail_typ_bndry"] = vldtype
                     break  # cancel checking rest of values at first occurrence of boundary validation
@@ -1593,7 +1560,7 @@ class PdbxDataIo(object):
             #
             attributeNm = attributeList[
                 p_colIdx
-            ]  # get name of category field based using column index returned from client and mapped against attribute list held by the categoryObject # noqa; E501
+            ]  # get name of category field based using column index returned from client and mapped against attribute list held by the categoryObject  # noqa: E501
 
             if EditorConfig.bAccommodatingUnicode and p_ctgryNm + "." + attributeNm in EditorConfig.itemsAllowingUnicodeAccommodation:
                 # if we are handling unicode characters, submit new value to ascii safe conversion
@@ -1681,8 +1648,7 @@ class PdbxDataIo(object):
                         listedtasks.append(taskName)
                     except ValueError:
                         if self.__verbose and self.__debug:
-                            logger.info(
-                                "-- ValueError found when extracting tasks %s", idx)
+                            logger.info("-- ValueError found when extracting tasks %s", idx)
                             continue
 
             #
@@ -2084,7 +2050,7 @@ class PdbxDataIo(object):
 
                     deletedOrdinalValue = rowBeingDeleted[colIdx]
 
-                    for idx, record in enumerate(rowList):
+                    for record in rowList:
                         try:
                             ordinalId = int(record[colIdx])
                             if ordinalId == (int(deletedOrdinalValue) + 1):
@@ -2168,7 +2134,6 @@ class PdbxDataIo(object):
                 cloneDict["referenceRow"] = rowList[p_rowIdx]
 
             for n in range(p_iNumRows):
-
                 newOrdinalId = str(p_rowIdx + (n + 2))
 
                 newRow = self.__genRowOfDefaultValues(p_ctgryNm, ctgryMetaDict, attributeList, "insertRow", ctgryObj, p_ordinalId=newOrdinalId, p_cloneDict=cloneDict)
@@ -2226,7 +2191,7 @@ class PdbxDataIo(object):
         """
         autoIncrementNeeded = False
 
-        for idx, record in enumerate(p_recordset):
+        for record in p_recordset:
             try:
                 ordinalId = int(record[p_colIdx])
 
@@ -2271,7 +2236,6 @@ class PdbxDataIo(object):
 
         try:
             if os.access(rewindToSnapShotFilePath, os.F_OK):
-
                 myPersist = PdbxPersist(self.__verbose, self.__lfh)
                 #
                 if self.__verbose:
@@ -2281,9 +2245,8 @@ class PdbxDataIo(object):
                 #
                 bSuccess = myPersist.updateOneObject(categoryObj, self.__dbFilePath, self.__dataBlockName)
 
-            else:
-                if self.__verbose:
-                    logger.info("problem accessing dataFileSnapShot file at: %s\n", rewindToSnapShotFilePath)
+            elif self.__verbose:
+                logger.info("problem accessing dataFileSnapShot file at: %s\n", rewindToSnapShotFilePath)
         #
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
@@ -2296,7 +2259,6 @@ class PdbxDataIo(object):
     # #####################################   HELPER FUNCTIONS   #################################################
 
     def __getSortAscColIndex(self, p_categoryNm, p_truCtgryColList):
-
         sortAscIdx = None
         sortTargetColName = EditorConfig.sortColDict[p_categoryNm] if p_categoryNm in EditorConfig.sortColDict else None
 
@@ -2312,8 +2274,7 @@ class PdbxDataIo(object):
     def __isNotCifNull(self, p_value):
         if p_value == "." or p_value == "?":
             return False
-        else:
-            return True
+        return True
 
     def __getCifCtgryMetaDict(self, p_sCtgryName, p_bCreateStub=False):
         """
@@ -2381,7 +2342,7 @@ class PdbxDataIo(object):
         dataTblCnfgDict["PRIMARY_KEYS"] = []
         dataTblCnfgDict["MANDATORY_COLUMNS"] = []
         dataTblCnfgDict["MANDATORY_COLUMNS_ALT"] = []
-        dataTblCnfgDict["COLUMN_DISPLAY_ORDER"] = [x for x in range(0, len(p_ctgryColList))] if p_ctgryColList else []
+        dataTblCnfgDict["COLUMN_DISPLAY_ORDER"] = [x for x in range(len(p_ctgryColList))] if p_ctgryColList else []  # noqa: C416
         dataTblCnfgDict["COLUMN_TYPES"] = {}
         dataTblCnfgDict["COLUMN_TYPES_ALT"] = {}
         dataTblCnfgDict["COLUMN_ENUMS"] = {}
@@ -2400,7 +2361,6 @@ class PdbxDataIo(object):
         return dataTblCnfgDict
 
     def __getNextOrdinalValue(self, p_ctgryObj, p_attributeNm):
-
         logger.info("--------------------------------------------\n")
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         #
@@ -2419,7 +2379,6 @@ class PdbxDataIo(object):
             #
             desiredIdx = None
             for idx, name in enumerate(ctgryColList):
-
                 if name == p_attributeNm:
                     if self.__verbose and self.__debug:
                         logger.debug("-- '%s' field corresponds to index: [%s]", p_attributeNm, idx)
@@ -2467,7 +2426,7 @@ class PdbxDataIo(object):
             allIntDict[colIndx] = True
             for dictEntry in sortlist:
                 try:
-                    int((list(dictEntry.items()))[0][1][colIndx])
+                    int((list(dictEntry.items()))[0][1][colIndx])  # noqa: RUF015
                 except:  # noqa: E722 pylint: disable=bare-except
                     allIntDict[colIndx] = False
                     if self.__verbose and self.__debug:
@@ -2477,14 +2436,13 @@ class PdbxDataIo(object):
         for colIndx in reversed(orderby):
             if allIntDict[colIndx]:
                 # The cell-var-from-loop is probably real error - code never worked
-                sortlist.sort(key=lambda dictEntry: int((list(dictEntry.items()))[0][1][colIndx]), reverse=(colIndx in desc))  # pylint: disable=cell-var-from-loop
+                sortlist.sort(key=lambda dictEntry: int((list(dictEntry.items()))[0][1][colIndx]), reverse=(colIndx in desc))  # noqa: RUF015 pylint: disable=cell-var-from-loop
             else:
-                sortlist.sort(key=lambda dictEntry: (list(dictEntry.items()))[0][1][colIndx], reverse=(colIndx in desc))  # pylint: disable=cell-var-from-loop
+                sortlist.sort(key=lambda dictEntry: (list(dictEntry.items()))[0][1][colIndx], reverse=(colIndx in desc))  # noqa: RUF015 pylint: disable=cell-var-from-loop
 
         return sortlist
 
     def __setMenuConfigTypes(self, p_currViewId, p_topLevelMenuList, p_dictViewInfo):
-
         menuTypeDict = {}
         bCombined = None
         for topLevelMenuChoice in p_topLevelMenuList:  # topLevelMenuChoice is the descriptor of the individual choices in "navigation" menu bar at top of page
@@ -2528,7 +2486,6 @@ class PdbxDataIo(object):
         return menuTypeDict
 
     def __getConfigViewId(self):
-
         if self.__verbose and self.__debug:
             for value in self.__expMethodList:
                 logger.info("value found in self.__expMethodList: %s", value)
@@ -2582,7 +2539,7 @@ class PdbxDataIo(object):
         #
         if os.access(self.__skltnLstFlPath, os.R_OK):
             try:
-                ifh = open(self.__skltnLstFlPath, "r")
+                ifh = open(self.__skltnLstFlPath)
                 for line in ifh:
                     ctgryName = line.strip()
                     if ctgryName not in purgeCategoryList:
@@ -2599,7 +2556,6 @@ class PdbxDataIo(object):
         logger.debug("Categories present %s", storectgries)
         #
         for cifCtgryNm in purgeCategoryList:
-
             if storectgries is not None and cifCtgryNm not in storectgries:
                 logger.debug("Skip purge of %s as not present", cifCtgryNm)
                 continue
@@ -2660,9 +2616,7 @@ class PdbxDataIo(object):
                             # i.e. specialTreatment means that these were autoincremented as is default behavior for ordinal ID items
                         #
                         if value != "?" and value != "." and not bSpecialTreatmentAttribute:
-                            if defaultVal == "none":
-                                bRemoveRow = False
-                            elif value != defaultVal:
+                            if defaultVal == "none" or value != defaultVal:
                                 bRemoveRow = False
                     #
                     if bRemoveRow:
@@ -2689,9 +2643,8 @@ class PdbxDataIo(object):
                     if self.__debug:
                         logger.debug("++++++++++++ just after call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
                     #
-                else:
-                    if self.__verbose:
-                        logger.info("NO rows being deleted for category '%s'", cifCtgryNm)
+                elif self.__verbose:
+                    logger.info("NO rows being deleted for category '%s'", cifCtgryNm)
 
         return bSuccess
 
@@ -2704,9 +2657,7 @@ class PdbxDataIo(object):
         #
         if p_ctgryName == "audit_author":
             targetAttributeNm = "pdbx_ordinal"
-        elif p_ctgryName == "citation_author":
-            targetAttributeNm = "ordinal"
-        elif p_ctgryName == "em_author_list":
+        elif p_ctgryName == "citation_author" or p_ctgryName == "em_author_list":
             targetAttributeNm = "ordinal"
         else:
             targetAttributeNm = "None"  # Will cause an error
@@ -2732,12 +2683,10 @@ class PdbxDataIo(object):
                     logger.debug("++++++++++++ just after call to myPersist.updateOneObject at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
                     logger.debug("++++++++++++ just after call to myPersist.updateOneObject and bSuccess is %s", bSuccess)
                 #
-            else:
-                if self.__verbose:
-                    logger.info("unable to identify '%s.%s' in data.", p_ctgryName, targetAttributeNm)
-        else:
-            if self.__verbose:
-                logger.info("'%s' category not found in data.", p_ctgryName)
+            elif self.__verbose:
+                logger.info("unable to identify '%s.%s' in data.", p_ctgryName, targetAttributeNm)
+        elif self.__verbose:
+            logger.info("'%s' category not found in data.", p_ctgryName)
 
         return bSuccess
 
@@ -2807,7 +2756,6 @@ class PdbxDataIo(object):
                                 idxTargetId = idx
 
                     if idxTargetTitle >= 0:
-
                         for rowNmbr, record in enumerate(targetRowList):
                             if idxTargetId >= 0:
                                 if record[idxTargetId] == "primary":
@@ -2824,17 +2772,14 @@ class PdbxDataIo(object):
 
                         bSuccess = myPersist.updateOneObject(targetCtgryObj, self.__dbFilePath, self.__dataBlockName)
                         #
-                else:
-                    if self.__verbose:
-                        logger.info("unable to identify '%s.%s' in data.", srcCtgry, targetAttributeNm)
-            else:
-                if self.__verbose:
-                    logger.info("'%s' category not found in data.", srcCtgry)
+                elif self.__verbose:
+                    logger.info("unable to identify '%s.%s' in data.", srcCtgry, targetAttributeNm)
+            elif self.__verbose:
+                logger.info("'%s' category not found in data.", srcCtgry)
 
         return bSuccess, origTitleValue
 
     def __createSkeletonCtgryContainer(self, p_myPersist, p_ctgryNm):
-
         bSuccess = False
         rtrnList = []
         # localExclList = ["entity_src_nat.entity_id", "entity_src_gen.entity_id", "pdbx_entity_src_syn.entity_id"]
@@ -2874,7 +2819,6 @@ class PdbxDataIo(object):
         return bSuccess, rtrnList
 
     def __generateMissingCtgryItems(self, p_categoryNm, p_ctgryColList, p_attribsForDisplay):
-
         bSuccess = False
         bUpdateRequired = False
         attribsToAdd = []
@@ -2953,8 +2897,7 @@ class PdbxDataIo(object):
     def __encodeUtf8ToCif(self, p_content):
         """Encoding unicode/utf-8 content into cif friendly ascii"""
         text = p_content.encode("ascii", "xmlcharrefreplace")
-        if sys.version_info[0] > 2:
-            text = text.decode("ascii")
+        text = text.decode("ascii")
         return text
 
     def __regexValidation(self, p_ctgryMetaDict, p_ctgryNm, p_attributeNm, p_newValue):
@@ -3016,28 +2959,24 @@ class PdbxDataIo(object):
         if lB == uB:
             if int(value) == int(lB):
                 return (True, "pass")
-            else:
-                return (False, "")
-        else:
-            if lB != "." and int(value) < int(lB):
-                return (False, "Submitted value of '" + str(value) + "' falls below " + limitType + " lower limit of: " + str(lB) + ".")
-            if uB != "." and int(value) > int(uB):
-                return (False, "Submitted value of '" + str(value) + "' exceeds " + limitType + " upper limit of: " + str(uB) + ".")
-            return (True, "pass")
+            return (False, "")
+        if lB != "." and int(value) < int(lB):
+            return (False, "Submitted value of '" + str(value) + "' falls below " + limitType + " lower limit of: " + str(lB) + ".")
+        if uB != "." and int(value) > int(uB):
+            return (False, "Submitted value of '" + str(value) + "' exceeds " + limitType + " upper limit of: " + str(uB) + ".")
+        return (True, "pass")
 
     def __testFloatBoundary(self, value, lB, uB, limitType):
         # this equivalence comparison is a bit dicey --
         if lB == uB:
             if float(value) == float(lB):
                 return (True, "pass")
-            else:
-                return (False, "")
-        else:
-            if lB != "." and float(value) < float(lB):
-                return (False, "Submitted value of '" + str(value) + "' falls below " + limitType + " lower limit of: " + lB + ".")
-            if uB != "." and float(value) > float(uB):
-                return (False, "Submitted value of '" + str(value) + "' exceeds " + limitType + " upper limit of: " + uB + ".")
-            return (True, "pass")
+            return (False, "")
+        if lB != "." and float(value) < float(lB):
+            return (False, "Submitted value of '" + str(value) + "' falls below " + limitType + " lower limit of: " + lB + ".")
+        if uB != "." and float(value) > float(uB):
+            return (False, "Submitted value of '" + str(value) + "' exceeds " + limitType + " upper limit of: " + uB + ".")
+        return (True, "pass")
 
     def __boundaryValidation(self, p_ctgryMetaDict, p_ctgryNm, p_attributeNm, p_newValue):
         """Perform validation check of proposed edit against boundary constraints for the given
@@ -3062,39 +3001,37 @@ class PdbxDataIo(object):
                 if self.__verbose:
                     logger.info("no COLUMN_BOUNDARY_VALUES(_ALT) defined for '%s.%s'", p_ctgryNm, p_attributeNm)
 
-            else:
-                if bndryDictHard:
-                    if self.__verbose:
-                        logger.info("Checking against 'hard' COLUMN_BOUNDARY_VALUES for '%s.%s'", p_ctgryNm, p_attributeNm)
-                    #
-                    rsltTupl = self.__checkAgainstBoundaries(p_ctgryNm, bndryDictHard, p_attributeNm, p_newValue, "hard")
+            elif bndryDictHard:
+                if self.__verbose:
+                    logger.info("Checking against 'hard' COLUMN_BOUNDARY_VALUES for '%s.%s'", p_ctgryNm, p_attributeNm)
+                #
+                rsltTupl = self.__checkAgainstBoundaries(p_ctgryNm, bndryDictHard, p_attributeNm, p_newValue, "hard")
 
+                if rsltTupl[0] is False:
+                    failSummaryMsg = rsltTupl[1]
+                    rtrnTupl = (False, failSummaryMsg, "hard")
+                    return rtrnTupl
+                if bndryDictSoft:
+                    if self.__verbose:
+                        logger.info("Checking against 'soft' COLUMN_BOUNDARY_VALUES_ALT for '%s.%s'", p_ctgryNm, p_attributeNm)
+
+                    rsltTupl = self.__checkAgainstBoundaries(p_ctgryNm, bndryDictSoft, p_attributeNm, p_newValue, "soft")
                     if rsltTupl[0] is False:
                         failSummaryMsg = rsltTupl[1]
-                        rtrnTupl = (False, failSummaryMsg, "hard")
+                        rtrnTupl = (False, failSummaryMsg, "soft")
                         return rtrnTupl
-                    else:
-                        if bndryDictSoft:
-                            if self.__verbose:
-                                logger.info("Checking against 'soft' COLUMN_BOUNDARY_VALUES_ALT for '%s.%s'", p_ctgryNm, p_attributeNm)
-
-                            rsltTupl = self.__checkAgainstBoundaries(p_ctgryNm, bndryDictSoft, p_attributeNm, p_newValue, "soft")
-                            if rsltTupl[0] is False:
-                                failSummaryMsg = rsltTupl[1]
-                                rtrnTupl = (False, failSummaryMsg, "soft")
-                                return rtrnTupl
-                else:
+            else:
+                if self.__verbose:
+                    logger.info("No 'hard' boundary limits for '%s.%s'", p_ctgryNm, p_attributeNm)
+                if bndryDictSoft:
                     if self.__verbose:
-                        logger.info("No 'hard' boundary limits for '%s.%s'", p_ctgryNm, p_attributeNm)
-                    if bndryDictSoft:
-                        if self.__verbose:
-                            logger.info("Proceeding to check against 'soft' COLUMN_BOUNDARY_VALUES_ALT for '%s.%s'", p_ctgryNm, p_attributeNm)
+                        logger.info("Proceeding to check against 'soft' COLUMN_BOUNDARY_VALUES_ALT for '%s.%s'", p_ctgryNm, p_attributeNm)
 
-                        rsltTupl = self.__checkAgainstBoundaries(p_ctgryNm, bndryDictSoft, p_attributeNm, p_newValue, "soft")
-                        if rsltTupl[0] is False:
-                            failSummaryMsg = rsltTupl[1]
-                            rtrnTupl = (False, failSummaryMsg, "soft")
-                            return rtrnTupl
+                    rsltTupl = self.__checkAgainstBoundaries(p_ctgryNm, bndryDictSoft, p_attributeNm, p_newValue, "soft")
+                    if rsltTupl[0] is False:
+                        failSummaryMsg = rsltTupl[1]
+                        rtrnTupl = (False, failSummaryMsg, "soft")
+                        return rtrnTupl
             #
         except Exception as _e:  # noqa: F841
             rtrnTupl = (False, "Problem during validation of '" + p_newValue + "'.", "n.a")
@@ -3114,7 +3051,7 @@ class PdbxDataIo(object):
         bList = p_bndryDict.get(p_attributeNm, None)
         if bList:
             try:
-                for (lB, uB) in bList:
+                for lB, uB in bList:
                     if len(failSummaryMsg) > 0:
                         separator = " "
                     if ((len(lB) > 1) and "." in lB) or ((len(uB) > 1) and "." in uB):
@@ -3127,7 +3064,7 @@ class PdbxDataIo(object):
                                     "new value of '%s' passes validation against float COLUMN_BOUNDARY_VALUES(_ALT) for '%s.%s' as %r", p_newValue, p_ctgryNm, p_attributeNm, bList
                                 )
                             return rtrnTupl
-                        elif rtrnTupl[0] is False:
+                        if rtrnTupl[0] is False:
                             if failSummaryMsg != rtrnTupl[1] and len(rtrnTupl[1]) > 1:  # to prevent duplicate messages
                                 failSummaryMsg += separator + rtrnTupl[1]
                             if self.__verbose:
@@ -3154,7 +3091,7 @@ class PdbxDataIo(object):
                                     bList,
                                 )
                             return rtrnTupl
-                        elif rtrnTupl[0] is False:
+                        if rtrnTupl[0] is False:
                             if failSummaryMsg != rtrnTupl[1]:
                                 failSummaryMsg += separator + rtrnTupl[1]
                             if self.__verbose:
@@ -3206,7 +3143,7 @@ class PdbxDataIo(object):
             if self.__verbose and self.__debug:
                 logger.debug("performing global search for string '%s'", p_sGlobalSrchFilter)
             for trueIndxdRcrdDict in p_rsltSetList:
-                _trueIndxKey, rcrdValue = (list(trueIndxdRcrdDict.items()))[0]
+                _trueIndxKey, rcrdValue = (list(trueIndxdRcrdDict.items()))[0]  # noqa: RUF015
                 for field in rcrdValue:
                     if p_sGlobalSrchFilter.lower() in str(field).lower():
                         fltrdList.append(trueIndxdRcrdDict)
@@ -3218,7 +3155,7 @@ class PdbxDataIo(object):
             #
             bAllCriteriaMet = False
             for trueIndxdRcrdDict in p_rsltSetList:
-                _trueRowIdx, rcrd = (list(trueIndxdRcrdDict.items()))[0]
+                _trueRowIdx, rcrd = (list(trueIndxdRcrdDict.items()))[0]  # noqa: RUF015
                 #
                 for key in list(p_dictColSrchFilter.keys()):
                     if p_dictColSrchFilter[key].lower() in str(rcrd[key]).lower():
@@ -3245,13 +3182,11 @@ class PdbxDataIo(object):
         if fileSource and fileSource in ["archive", "wf-archive", "wf_archive", "wf-instance", "wf_instance"]:
             # if the file source is any of the above then we are in the workflow manager environment
             return True
-        else:
-            # else we are in the standalone dev environment
-            return False
+        # else we are in the standalone dev environment
+        return False
 
     def __attributePart(self, name):
         i = name.find(".")
         if i == -1:
             return None
-        else:
-            return name[i + 1 :]
+        return name[i + 1 :]

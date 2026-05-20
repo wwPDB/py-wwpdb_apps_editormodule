@@ -12,6 +12,7 @@
 WebRequest provides containers and accessors for managing request parameter information.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -19,17 +20,17 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
 
-import sys
-from json import loads, dumps
 import os
+import sys
+from json import dumps, loads
 
 from wwpdb.utils.session.SessionManager import SessionManager
 
 
-class WebRequest(object):
+class WebRequest:
     """Base container and accessors for input and output parameters and control information."""
 
-    def __init__(self, paramDict=None, verbose=False):  # pylint: disable=unused-argument
+    def __init__(self, paramDict=None, verbose=False):  # noqa: ARG002 pylint: disable=unused-argument
         if paramDict is None:
             paramDict = {}
         #
@@ -65,7 +66,7 @@ class WebRequest(object):
         except:  # noqa: E722 pylint: disable=bare-except
             pass
 
-    def dump(self, format="text"):  # pylint: disable=redefined-builtin
+    def dump(self, format="text"):  # noqa: A002 pylint: disable=redefined-builtin
         oL = []
         try:
             if format == "html":
@@ -146,7 +147,7 @@ class WebRequest(object):
 
 
 class EditorInputRequest(WebRequest):
-    def __init__(self, paramDict, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
+    def __init__(self, paramDict, verbose=False, log=sys.stderr):  # noqa: ARG002 pylint: disable=unused-argument
         super(EditorInputRequest, self).__init__(paramDict, verbose)
         self.__returnFormatDefault = ""
 
@@ -206,8 +207,8 @@ class EditorInputRequest(WebRequest):
         return int(self.getValue(myKey).encode("utf-8"))
 
 
-class ResponseContent(object):
-    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # pylint: disable=unused-argument
+class ResponseContent:
+    def __init__(self, reqObj=None, verbose=False, log=sys.stderr):  # noqa: ARG002 pylint: disable=unused-argument
         """
         Manage content items to be transfered as part of the
         the application response.
@@ -248,13 +249,13 @@ class ResponseContent(object):
     def setTextFileE(self, filePath):
         try:
             if os.path.exists(filePath):
-                with open(filePath, "r") as fin:
+                with open(filePath) as fin:
                     self.__cD["textcontent"] = fin.read()
         except:  # noqa: E722 pylint: disable=bare-except
             pass
 
     def setTextFile(self, filePath):
-        with open(filePath, "r") as fin:
+        with open(filePath) as fin:
             self.__cD["textcontent"] = fin.read()
 
     def setError(self, errMsg="", semaphore=""):

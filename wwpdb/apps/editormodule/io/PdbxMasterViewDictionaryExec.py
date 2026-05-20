@@ -4,8 +4,9 @@
 
 import argparse
 
-from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
 from mmcif.io.PdbxWriter import PdbxWriter
+
+from wwpdb.apps.editormodule.io.PdbxMasterViewDictionary import PdbxMasterViewDictionary
 
 
 def main():
@@ -19,14 +20,14 @@ def main():
 
     parseargs = parser.parse_args()
 
-    print(parseargs)
+    print(parseargs)  # noqa: T201
 
     # filename is mandatory
     dV = PdbxMasterViewDictionary(verbose=False)
     dV.read(parseargs.filename)
 
     if parseargs.list_methods:
-        print("Methods: %s" % dV.getMethods())
+        print("Methods: %s" % dV.getMethods())  # noqa: T201
 
     if parseargs.export:
         if parseargs.methods:
@@ -35,7 +36,7 @@ def main():
             methodList = dV.getMethods()
 
         for m in methodList:
-            print("Exporting %s" % m)
+            print("Exporting %s" % m)  # noqa: T201
             catObj = dV.generateMethodsView(m)
             if catObj:
                 ofh = open(m + ".cif", "w")
@@ -44,7 +45,7 @@ def main():
                 pdbxW.write([catObj])
                 ofh.close()
             else:
-                print("Method %s invalid" % m)
+                print("Method %s invalid" % m)  # noqa: T201
 
 
 if __name__ == "__main__":

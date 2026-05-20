@@ -81,6 +81,7 @@
 Base class for HTML depictions containing common HTML constructs.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "Raul Sala"
 __email__ = "rsala@rcsb.rutgers.edu"
@@ -96,17 +97,19 @@ try:
 except ImportError:
     from urllib import unquote as u_unquote
 
-from json import loads
-from mmcif_utils.persist.PdbxPersist import PdbxPersist  # temporary for testing
-from wwpdb.apps.editormodule.io.PdbxDataIo import PdbxDataIo
-from wwpdb.apps.editormodule.config.EditorConfig import EditorConfig
-from wwpdb.io.graphics.GraphicsContext3D import GraphicsContext3D
 import logging
+from json import loads
+
+from mmcif_utils.persist.PdbxPersist import PdbxPersist  # temporary for testing
+from wwpdb.io.graphics.GraphicsContext3D import GraphicsContext3D
+
+from wwpdb.apps.editormodule.config.EditorConfig import EditorConfig
+from wwpdb.apps.editormodule.io.PdbxDataIo import PdbxDataIo
 
 logger = logging.getLogger(__name__)
 
 
-class EditorDepict(object):
+class EditorDepict:
     """Base class for HTML depictions contain definitions of common constructs."""
 
     def __init__(self, verbose=False, log=sys.stderr):
@@ -266,21 +269,18 @@ class EditorDepict(object):
         myD["readonlycategories"] = self.__getReadOnlyCategories()
         myD["allowdeletelastrow"] = self.__getCategoriesAllowingDeleteLastRow()
         #
-        if p_bIsWorkflow:
+        if p_bIsWorkflow or (depId is not None and len(depId) > 1):
             myD["identifier"] = depId
         else:
-            if depId is not None and len(depId) > 1:
-                myD["identifier"] = depId
+            (_pth, fileName) = os.path.split(p_reqObj.getValue("filePath"))
+            (fN, _fileExt) = os.path.splitext(fileName)
+            if fN.upper().startswith("D_"):
+                depDataSetId = fN.upper()
+            elif fN.lower().startswith("rcsb"):
+                depDataSetId = fN.lower()
             else:
-                (_pth, fileName) = os.path.split(p_reqObj.getValue("filePath"))
-                (fN, _fileExt) = os.path.splitext(fileName)
-                if fN.upper().startswith("D_"):
-                    depDataSetId = fN.upper()
-                elif fN.lower().startswith("rcsb"):
-                    depDataSetId = fN.lower()
-                else:
-                    depDataSetId = "TMP_ID"
-                myD["identifier"] = depDataSetId
+                depDataSetId = "TMP_ID"
+            myD["identifier"] = depDataSetId
         #
         pdbxDataIo = PdbxDataIo(p_reqObj, self.__verbose, self.__lfh)
         self.__navTabGroups = pdbxDataIo.getCtgryNavConfig()
@@ -344,7 +344,7 @@ class EditorDepict(object):
         #
         if self.__verbose:
             logger.info("-- dictionary of attributes for record transmitted from UI follows")
-            for (key, value) in rcrdKeyValueDict.items():
+            for key, value in rcrdKeyValueDict.items():
                 logger.info("-- dict[%s] : %s", key, value)
         #
 
@@ -377,7 +377,7 @@ class EditorDepict(object):
     # ####### BEGIN -- Specific to DataTable Implementation ##################
     # NOTE: consider encapsulating DataTable functionality as separate class
 
-    def getJsonDataTable(self, p_reqObj, p_ctgryRcrdList, p_iDisplayStart, p_ctgryColList):  # pylint: disable=unused-argument
+    def getJsonDataTable(self, p_reqObj, p_ctgryRcrdList, p_iDisplayStart, p_ctgryColList):  # noqa: ARG002 pylint: disable=unused-argument
         """Generate contents of json object expected by DataTables for populating display
         table with data.
 
@@ -452,12 +452,7 @@ class EditorDepict(object):
         logger.debug("catDispLabel: %s", catDispLabel)
         context = str(p_reqObj.getValue("context"))
 
-        if sys.version_info[0] < 3:
-            catDispLabel = u_unquote(catDispLabel).decode(
-                "utf8"
-            )  # found the need to do this when Chrome browser being used, which for some reason does not URL decode the data as Firefox does  # noqa: E501
-        else:
-            catDispLabel = u_unquote(catDispLabel)  # Need to test chrome XXXX
+        catDispLabel = u_unquote(catDispLabel)  # Need to test chrome XXXX
 
         pdbxDataIo = PdbxDataIo(p_reqObj, self.__verbose, self.__lfh)
         catObjDict = pdbxDataIo.getTblConfigDict(p_cifCtgryNm, catDispLabel)  # note: to be used as Json Object when in webpage
@@ -670,15 +665,14 @@ class EditorDepict(object):
                             inputTypes[idx] = "autocomplete_w_other"
                         else:
                             inputTypes[idx] = "autocomplete"
+                    elif (p_cifCtgryNm in ["entity_src_gen", "entity_src_nat"]) and ("scientific" in p_ctgryColList[idx]):
+                        inputTypes[idx] = "select_w_other"
                     else:
-                        if (p_cifCtgryNm in ["entity_src_gen", "entity_src_nat"]) and ("scientific" in p_ctgryColList[idx]):
-                            inputTypes[idx] = "select_w_other"
-                        else:
-                            inputTypes[idx] = "select"
-                            if p_cifCtgryNm + "." + p_ctgryColList[idx] in EditorConfig.itemsAllowingCifNullOption:
-                                enumOpts[idx].append("?")
-                            if p_cifCtgryNm + "." + p_ctgryColList[idx] == "pdbx_database_related.content_type":
-                                enumOpts[idx].extend(["split", "complete structure"])
+                        inputTypes[idx] = "select"
+                        if p_cifCtgryNm + "." + p_ctgryColList[idx] in EditorConfig.itemsAllowingCifNullOption:
+                            enumOpts[idx].append("?")
+                        if p_cifCtgryNm + "." + p_ctgryColList[idx] == "pdbx_database_related.content_type":
+                            enumOpts[idx].extend(["split", "complete structure"])
 
                 elif ("details" in p_ctgryColList[idx]) or ("description" in p_ctgryColList[idx]) or (p_ctgryColList[idx] == "pdbx_seq_one_letter_code"):
                     inputTypes[idx] = "textarea"
@@ -691,7 +685,7 @@ class EditorDepict(object):
 
     # ####### BEGIN -- Specific to DataTable Implementation ##################
 
-    def __createDataTableAaDataList(self, p_colList, p_recordList, p_iDisplayStart):  # pylint: disable=unused-argument
+    def __createDataTableAaDataList(self, p_colList, p_recordList, p_iDisplayStart):  # noqa: ARG002 pylint: disable=unused-argument
         """Generate contents of "aaData" json object expected by DataTables for populating display
         table with data.
 
@@ -721,7 +715,7 @@ class EditorDepict(object):
             # the record is itself a dictionary, which will consist of single key/value pair where the "key" represents true
             # row index of the cif record as it sits in persistent store and "value" is the cif record itself
 
-            trueRowIndxKey, recordValue = list(record.items())[0]
+            trueRowIndxKey, recordValue = list(record.items())[0]  # noqa: RUF015
             newRecordJsonObj["DT_RowId"] = "row_" + str(trueRowIndxKey)
             newRecordJsonObj["DT_RowClass"] = "dt_row"
             #
@@ -734,7 +728,7 @@ class EditorDepict(object):
 
     # ####### END -- Specific to DataTable Implementation ##################
 
-    def __getAllCategoriesInDataFile(self, p_fileSource, p_dataFile, p_bIsWorkflow):  # pylint: disable=unused-argument
+    def __getAllCategoriesInDataFile(self, p_fileSource, p_dataFile, p_bIsWorkflow):  # noqa: ARG002 pylint: disable=unused-argument
         """Returns list of categories in the first data block"""
         if self.__verbose:
             logger.info("--------------------------------------------")
@@ -748,13 +742,13 @@ class EditorDepict(object):
         containerNameList = myInd["__containers__"]
         dataBlockName = containerNameList[0][0]
         for objName in myInd[dataBlockName]:
-            ctgryList.append(objName)
+            ctgryList.append(objName)  # noqa: PERF402
 
         if self.__verbose:
             logger.info("+++ completed at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         return ctgryList
 
-    def __genCtgryNavBar(self, p_dataBlockName, p_fileSource, p_dataFile, p_bIsWorkflow, p_context):  # pylint: disable=unused-argument
+    def __genCtgryNavBar(self, p_dataBlockName, p_fileSource, p_dataFile, p_bIsWorkflow, p_context):  # noqa: ARG002 pylint: disable=unused-argument
         """Generate markup used to render the navigation menu bar.
 
         :Params:
@@ -822,9 +816,9 @@ class EditorDepict(object):
 
                 else:  # Not other - nested pulldown - need cardinality for items
                     labels = navTabGrp["dropdown_display_labels"]
-                    for (_nm, ldict) in labels:
+                    for _nm, ldict in labels:
                         # ldict looks like {'struct_conn': ('struct_conn', 'multi'), 'Cis-peptide': ('struct_mon_prot_cis', 'multi'), 'pcm': ('pdbx_modification_feature', 'unit')}
-                        for _vname, tupl in ldict.items():
+                        for tupl in ldict.values():
                             ctgryName = tupl[0]
                             crdnltyStr = tupl[1]
 
@@ -889,7 +883,6 @@ class EditorDepict(object):
                 crdnltyLst = []
 
                 if navTabGrp["id"] != "other":
-
                     for key, tupl in navTabGrp["no_dropdown_dict"].items():
                         hdrDict["ctgry_disply_lbls"] = key
                         hdrDict["ctgries"] = tupl[0]
@@ -898,14 +891,13 @@ class EditorDepict(object):
                         ctgryNmLst = hdrDict["ctgries"].split("+")
                         crdnltyLst = crdnltyStr.split("+")
 
-                        for (ctgryName, crdnlty) in zip(ctgryNmLst, crdnltyLst):
+                        for ctgryName, crdnlty in zip(ctgryNmLst, crdnltyLst):
                             if ctgryName not in crdnltyDict:
                                 crdnltyDict[ctgryName] = crdnlty
 
                             stndrdCtgrySet.add(ctgryName)
 
                 else:  # 2014-01-07, RPS: verify-->we'll never get here b/c "other" currently hardcoded to "dropdown" type, so can remove
-
                     # have to determine which categories are in datafile but not in established set of navigation groups
                     # so that we can create an "Other" navigation group for these
                     allCtgriesInDatafile = set(self.__getAllCategoriesInDataFile(p_fileSource, p_dataFile, p_bIsWorkflow))
@@ -972,9 +964,8 @@ class EditorDepict(object):
         if fileSource in ["archive", "wf-archive", "wf_archive", "wf-instance", "wf_instance"]:
             # if the file source is any of the above then we are in the workflow manager environment
             return True
-        else:
-            # else we are in the standalone dev environment
-            return False
+        # else we are in the standalone dev environment
+        return False
 
     def processTemplate(self, tmpltPth, fn, parameterDict=None):
         """Read the input HTML template data file and perform the key/value substitutions in the
@@ -984,7 +975,7 @@ class EditorDepict(object):
             parameterDict = {}
 
         fPath = os.path.join(tmpltPth, fn)
-        with open(fPath, "r") as ifh:
+        with open(fPath) as ifh:
             sIn = ifh.read()
         return sIn % parameterDict
 
@@ -993,10 +984,8 @@ class EditorDepict(object):
         if content is not None:
             if len(content) <= maxlength:
                 return content
-            else:
-                return content[: maxlength + 1] + suffix
-        else:
-            return ""
+            return content[: maxlength + 1] + suffix
+        return ""
 
     def __generateDropDownMarkup(self, p_ctgries, p_ctgryCrdnlties, p_ctgryDisplNm, p_grpId, p_inputMrkpTmplt, p_index=None, p_ctgryDisplyLbls=None):
         inputMrkp = ""
@@ -1020,7 +1009,6 @@ class EditorDepict(object):
     def __getFontSize(self, p_displayLabel):
         if len(p_displayLabel) > 35:
             return ".75em"
-        elif len(p_displayLabel) > 25:
+        if len(p_displayLabel) > 25:
             return ".8em"
-        else:
-            return ".9em"
+        return ".9em"

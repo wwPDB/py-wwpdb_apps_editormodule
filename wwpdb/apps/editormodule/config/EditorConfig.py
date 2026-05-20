@@ -23,17 +23,21 @@
 """
 Contains settings pertinent to configuring the behaviour of the CIF Editor
 """
+
+from __future__ import annotations
+
 __docformat__ = "restructuredtext en"
 __author__ = "Raul Sala"
 __email__ = "rsala@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+from typing import ClassVar
 
-class EditorConfig(object):
 
+class EditorConfig:
     # list of category.items for which ordinal value should be incremented/decremented automatically when adding/inserting or deleting a row
-    autoIncrDecrList = [
+    autoIncrDecrList: ClassVar[list[str]] = [
         "audit_author.pdbx_ordinal",
         "citation_author.ordinal",
         "em_author_list.ordinal",
@@ -48,12 +52,12 @@ class EditorConfig(object):
     ]
 
     # generating dictionary version of above autoIncrDecrList list where key is category name and value is item name
-    autoIncrDecrDict = {}
+    autoIncrDecrDict: ClassVar[dict[str, str]] = {}
     for cifitem in autoIncrDecrList:
         autoIncrDecrDict[cifitem.split(".")[0]] = cifitem.split(".")[1]
 
     # list of category.items for which auto increment/decrement behavior is NOT wanted
-    autoIncrExclList = [
+    autoIncrExclList: ClassVar[list[str]] = [
         "atom_sites.entry_id",
         "chem_comp.id",
         "citation.id",
@@ -81,7 +85,7 @@ class EditorConfig(object):
     ]
 
     # list of categories for which rows in which all items have non-meaningful/null values are purged on exit from the Editor session
-    purgeSkeletonRowList = [
+    purgeSkeletonRowList: ClassVar[list[str]] = [
         "database_PDB_caveat",
         "diffrn_radiation_wavelength",
         "em_diffraction_stats",
@@ -124,10 +128,10 @@ class EditorConfig(object):
     ]
 
     # list of categories for which we allow submitted values to take form of comma separated list
-    itemsInCsvListForm = ["diffrn_source.pdbx_wavelength_list"]
+    itemsInCsvListForm: ClassVar[list[str]] = ["diffrn_source.pdbx_wavelength_list"]
 
     # dictionary defining which category.items serve as default sort column for given category when viewed in Editor
-    sortColDict = {
+    sortColDict: ClassVar[dict[str, str]] = {
         "audit_author": "pdbx_ordinal",
         "citation_author": "ordinal",
         "em_author_list": "ordinal",
@@ -138,7 +142,7 @@ class EditorConfig(object):
     }
 
     # list of category.items for which the user is allowed to supply a cif null (i.e. '?')
-    itemsAllowingCifNullOption = [
+    itemsAllowingCifNullOption: ClassVar[list[str]] = [
         "pdbx_database_status.methods_development_category",
         "pdbx_nmr_exptl_sample_conditions.pressure_units",
         "refine.pdbx_method_to_determine_struct",
@@ -149,10 +153,10 @@ class EditorConfig(object):
     bAccommodatingUnicode = False  # are we handling incoming non-ascii unicode inputs by converting to XML char references when persisting to CIF file
 
     # list of category.items for which we will convert unicode characters to ascii safe counterparts
-    itemsAllowingUnicodeAccommodation = ["audit_author.name", "em_author_list.author", "citation.title", "citation_author.name", "struct.title"]
+    itemsAllowingUnicodeAccommodation: ClassVar[list[str]] = ["audit_author.name", "em_author_list.author", "citation.title", "citation_author.name", "struct.title"]
 
     # list of categories which will be treated as READ ONLY in the UI
-    arrReadOnlyCtgries = [
+    arrReadOnlyCtgries: ClassVar[list[str]] = [
         "pdbx_chem_comp_depositor_info",
         "pdbx_chem_comp_instance_depositor_info",
         "pdbx_chem_comp_upload_depositor_info",
@@ -169,7 +173,7 @@ class EditorConfig(object):
     ]
 
     # list of categories for which deletion of last remaining row will be allowed in the UI
-    arrAllowLastRowDeleteCtgries = [
+    arrAllowLastRowDeleteCtgries: ClassVar[list[str]] = [
         "em_db_reference",
         "em_3d_fitting_list",
         "em_entity_assembly_molwt",
@@ -198,4 +202,4 @@ class EditorConfig(object):
     ]
 
     # list of items that use a regular expression - for which biocurator could override..
-    itemsAllowingOverrideRegex = ["audit_author.name", "citation_author.name"]
+    itemsAllowingOverrideRegex: ClassVar[list[str]] = ["audit_author.name", "citation_author.name"]
