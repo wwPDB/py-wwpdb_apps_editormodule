@@ -57,7 +57,7 @@ NMR      NMR1     SumBase,NMRSum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T
 EM       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,T7,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8,EM9_REFI
 EMmap    EM2      EM1A,T1contacts,EM1B,EM1C,T2A,T2C,T2D,T3B,T3EM,T6EM,T6,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8
 EM_NMR   EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,NMR1,T7,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8,EM9_REFI
-EC       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,XRAY1,XRAY2,T7,EM2,EM3,EM4A,EM4_EC,EM4B,EM5,EM6,EM7,EM8
+EC       EC1      SumBase,XraySum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,XRAY1,XRAY2,XRAY_SX,T7
 
 ###############################################################################################################
 data_XraySum
@@ -410,6 +410,7 @@ _pdbx_display_view_category_info.category_cardinality
 'EM Admin'           struct_keywords                     'EM Admin'            struct_keywords                    unit
 'EM Admin'           pdbx_contact_author                 'EM Admin'            'Contact Authors'                  multi
 'EM Admin'           em_experiment                       'EM Admin'            em_experiment                      multi
+'EM Admin'           pdbx_exptl_subtype                  'EM Admin'            em_pdbx_exptl_subtype              multi
 'EM Admin'           em_db_reference                     'EM Admin'            em_db_reference                    multi
 'EM Admin'           em_db_reference_auxiliary           'EM Admin'            em_db_reference_auxiliary          multi
 'EM Admin'           em_obsolete                         'EM Admin'            em_obsolete                        multi
@@ -436,6 +437,9 @@ em_experiment                      '_em_experiment.specimen_type'               
 em_experiment                      '_em_experiment.entity_assembly_id'                           assembly_id                                      N
 em_experiment                      '_em_experiment.id'                                           id                                               N
 em_experiment                      '_em_experiment.reconstruction_method'                        method                                           N
+em_pdbx_exptl_subtype              '_pdbx_exptl_subtype.exptl_method'                                     Method                                      Y
+em_pdbx_exptl_subtype              '_pdbx_exptl_subtype.method_type'                                      Subtype                                     Y
+em_pdbx_exptl_subtype              '_pdbx_exptl_subtype.details'                                          Details                                     N
 em_db_reference                    '_em_db_reference.access_code'                                accession                                        N
 em_db_reference                    '_em_db_reference.db_name'                                    'db name'                                        N
 em_db_reference                    '_em_db_reference.details'                                    details                                          N
@@ -737,13 +741,22 @@ _pdbx_display_view_category_info.category_cardinality
 'Data Collection'            cell                                'Data Collection'            cell                                  unit
 'Data Collection'            symmetry                            'Data Collection'            symmetry                              unit
 'Data Collection'            exptl_crystal_grow                  'Data Collection'            exptl_crystal_grow                    multi
+
+'Data Collection'            pdbx_exptl_crystal_process          'Data Collection'            pdbx_exptl_crystal_process            multi
+'Data Collection'            pdbx_exptl_crystal_cryo_treatment   'Data Collection'            pdbx_exptl_crystal_cryo_treatment     multi
+
 'Data Collection'            exptl_crystal                       'Data Collection'            exptl_crystal                         multi
 'Data Collection'            exptl                               'Data Collection'            exptl                                 multi
+'Data Collection'            pdbx_exptl_subtype                  'Data Collection'            pdbx_exptl_subtype                    multi
 'Data Collection'            diffrn                              'Data Collection'            Temperature                           multi
 'Data Collection'            diffrn_source                       'Data Collection'            diffrn_source                         multi
 'Data Collection'            diffrn_detector                     'Data Collection'            Detector                              multi
 'Data Collection'            diffrn_radiation                    'Data Collection'            diffrn_radiation                      multi
 'Data Collection'            diffrn_radiation_wavelength         'Data Collection'            diffrn_radiation_wavelength           multi
+
+'Data Collection'            diffrn_measurement                  'Data Collection'            diffrn_measurement                    multi
+'Data Collection'            pdbx_diffrn_ed                      'Data Collection'            pdbx_diffrn_ed                        multi
+
 'Data Collection'            software                            'Data Collection'            Software                              multi
 
 loop_
@@ -769,6 +782,55 @@ exptl_crystal_grow                    '_exptl_crystal_grow.temp_details'        
 exptl_crystal_grow                    '_exptl_crystal_grow.pH'                                               'Sample pH'                                 N
 exptl_crystal_grow                    '_exptl_crystal_grow.pdbx_pH_range'                                    'Sample pH Range'                           N
 exptl_crystal_grow                    '_exptl_crystal_grow.pdbx_details'                                     'Crystallization Conditions'                N
+
+
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.id'                                       'ID'                                        N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.crystal_id'                               'Crystal id'                                N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_method'                      'Method'                N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_instrument'                  'Instrument'            N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_min_dim'                     'Min Dim'               N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_max_dim'                     'Max Dim'               N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_description'                 'Description'           N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.details'                                  'Details'                                   N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.crystal_id'                        'Crystal id'                                N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.annealing_details'                 'Anneal details'                            N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.cooling_details'                   'Cooling details'                           N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.cryogen'                           'Cryogen'                                   N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.final_solution_details'            'Final Solution Details'                    N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.soaking_details'                   'Soaking details'                           N
+
+
+diffrn_measurement                    '_diffrn_measurement.diffrn_id'                                        'Diffrn id'               N
+diffrn_measurement                    '_diffrn_measurement.rotation_mode'                                    'Rotation mode'           N
+diffrn_measurement                    '_diffrn_measurement.pdbx_exposure_time_per_image'                     'Exposure time/image'     N
+diffrn_measurement                    '_diffrn_measurement.pdbx_angle_start'                                 'Start angle'             N
+diffrn_measurement                    '_diffrn_measurement.pdbx_angle_end'                                   'End angle'               N
+diffrn_measurement                    '_diffrn_measurement.method_precession'                                'Precession method'       N
+diffrn_measurement                    '_diffrn_measurement.method'                                           'Method'                  N
+diffrn_measurement                    '_diffrn_measurement.sample_tracking'                                  'Sample tracking'         N
+diffrn_measurement                    '_diffrn_measurement.sample_tracking_method'                           'Sample tracking method'  N
+diffrn_measurement                    '_diffrn_measurement.details'                                          'Details'                 N
+
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.id'                                                   'EC process id'           N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.diffrn_id'                                            'Diffrn id'               N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.electron_source'                                      'Electron source'         N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.recording_mode'                                       'Electron recording mode' N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.fluence_rate'                                         'Fluence rate'            N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.fluence_accumulated'                                  'Fluence accumultaed'     N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.camera_length'                                        'Camera length'           N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.beam_diameter_sample_plane'                           'Beam diameter at sample plane' N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.c2_aperture_diameter'                                 'C2 aperature'            N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.sa_aperture_diameter'                                 'SA aperature'            N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_name'                                    'Energy filter name'      N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_lower'                                   'Filter lower E'          N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_upper'                                   'Filter upper E'          N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.details'                                              'Details'                 N
+
+
+
+
+
+
 exptl_crystal                         '_exptl_crystal.id'                                                    'Crystal id'                                N
 exptl_crystal                         '_exptl_crystal.density_Matthews'                                      Matthews                                    N
 exptl_crystal                         '_exptl_crystal.density_percent_sol'                                   'Solvent content'                           N
@@ -777,6 +839,9 @@ exptl_crystal                         '_exptl_crystal.description'              
 exptl_crystal                         '_exptl_crystal.preparation'                                           'Data collection remarks'                   N
 exptl                                 '_exptl.method'                                                        Method                                      Y
 exptl                                 '_exptl.crystals_number'                                               'Number of Crystals'                        N
+pdbx_exptl_subtype                    '_pdbx_exptl_subtype.exptl_method'                                     Method                                      Y
+pdbx_exptl_subtype                    '_pdbx_exptl_subtype.method_type'                                      Subtype                                     Y
+pdbx_exptl_subtype                    '_pdbx_exptl_subtype.details'                                          Details                                     N
 Temperature                           '_diffrn.id'                                                           ID                                          Y
 Temperature                           '_diffrn.crystal_id'                                                   'Crystal id'                                N
 Temperature                           '_diffrn.ambient_temp'                                                 'Data Collection Temperature'               N
@@ -1061,6 +1126,7 @@ _pdbx_display_view_category_info.category_cardinality
 'NMR Categories'        'pdbx_nmr_exptl_sample_conditions'      'NMR Categories'     'pdbx_nmr_exptl_sample_conditions'      multi
 'NMR Categories'        'pdbx_nmr_spectrometer' 'NMR Categories'     'pdbx_nmr_spectrometer' multi
 'NMR Categories'        'pdbx_nmr_exptl'        'NMR Categories'     'pdbx_nmr_exptl'        multi
+'NMR Categories'        'pdbx_exptl_subtype'    'NMR Categories'     'nmr_pdbx_exptl_subtype' multi
 'NMR Categories'        'pdbx_nmr_details'      'NMR Categories'     'pdbx_nmr_details'      multi
 'NMR Categories'        'pdbx_nmr_refine'       'NMR Categories'     'pdbx_nmr_refine'       multi
 'NMR Categories'        'pdbx_nmr_software'     'NMR Categories'     'pdbx_nmr_software'     multi
@@ -1118,6 +1184,10 @@ _pdbx_display_view_item_info.read_only_flag
 'pdbx_nmr_exptl'	'_pdbx_nmr_exptl.conditions_id'	'conditions_id' N
 'pdbx_nmr_exptl'	'_pdbx_nmr_exptl.solution_id'	'solution_id' N
 'pdbx_nmr_exptl'	'_pdbx_nmr_exptl.type'	'type' N
+
+'nmr_pdbx_exptl_subtype'  '_pdbx_exptl_subtype.exptl_method'                                     Method                                      Y
+'nmr_pdbx_exptl_subtype'  '_pdbx_exptl_subtype.method_type'                                      Subtype                                     Y
+'nmr_pdbx_exptl_subtype'  '_pdbx_exptl_subtype.details'                                          Details                                     N
 
 'pdbx_nmr_details'	'_pdbx_nmr_details.entry_id'	'entry_id'	Y
 'pdbx_nmr_details'	'_pdbx_nmr_details.text'	'text'	N

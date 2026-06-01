@@ -82,6 +82,7 @@ class EditorConfig(object):
 
     # list of categories for which rows in which all items have non-meaningful/null values are purged on exit from the Editor session
     purgeSkeletonRowList = [
+        "diffrn_measurement",
         "database_PDB_caveat",
         "diffrn_radiation_wavelength",
         "em_diffraction_stats",
@@ -93,7 +94,11 @@ class EditorConfig(object):
         "pdbx_database_proc",
         "pdbx_database_related",
         "pdbx_distant_solvent_atoms",
+        "pdbx_diffrn_ed",
         "pdbx_entity_src_syn",
+        "pdbx_exptl_crystal_cryo_treatment",
+        "pdbx_exptl_crystal_process",
+        "pdbx_exptl_subtype",
         "pdbx_modification_feature",
         "pdbx_nmr_constraint_file",
         "pdbx_refine_tls_group",
