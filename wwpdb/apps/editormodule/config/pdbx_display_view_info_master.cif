@@ -57,7 +57,7 @@ NMR      NMR1     SumBase,NMRSum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T
 EM       EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,T7,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8,EM9_REFI
 EMmap    EM2      EM1A,T1contacts,EM1B,EM1C,T2A,T2C,T2D,T3B,T3EM,T6EM,T6,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8
 EM_NMR   EM1      T1,T1contacts,EM1A,EM1C,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T3EM,T4,T5,T6,NMR1,T7,EM2,EM3,EM4A,EM4B,EM5,EM6,EM7,EM8,EM9_REFI
-EC       EC1      SumBase,XraySum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,XRAY1,XRAY2,XRAY_SX,T7
+EC       EC1      SumBase,XraySum,T1,T1contacts,T2A,T2B,T2C,T2D,T2E,T3A,T3B,T3C,T4,T5,T6,XRAY1,EC1,XRAY2,XRAY_SX,T7
 
 ###############################################################################################################
 data_XraySum
@@ -741,10 +741,6 @@ _pdbx_display_view_category_info.category_cardinality
 'Data Collection'            cell                                'Data Collection'            cell                                  unit
 'Data Collection'            symmetry                            'Data Collection'            symmetry                              unit
 'Data Collection'            exptl_crystal_grow                  'Data Collection'            exptl_crystal_grow                    multi
-
-'Data Collection'            pdbx_exptl_crystal_process          'Data Collection'            pdbx_exptl_crystal_process            multi
-'Data Collection'            pdbx_exptl_crystal_cryo_treatment   'Data Collection'            pdbx_exptl_crystal_cryo_treatment     multi
-
 'Data Collection'            exptl_crystal                       'Data Collection'            exptl_crystal                         multi
 'Data Collection'            exptl                               'Data Collection'            exptl                                 multi
 'Data Collection'            pdbx_exptl_subtype                  'Data Collection'            pdbx_exptl_subtype                    multi
@@ -753,10 +749,6 @@ _pdbx_display_view_category_info.category_cardinality
 'Data Collection'            diffrn_detector                     'Data Collection'            Detector                              multi
 'Data Collection'            diffrn_radiation                    'Data Collection'            diffrn_radiation                      multi
 'Data Collection'            diffrn_radiation_wavelength         'Data Collection'            diffrn_radiation_wavelength           multi
-
-'Data Collection'            diffrn_measurement                  'Data Collection'            diffrn_measurement                    multi
-'Data Collection'            pdbx_diffrn_ed                      'Data Collection'            pdbx_diffrn_ed                        multi
-
 'Data Collection'            software                            'Data Collection'            Software                              multi
 
 loop_
@@ -782,55 +774,6 @@ exptl_crystal_grow                    '_exptl_crystal_grow.temp_details'        
 exptl_crystal_grow                    '_exptl_crystal_grow.pH'                                               'Sample pH'                                 N
 exptl_crystal_grow                    '_exptl_crystal_grow.pdbx_pH_range'                                    'Sample pH Range'                           N
 exptl_crystal_grow                    '_exptl_crystal_grow.pdbx_details'                                     'Crystallization Conditions'                N
-
-
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.id'                                       'ID'                                        N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.crystal_id'                               'Crystal id'                                N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_method'                      'Method'                N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_instrument'                  'Instrument'            N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_min_dim'                     'Min Dim'               N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_max_dim'                     'Max Dim'               N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_description'                 'Description'           N
-pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.details'                                  'Details'                                   N
-pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.crystal_id'                        'Crystal id'                                N
-pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.annealing_details'                 'Anneal details'                            N
-pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.cooling_details'                   'Cooling details'                           N
-pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.cryogen'                           'Cryogen'                                   N
-pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.final_solution_details'            'Final Solution Details'                    N
-pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.soaking_details'                   'Soaking details'                           N
-
-
-diffrn_measurement                    '_diffrn_measurement.diffrn_id'                                        'Diffrn id'               N
-diffrn_measurement                    '_diffrn_measurement.rotation_mode'                                    'Rotation mode'           N
-diffrn_measurement                    '_diffrn_measurement.pdbx_exposure_time_per_image'                     'Exposure time/image'     N
-diffrn_measurement                    '_diffrn_measurement.pdbx_angle_start'                                 'Start angle'             N
-diffrn_measurement                    '_diffrn_measurement.pdbx_angle_end'                                   'End angle'               N
-diffrn_measurement                    '_diffrn_measurement.method_precession'                                'Precession method'       N
-diffrn_measurement                    '_diffrn_measurement.method'                                           'Method'                  N
-diffrn_measurement                    '_diffrn_measurement.sample_tracking'                                  'Sample tracking'         N
-diffrn_measurement                    '_diffrn_measurement.sample_tracking_method'                           'Sample tracking method'  N
-diffrn_measurement                    '_diffrn_measurement.details'                                          'Details'                 N
-
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.id'                                                   'EC process id'           N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.diffrn_id'                                            'Diffrn id'               N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.electron_source'                                      'Electron source'         N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.recording_mode'                                       'Electron recording mode' N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.fluence_rate'                                         'Fluence rate'            N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.fluence_accumulated'                                  'Fluence accumultaed'     N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.camera_length'                                        'Camera length'           N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.beam_diameter_sample_plane'                           'Beam diameter at sample plane' N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.c2_aperture_diameter'                                 'C2 aperature'            N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.sa_aperture_diameter'                                 'SA aperature'            N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_name'                                    'Energy filter name'      N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_lower'                                   'Filter lower E'          N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_upper'                                   'Filter upper E'          N
-pdbx_diffrn_ed                        '_pdbx_diffrn_ed.details'                                              'Details'                 N
-
-
-
-
-
-
 exptl_crystal                         '_exptl_crystal.id'                                                    'Crystal id'                                N
 exptl_crystal                         '_exptl_crystal.density_Matthews'                                      Matthews                                    N
 exptl_crystal                         '_exptl_crystal.density_percent_sol'                                   'Solvent content'                           N
@@ -886,6 +829,65 @@ diffrn_radiation_wavelength           '_diffrn_radiation_wavelength.wt'         
 #serial_crystallography_measurement    '_pdbx_serial_crystallography_measurement.focal_spot_size'             'Focal spot sz'                             N
 #serial_crystallography_measurement    '_pdbx_serial_crystallography_measurement.collimation'                 'Collimation'                               N
 #serial_crystallography_measurement    '_pdbx_serial_crystallography_measurement.collection_time_total'       'Collection Time'                           N
+
+data_EC1
+# Comes afer
+loop_
+_pdbx_display_view_category_info.category_menu_display_name
+_pdbx_display_view_category_info.category_name
+_pdbx_display_view_category_info.category_group_display_name
+_pdbx_display_view_category_info.category_display_name
+_pdbx_display_view_category_info.category_cardinality
+'Data Collection'            pdbx_exptl_crystal_process          'Data Collection'            pdbx_exptl_crystal_process            multi
+'Data Collection'            pdbx_exptl_crystal_cryo_treatment   'Data Collection'            pdbx_exptl_crystal_cryo_treatment     multi
+'Data Collection'            diffrn_measurement                  'Data Collection'            diffrn_measurement                    multi
+'Data Collection'            pdbx_diffrn_ed                      'Data Collection'            pdbx_diffrn_ed                        multi
+
+
+loop_
+_pdbx_display_view_item_info.category_display_name
+_pdbx_display_view_item_info.item_name
+_pdbx_display_view_item_info.item_display_name
+_pdbx_display_view_item_info.read_only_flag
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.id'                                       'ID'                                        N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.crystal_id'                               'Crystal id'                                N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_method'                      'Method'                N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_instrument'                  'Instrument'            N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_min_dim'                     'Min Dim'               N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_max_dim'                     'Max Dim'               N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.microcrystal_description'                 'Description'           N
+pdbx_exptl_crystal_process            '_pdbx_exptl_crystal_process.details'                                  'Details'                                   N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.crystal_id'                        'Crystal id'                                N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.annealing_details'                 'Anneal details'                            N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.cooling_details'                   'Cooling details'                           N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.cryogen'                           'Cryogen'                                   N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.final_solution_details'            'Final Solution Details'                    N
+pdbx_exptl_crystal_cryo_treatment     '_pdbx_exptl_crystal_cryo_treatment.soaking_details'                   'Soaking details'                           N
+diffrn_measurement                    '_diffrn_measurement.diffrn_id'                                        'Diffrn id'               N
+diffrn_measurement                    '_diffrn_measurement.rotation_mode'                                    'Rotation mode'           N
+diffrn_measurement                    '_diffrn_measurement.pdbx_exposure_time_per_image'                     'Exposure time/image'     N
+diffrn_measurement                    '_diffrn_measurement.pdbx_angle_start'                                 'Start angle'             N
+diffrn_measurement                    '_diffrn_measurement.pdbx_angle_end'                                   'End angle'               N
+diffrn_measurement                    '_diffrn_measurement.method_precession'                                'Precession method'       N
+diffrn_measurement                    '_diffrn_measurement.method'                                           'Method'                  N
+diffrn_measurement                    '_diffrn_measurement.sample_tracking'                                  'Sample tracking'         N
+diffrn_measurement                    '_diffrn_measurement.sample_tracking_method'                           'Sample tracking method'  N
+diffrn_measurement                    '_diffrn_measurement.details'                                          'Details'                 N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.id'                                                   'EC process id'           N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.diffrn_id'                                            'Diffrn id'               N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.electron_source'                                      'Electron source'         N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.recording_mode'                                       'Electron recording mode' N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.fluence_rate'                                         'Fluence rate'            N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.fluence_accumulated'                                  'Fluence accumultaed'     N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.camera_length'                                        'Camera length'           N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.beam_diameter_sample_plane'                           'Beam diameter at sample plane' N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.c2_aperture_diameter'                                 'C2 aperature'            N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.sa_aperture_diameter'                                 'SA aperature'            N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_name'                                    'Energy filter name'      N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_lower'                                   'Filter lower E'          N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.energyfilter_upper'                                   'Filter upper E'          N
+pdbx_diffrn_ed                        '_pdbx_diffrn_ed.details'                                              'Details'                 N
+
 
 data_XRAY2
 loop_
