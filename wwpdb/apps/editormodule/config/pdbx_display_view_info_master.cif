@@ -572,6 +572,8 @@ _pdbx_display_view_category_info.category_cardinality
 'Entity Description'         struct_ref                          'Entity Description'         'Entity Mapping'                      unit
 'Entity Description'         struct_ref_seq                      'Entity Description'         struct_ref_seq                        unit
 'Entity Description'         struct_ref_seq_dif                  'Entity Description'         struct_ref_seq_dif                    multi
+'Entity Description'         pdbx_nonpoly_atom_feature           'Entity Description'         pdbx_nonpoly_atom_feature             multi
+
 
 loop_
 _pdbx_display_view_item_info.category_display_name
@@ -639,6 +641,20 @@ struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_seq_db_accession
 struct_ref_seq_dif                    '_struct_ref_seq_dif.db_mon_id'                               db_mon_id                                   N
 struct_ref_seq_dif                    '_struct_ref_seq_dif.pdbx_seq_db_seq_num'                     pdbx_seq_db_seq_num                         N
 struct_ref_seq_dif                    '_struct_ref_seq_dif.details'                                 details                                     N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.ordinal'                          ordinal                                     N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.label_asym_id'                    label_asym_id                               N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.label_seq_id'                     label_seq_id                                N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.label_comp_id'                    label_comp_id                               N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.label_atom_id'                    label_atom_id                               N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.label_alt_id'                     label_alt_id                                N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.auth_asym_id'                     auth_asym_id                                N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.auth_seq_id'                      auth_seq_id                                 N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.auth_comp_id'                     auth_comp_id                                N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.auth_atom_id'                     auth_atom_id                                N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.PDB_ins_code'                     PDB_ins_code                                N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.type'                             type                                        N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.value'                            value                                       N
+pdbx_nonpoly_atom_feature             '_pdbx_nonpoly_atom_feature.provenance'                       provenance                                  N
 
 ######################################################################################
 data_T6EM
